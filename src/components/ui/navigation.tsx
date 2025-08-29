@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
-// import logo from "@/assets/logo.png";
+
 
 interface NavigationProps {
   className?: string;
