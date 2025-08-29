@@ -3,16 +3,16 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { lazy, Suspense, Component, ReactNode } from "react";
+import { Component, ReactNode } from "react";
 
-// Lazy load pages to reduce initial bundle size
-const Index = lazy(() => import("./pages/Index"));
-const Membership = lazy(() => import("./pages/Membership"));
-const Events = lazy(() => import("./pages/Events"));
-const Rentals = lazy(() => import("./pages/Rentals"));
-const About = lazy(() => import("./pages/About"));
-const Admin = lazy(() => import("./pages/Admin"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+// Direct imports to fix white screen issue
+import Index from "./pages/Index";
+import Membership from "./pages/Membership";
+import Events from "./pages/Events";
+import Rentals from "./pages/Rentals";
+import About from "./pages/About";
+import Admin from "./pages/Admin";
+import NotFound from "./pages/NotFound";
 
 // Error boundary for lazy routes
 class ErrorBoundary extends Component<
@@ -67,22 +67,16 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ErrorBoundary>
-          <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
-          }>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/membership" element={<Membership />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/rentals" element={<Rentals />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/admin" element={<Admin />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/membership" element={<Membership />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/rentals" element={<Rentals />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/admin" element={<Admin />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </ErrorBoundary>
       </BrowserRouter>
     </TooltipProvider>
