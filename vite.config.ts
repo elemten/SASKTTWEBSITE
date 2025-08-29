@@ -26,7 +26,61 @@ export default defineConfig(({ mode }) => ({
     target: "es2019",
     // Performance budgets
     chunkSizeWarningLimit: 500,
-    // Let Vite decide optimal chunking to avoid cross-chunk React issues
+    // Split heavy libraries while keeping React and ReactDOM together
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Core React (keep together)
+          if (
+            /node_modules\/(react|react-dom)\//.test(id) ||
+            id.includes('react/jsx-runtime')
+          ) {
+            return 'react-vendor'
+          }
+
+          // Radix UI components
+          if (id.includes('@radix-ui/react-')) {
+            return 'ui-vendor'
+          }
+
+          // Charts
+          if (id.includes('recharts')) {
+            return 'charts'
+          }
+
+          // Animations
+          if (id.includes('framer-motion')) {
+            return 'animations'
+          }
+
+          // State/query
+          if (id.includes('@tanstack/react-query')) {
+            return 'query'
+          }
+
+          // Icons
+          if (id.includes('lucide-react')) {
+            return 'icons'
+          }
+
+          // UI utilities
+          if (
+            id.includes('class-variance-authority') ||
+            id.includes('clsx') ||
+            id.includes('tailwind-merge') ||
+            id.includes('tailwindcss-animate') ||
+            id.includes('vaul') ||
+            id.includes('sonner') ||
+            id.includes('input-otp') ||
+            id.includes('cmdk') ||
+            id.includes('embla-carousel-react') ||
+            id.includes('react-resizable-panels')
+          ) {
+            return 'ui-utils'
+          }
+        },
+      },
+    },
   },
   // Add bundle analyzer in development
   ...(process.env.ANALYZE === 'true' && {

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
 
 interface NavigationProps {
@@ -42,13 +43,12 @@ export function Navigation({ className }: NavigationProps) {
             className="flex items-center space-x-4"
             style={{ willChange: 'transform' }}
           >
-            <div className="relative">
-              <div 
-                className="h-12 w-12 rounded-xl shadow-medium bg-primary flex items-center justify-center"
-              >
-                <span className="text-white font-bold text-lg">TTS</span>
-              </div>
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+            <div className="h-12 w-12 rounded-full overflow-hidden shadow-medium bg-white">
+              <img
+                src={logo}
+                alt="Table Tennis Saskatchewan"
+                className="h-full w-full object-cover object-center"
+              />
             </div>
             <div className="hidden md:block">
               <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">

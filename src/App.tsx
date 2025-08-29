@@ -13,6 +13,20 @@ import Rentals from "./pages/Rentals";
 import About from "./pages/About";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+// New pages (shells)
+import Clubs from "./pages/Clubs";
+import Coaching from "./pages/Coaching";
+import Officials from "./pages/Officials";
+import Resources from "./pages/Resources";
+import Gallery from "./pages/Gallery";
+import Contact from "./pages/Contact";
+import AboutHistoryMission from "./pages/about/HistoryMission";
+import AboutStaffBoard from "./pages/about/StaffBoard";
+import AboutGovernance from "./pages/about/Governance";
+import PlayLocations from "./pages/play/Locations";
+import PlayTraining from "./pages/play/Training";
+import PlayAdvancedPara from "./pages/play/AdvancedPara";
+import PlayClinics from "./pages/play/Clinics";
 
 // Error boundary for lazy routes
 class ErrorBoundary extends Component<
@@ -73,6 +87,22 @@ const App = () => (
             <Route path="/events" element={<Events />} />
             <Route path="/rentals" element={<Rentals />} />
             <Route path="/about" element={<About />} />
+            {/* About subsections */}
+            <Route path="/about/history-mission" element={<AboutHistoryMission />} />
+            <Route path="/about/staff-board" element={<AboutStaffBoard />} />
+            <Route path="/about/governance" element={<AboutGovernance />} />
+            {/* Play & Train */}
+            <Route path="/play/locations" element={<PlayLocations />} />
+            <Route path="/play/training" element={<PlayTraining />} />
+            <Route path="/play/advanced-para" element={<PlayAdvancedPara />} />
+            <Route path="/play/clinics" element={<PlayClinics />} />
+            {/* Other sections */}
+            <Route path="/clubs" element={<Clubs />} />
+            <Route path="/coaching" element={<Coaching />} />
+            <Route path="/officials" element={<Officials />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
