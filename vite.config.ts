@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ["react", "react-dom"],
   },
   build: {
     target: "es2019",
@@ -28,8 +29,8 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Core React libraries
-          if (id.includes('react') && id.includes('react-dom')) {
+          // Core React libraries (ensure React and ReactDOM live together)
+          if (/node_modules\/(react|react-dom)\//.test(id) || id.includes('react/jsx-runtime')) {
             return 'react-vendor';
           }
           
