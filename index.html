@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Table Tennis Saskatchewan</title>
+    <meta name="description" content="Official Table Tennis Saskatchewan management system - membership, training, events, and equipment rentals" />
+    <meta name="author" content="Table Tennis Saskatchewan" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Preload critical font files to break dependency chain -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/sora/v16/xMQOuFFYT72X5wkBKy7SxwHfz3Y.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/sora/v16/xMQbuFFYT72XzQUpDqW1KX4.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Load fonts asynchronously to prevent render blocking -->
+    <script>
+      (function() {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap';
+        link.media = 'print';
+        link.onload = function() { this.media = 'all'; };
+        document.head.appendChild(link);
+      })();
+    </script>
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+
+    <meta property="og:title" content="Table Tennis Saskatchewan" />
+    <meta property="og:description" content="Official Table Tennis Saskatchewan management system" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
