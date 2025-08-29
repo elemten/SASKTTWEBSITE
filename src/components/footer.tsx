@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import logo from "@/assets/logo.png";
+// import logo from "@/assets/logo.png";
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from "lucide-react";
 
 const footerSections = [
@@ -54,11 +54,11 @@ export function Footer() {
               className="flex items-center space-x-4 mb-6"
             >
               <div className="relative">
-                <img 
-                  src={logo} 
-                  alt="Table Tennis Saskatchewan" 
-                  className="h-12 w-12 rounded-xl shadow-medium"
-                />
+                <div 
+                  className="h-12 w-12 rounded-xl shadow-medium bg-primary flex items-center justify-center"
+                >
+                  <span className="text-white font-bold text-lg">TTS</span>
+                </div>
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
               </div>
               <div>
