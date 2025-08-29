@@ -61,26 +61,20 @@ class ErrorBoundary extends Component<
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ErrorBoundary>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/membership" element={<Membership />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/rentals" element={<Rentals />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/admin" element={<Admin />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </ErrorBoundary>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <div className="min-h-screen bg-background p-8">
+    <h1 className="text-4xl font-bold text-foreground mb-4">
+      Table Tennis Saskatchewan
+    </h1>
+    <p className="text-lg text-muted-foreground">
+      Test page - if you can see this, the app is working!
+    </p>
+    <div className="mt-8 p-6 bg-card rounded-lg border">
+      <h2 className="text-2xl font-semibold mb-4">Debug Info</h2>
+      <p className="text-muted-foreground">
+        This is a minimal test to check if the basic React app loads.
+      </p>
+    </div>
+  </div>
 );
 
 export default App;
