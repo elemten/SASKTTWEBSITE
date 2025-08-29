@@ -18,16 +18,30 @@ const navigationItems = [
 
 export function Navigation({ className }: NavigationProps) {
   return (
-    <nav
+    <motion.nav
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
       className={cn(
-        "sticky top-0 z-50 w-full bg-white border-b border-border/30",
+        "sticky top-0 z-50 w-full backdrop-blur-xl bg-white/80 border-b border-border/30 shadow-soft",
+        "supports-[backdrop-filter]:bg-white/60",
         className
       )}
     >
       <div className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           {/* Logo Section */}
-          <div className="flex items-center space-x-4">
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 300, 
+              damping: 20,
+              mass: 0.8
+            }}
+            className="flex items-center space-x-4"
+            style={{ willChange: 'transform' }}
+          >
             <div className="relative">
               <div 
                 className="h-12 w-12 rounded-xl shadow-medium bg-primary flex items-center justify-center"
@@ -42,12 +56,22 @@ export function Navigation({ className }: NavigationProps) {
               </h1>
               <p className="text-xs text-muted-foreground font-medium">Official Association</p>
             </div>
-                      </div>
+          </motion.div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
             {navigationItems.map((item, index) => (
-              <div key={item.href}>
+              <motion.div
+                key={item.href}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.2, 
+                  delay: index * 0.05,
+                  ease: [0.4, 0, 0.2, 1]
+                }}
+                style={{ willChange: 'transform, opacity' }}
+              >
                 <NavLink
                   to={item.href}
                   className={({ isActive }) =>
@@ -65,12 +89,23 @@ export function Navigation({ className }: NavigationProps) {
                     <>
                       {item.label}
                       {isActive && (
-                        <div className="absolute inset-0 bg-primary/10 rounded-lg" />
+                        <motion.div
+                          layoutId="activeTab"
+                          className="absolute inset-0 bg-primary/10 rounded-lg"
+                          initial={false}
+                          transition={{ 
+                            type: "spring", 
+                            stiffness: 300, 
+                            damping: 25,
+                            mass: 0.8
+                          }}
+                          style={{ willChange: 'transform' }}
+                        />
                       )}
                     </>
                   )}
                 </NavLink>
-              </div>
+              </motion.div>
             ))}
           </div>
 
@@ -114,6 +149,6 @@ export function Navigation({ className }: NavigationProps) {
           </Button>
         </div>
       </div>
-          </nav>
+    </motion.nav>
   );
 }

@@ -1,118 +1,86 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Component, ReactNode } from "react";
 
-// Simple Navigation Component
-const Navigation = () => (
-  <nav style={{
-    backgroundColor: 'white',
-    borderBottom: '1px solid #e2e8f0',
-    padding: '1rem 2rem',
-    position: 'sticky',
-    top: 0,
-    zIndex: 50
-  }}>
-    <div style={{
-      maxWidth: '1200px',
-      margin: '0 auto',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }}>
-      <Link to="/" style={{
-        fontSize: '1.5rem',
-        fontWeight: 'bold',
-        color: '#1e293b',
-        textDecoration: 'none'
-      }}>
-        Table Tennis Saskatchewan
-      </Link>
-      <div style={{ display: 'flex', gap: '2rem' }}>
-        <Link to="/membership" style={{ color: '#64748b', textDecoration: 'none', fontWeight: '500' }}>Membership</Link>
-        <Link to="/events" style={{ color: '#64748b', textDecoration: 'none', fontWeight: '500' }}>Events</Link>
-        <Link to="/rentals" style={{ color: '#64748b', textDecoration: 'none', fontWeight: '500' }}>Rentals</Link>
-        <Link to="/about" style={{ color: '#64748b', textDecoration: 'none', fontWeight: '500' }}>About</Link>
-        <Link to="/admin" style={{ color: '#64748b', textDecoration: 'none', fontWeight: '500' }}>Admin</Link>
-      </div>
-    </div>
-  </nav>
+// Direct imports to fix white screen issue
+import Index from "./pages/Index";
+import Membership from "./pages/Membership";
+import Events from "./pages/Events";
+import Rentals from "./pages/Rentals";
+import About from "./pages/About";
+import Admin from "./pages/Admin";
+import NotFound from "./pages/NotFound";
+
+// Error boundary for lazy routes
+class ErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error("Route loading error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="text-center p-8">
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              Something went wrong
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              We're having trouble loading this page. Please try refreshing.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Refresh Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/membership" element={<Membership />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/rentals" element={<Rentals />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/admin" element={<Admin />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ErrorBoundary>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
 );
-
-// Simple page components
-const HomePage = () => (
-  <div style={{ 
-    minHeight: '100vh', 
-    backgroundColor: '#f8fafc', 
-    padding: '2rem',
-    fontFamily: 'system-ui, sans-serif'
-  }}>
-    <h1 style={{ 
-      fontSize: '2.5rem', 
-      fontWeight: 'bold', 
-      color: '#1e293b',
-      marginBottom: '1rem'
-    }}>
-      Welcome to Table Tennis Saskatchewan
-    </h1>
-    <p style={{ 
-      fontSize: '1.125rem', 
-      color: '#64748b',
-      marginBottom: '2rem'
-    }}>
-      The official website for table tennis enthusiasts in Saskatchewan.
-    </p>
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-      gap: '1.5rem',
-      marginTop: '2rem'
-    }}>
-      <div style={{ 
-        padding: '1.5rem', 
-        backgroundColor: 'white', 
-        borderRadius: '0.5rem',
-        border: '1px solid #e2e8f0'
-      }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1e293b' }}>Membership</h2>
-        <p style={{ color: '#64748b' }}>Join our community of table tennis enthusiasts.</p>
-      </div>
-      <div style={{ 
-        padding: '1.5rem', 
-        backgroundColor: 'white', 
-        borderRadius: '0.5rem',
-        border: '1px solid #e2e8f0'
-      }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1e293b' }}>Events</h2>
-        <p style={{ color: '#64748b' }}>Participate in tournaments and training sessions.</p>
-      </div>
-      <div style={{ 
-        padding: '1.5rem', 
-        backgroundColor: 'white', 
-        borderRadius: '0.5rem',
-        border: '1px solid #e2e8f0'
-      }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1e293b' }}>Equipment</h2>
-        <p style={{ color: '#64748b' }}>Rent or purchase table tennis equipment.</p>
-      </div>
-    </div>
-  </div>
-);
-
-const App = () => {
-  console.log('App component is rendering!');
-  
-  return (
-    <BrowserRouter>
-      <Navigation />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/membership" element={<HomePage />} />
-        <Route path="/events" element={<HomePage />} />
-        <Route path="/rentals" element={<HomePage />} />
-        <Route path="/about" element={<HomePage />} />
-        <Route path="/admin" element={<HomePage />} />
-        <Route path="*" element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
-  );
-};
 
 export default App;
