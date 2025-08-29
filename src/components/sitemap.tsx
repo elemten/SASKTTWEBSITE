@@ -1,59 +1,37 @@
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-import { MapPin, Users, Calendar, Trophy, BookOpen, HelpCircle, Building2, FileText } from "lucide-react";
+import { Home, Users, Wrench, GraduationCap, Calendar, Camera, Phone, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const sitemapSections = [
   {
-    title: "Main Pages",
-    icon: MapPin,
-    links: [
-      { label: "Home", href: "/", description: "Welcome to Table Tennis Saskatchewan" },
-      { label: "Membership", href: "/membership", description: "Join our community" },
-      { label: "About", href: "/about", description: "Learn about our organization" },
-    ],
-  },
-  {
-    title: "Programs & Events",
-    icon: Calendar,
-    links: [
-      { label: "Events & Training", href: "/events", description: "All events and training programs" },
-      { label: "SPED Training", href: "/events#sped", description: "Specialized training programs" },
-      { label: "Youth Programs", href: "/events#youth", description: "Programs for young players" },
-      { label: "Adult Leagues", href: "/events#adult", description: "Competitive adult leagues" },
-      { label: "Tournaments", href: "/events#tournaments", description: "Championship events" },
-    ],
-  },
-  {
-    title: "Community",
+    title: "About Us",
     icon: Users,
     links: [
-      { label: "Club Directory", href: "/clubs", description: "Find local clubs" },
-      { label: "Community Spotlight", href: "/community", description: "Member highlights" },
-      { label: "Partners", href: "/partners", description: "Our community partners" },
-      { label: "Testimonials", href: "/testimonials", description: "Member experiences" },
+      { label: "History & Mission", href: "/about/history-mission", description: "Our story and mission" },
+      { label: "Team Members", href: "/about/staff-board", description: "Meet our leadership team" },
+      { label: "Governance", href: "/about/governance", description: "Policies and bylaws" },
+      { label: "Our Story", href: "/about", description: "Learn about our organization" },
     ],
   },
   {
-    title: "Resources & Support",
-    icon: BookOpen,
+    title: "Services",
+    icon: Wrench,
     links: [
-      { label: "How It Works", href: "/how-it-works", description: "Getting started guide" },
-      { label: "Equipment Rentals", href: "/rentals", description: "Table and equipment access" },
-      { label: "Training Resources", href: "/resources", description: "Learning materials" },
-      { label: "FAQ", href: "/faq", description: "Frequently asked questions" },
-      { label: "Contact Us", href: "/contact", description: "Get in touch" },
+      { label: "Membership", href: "/membership", description: "Join our community" },
+      { label: "Equipment Rentals", href: "/rentals", description: "Professional equipment for rent" },
+      { label: "Coaching", href: "/coaching", description: "Coach education and certifications" },
+      { label: "Officials", href: "/officials", description: "Umpire and referee information" },
     ],
   },
   {
-    title: "Information",
-    icon: FileText,
+    title: "Training",
+    icon: GraduationCap,
     links: [
-      { label: "About Us", href: "/about", description: "Our organization" },
-      { label: "Impact Stats", href: "/impact", description: "Community achievements" },
-      { label: "News & Updates", href: "/news", description: "Latest information" },
-      { label: "Privacy Policy", href: "/privacy", description: "Data protection" },
-      { label: "Terms of Service", href: "/terms", description: "Usage guidelines" },
+      { label: "Training Programs", href: "/play/training", description: "Skill development programs" },
+      { label: "Clinics", href: "/play/clinics", description: "Workshops and skill clinics" },
+      { label: "Advanced & Para", href: "/play/advanced-para", description: "High-performance pathways" },
+      { label: "Where to Play", href: "/play/locations", description: "Find playing locations" },
     ],
   },
 ];
@@ -85,12 +63,12 @@ export function Sitemap() {
               transition={{ duration: 0.6, delay: 0.1 * sectionIndex }}
               viewport={{ once: true }}
             >
-              <Card className="p-6 h-full hover:shadow-medium transition-all duration-300 border-2 border-border hover:border-primary/30">
+              <Card className="p-6 h-full hover:shadow-medium transition-all duration-300 border border-border/50 hover:border-primary/30 bg-white/70 backdrop-blur-sm">
                 <div className="flex items-center space-x-3 mb-6">
-                  <div className="p-2 rounded-lg bg-primary/10">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/20 shadow-soft">
                     <section.icon className="h-5 w-5 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold">{section.title}</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{section.title}</h3>
                 </div>
 
                 <ul className="space-y-4">
@@ -104,12 +82,12 @@ export function Sitemap() {
                     >
                       <NavLink
                         to={link.href}
-                        className="group block p-3 rounded-lg hover:bg-primary/5 transition-all duration-200"
+                        className="group block p-3 rounded-xl hover:bg-primary/5 transition-all duration-200 hover:shadow-soft"
                       >
-                        <div className="font-medium text-foreground group-hover:text-primary transition-colors mb-1">
+                        <div className="font-medium text-foreground group-hover:text-primary transition-colors mb-1 text-sm">
                           {link.label}
                         </div>
-                        <div className="text-sm text-muted-foreground group-hover:text-muted-foreground/80">
+                        <div className="text-xs text-muted-foreground group-hover:text-muted-foreground/80 leading-relaxed">
                           {link.description}
                         </div>
                       </NavLink>
@@ -129,12 +107,12 @@ export function Sitemap() {
           viewport={{ once: true }}
           className="mt-16 text-center"
         >
-          <Card className="p-8 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
-            <h3 className="text-2xl font-bold mb-4">Quick Access</h3>
-            <p className="text-muted-foreground mb-6">
+          <Card className="p-8 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20 backdrop-blur-sm">
+            <h3 className="text-xl font-semibold mb-4">Quick Access</h3>
+            <p className="text-muted-foreground mb-6 text-sm">
               Need help finding something specific? Use these quick links to get where you need to go.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-3">
               {[
                 { label: "Join Now", href: "/membership", variant: "default" },
                 { label: "Find Events", href: "/events", variant: "outline" },
@@ -144,10 +122,10 @@ export function Sitemap() {
                 <NavLink
                   key={link.label}
                   to={link.href}
-                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  className={`px-5 py-2.5 rounded-xl font-medium transition-all duration-200 text-sm shadow-soft hover:shadow-medium ${
                     link.variant === "default"
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "bg-background border border-border hover:border-primary hover:text-primary"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-0.5"
+                      : "bg-white/80 border border-border/50 hover:border-primary hover:text-primary hover:-translate-y-0.5 backdrop-blur-sm"
                   }`}
                 >
                   {link.label}

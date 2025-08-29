@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TableTennis, Clock, MapPin, DollarSign, Package, Check } from "lucide-react";
-import { Sitemap } from "@/components/sitemap";
+import { Footer } from "@/components/footer";
 import { Navigation } from "@/components/ui/navigation";
 
 const rentalItems = [
@@ -299,8 +299,8 @@ export default function Rentals() {
         </div>
       </section>
 
-      {/* Sitemap Section */}
-      <Sitemap />
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 }

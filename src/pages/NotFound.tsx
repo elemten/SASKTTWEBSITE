@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { Sitemap } from "@/components/sitemap";
+import { Footer } from "@/components/footer";
 import { Navigation } from "@/components/ui/navigation";
 
 const NotFound = () => {
@@ -26,8 +26,8 @@ const NotFound = () => {
         </div>
       </div>
       
-      {/* Sitemap Section */}
-      <Sitemap />
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 };

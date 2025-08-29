@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, MapPin, Users, Trophy, BookOpen } from "lucide-react";
-import { Sitemap } from "@/components/sitemap";
+import { Footer } from "@/components/footer";
 import { Navigation } from "@/components/ui/navigation";
 
 const events = [
@@ -234,8 +234,8 @@ export default function Events() {
         </div>
       </section>
 
-      {/* Sitemap Section */}
-      <Sitemap />
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 }

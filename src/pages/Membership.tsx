@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, Star } from "lucide-react";
-import { Sitemap } from "@/components/sitemap";
+import { Footer } from "@/components/footer";
 import { Navigation } from "@/components/ui/navigation";
 
 const membershipPlans = [
@@ -216,8 +216,8 @@ export default function Membership() {
         </div>
       </section>
 
-      {/* Sitemap Section */}
-      <Sitemap />
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 }

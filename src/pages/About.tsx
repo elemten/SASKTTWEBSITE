@@ -313,8 +313,8 @@ export default function About() {
         </div>
       </section>
 
-      {/* Sitemap Section */}
-      <Sitemap />
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 }

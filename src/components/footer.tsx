@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
-
+import logo from "@/assets/logo.png";
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from "lucide-react";
 
 const footerSections = [
@@ -41,7 +41,7 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border/50">
+    <footer className="bg-gradient-to-br from-gray-900 to-black border-t border-primary/30 font-sora">
       <div className="container mx-auto px-6 py-16">
         <div className="grid md:grid-cols-5 gap-8">
           {/* Brand Section */}
@@ -53,19 +53,14 @@ export function Footer() {
               viewport={{ once: true }}
               className="flex items-center space-x-4 mb-6"
             >
-              <div className="relative">
-                <div 
-                  className="h-12 w-12 rounded-xl shadow-medium bg-primary flex items-center justify-center"
-                >
-                  <span className="text-white font-bold text-lg">TTS</span>
-                </div>
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+              <div className="h-12 w-12 rounded-xl overflow-hidden shadow-medium bg-primary/20 flex items-center justify-center border border-primary/30">
+                <img src={logo} alt="Table Tennis Saskatchewan" className="h-full w-full object-contain" />
               </div>
               <div>
-                <h3 className="text-lg font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                <h3 className="text-lg font-bold text-white">
                   Table Tennis Saskatchewan
                 </h3>
-                <p className="text-sm text-muted-foreground font-medium">
+                <p className="text-sm text-primary font-medium">
                   Excellence in Table Tennis
                 </p>
               </div>
@@ -76,7 +71,7 @@ export function Footer() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               viewport={{ once: true }}
-              className="text-muted-foreground mb-6 leading-relaxed"
+              className="text-gray-300 mb-6 leading-relaxed"
             >
               Promoting table tennis excellence across Saskatchewan through 
               quality programs, competitive opportunities, and community engagement.
@@ -90,15 +85,15 @@ export function Footer() {
               viewport={{ once: true }}
               className="space-y-3"
             >
-              <div className="flex items-center space-x-3 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-3 text-sm text-gray-300">
                 <Mail className="h-4 w-4 text-primary" />
                 <span>info@tabletennissask.ca</span>
               </div>
-              <div className="flex items-center space-x-3 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-3 text-sm text-gray-300">
                 <Phone className="h-4 w-4 text-primary" />
                 <span>(306) 555-PING</span>
               </div>
-              <div className="flex items-center space-x-3 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-3 text-sm text-gray-300">
                 <MapPin className="h-4 w-4 text-primary" />
                 <span>Saskatchewan, Canada</span>
               </div>
@@ -114,13 +109,13 @@ export function Footer() {
               transition={{ duration: 0.6, delay: 0.1 * (sectionIndex + 1) }}
               viewport={{ once: true }}
             >
-              <h4 className="font-semibold mb-4">{section.title}</h4>
+              <h4 className="font-semibold mb-4 text-white">{section.title}</h4>
               <ul className="space-y-3">
                 {section.links.map((link) => (
                   <li key={link.label}>
                     <NavLink
                       to={link.href}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                      className="text-sm text-gray-400 hover:text-primary transition-colors"
                     >
                       {link.label}
                     </NavLink>
@@ -137,9 +132,9 @@ export function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
           viewport={{ once: true }}
-          className="border-t border-border/50 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"
+          className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"
         >
-          <p className="text-sm text-muted-foreground mb-4 md:mb-0">
+          <p className="text-sm text-gray-400 mb-4 md:mb-0">
             © {new Date().getFullYear()} Table Tennis Saskatchewan. All rights reserved.
           </p>
 
@@ -151,7 +146,7 @@ export function Footer() {
                 href={social.href}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-xl bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="p-2 rounded-xl bg-gray-800 hover:bg-primary hover:text-primary-foreground transition-colors shadow-soft border border-gray-700 text-gray-300"
                 aria-label={social.label}
               >
                 <social.icon className="h-4 w-4" />
