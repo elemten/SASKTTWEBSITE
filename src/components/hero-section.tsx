@@ -143,7 +143,7 @@ export function HeroSection() {
           {/* Feature Cards */}
           <motion.div
             variants={containerVariants}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto"
           >
             {heroCards.map((card, index) => (
               <motion.div
@@ -156,32 +156,36 @@ export function HeroSection() {
                 className="group"
                 style={{ willChange: 'transform' }}
               >
-                <Card className="glass p-8 h-full hover:shadow-strong transition-all duration-500 hover:scale-[1.02] group-hover:shadow-primary/20">
-                  <div className={`inline-flex p-3 rounded-2xl bg-gradient-to-r ${card.gradient} mb-6 shadow-medium`}>
-                    <card.icon className="h-6 w-6 text-white" />
-                  </div>
-                  
-                  <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors font-sora">
-                    {card.title}
-                  </h2>
-                  
-                  <p className="text-muted-foreground mb-4 leading-relaxed font-light">
-                    {card.description}
-                  </p>
+                <Card className="glass p-6 lg:p-8 h-full hover:shadow-strong transition-all duration-500 hover:scale-[1.02] group-hover:shadow-primary/20">
+                  <div className="lg:flex lg:flex-row lg:items-center lg:gap-6">
+                    <div className={`inline-flex p-3 rounded-2xl bg-gradient-to-r ${card.gradient} mb-6 lg:mb-0 shadow-medium lg:flex-shrink-0`}>
+                      <card.icon className="h-6 w-6 text-white" />
+                    </div>
 
-                  {card.pricing && (
-                    <p className="text-sm font-medium text-primary mb-6 bg-primary/10 rounded-lg px-3 py-2">
-                      {card.pricing}
-                    </p>
-                  )}
-                  
-                  <Button 
-                    variant="ghost" 
-                    className="w-full group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300"
-                  >
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
+                    <div className="flex-1">
+                      <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors font-sora">
+                        {card.title}
+                      </h2>
+
+                      <p className="text-muted-foreground mb-4 leading-relaxed font-light">
+                        {card.description}
+                      </p>
+
+                      {card.pricing && (
+                        <p className="text-sm font-medium text-primary mb-6 bg-primary/10 rounded-lg px-3 py-2">
+                          {card.pricing}
+                        </p>
+                      )}
+
+                      <Button
+                        variant="ghost"
+                        className="w-full group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300"
+                      >
+                        Learn More
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Button>
+                    </div>
+                  </div>
                 </Card>
               </motion.div>
             ))}
