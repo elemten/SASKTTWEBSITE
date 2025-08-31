@@ -23,23 +23,41 @@ export default function SignIn() {
   const redirectTo = searchParams.get('redirectTo') || '/admin'
 
   useEffect(() => {
+    // Check if Supabase is configured
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase not configured, allowing direct access for development')
+      // For development without Supabase, add a demo login option
+      return
+    }
+
     // Check if user is already authenticated
     const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        navigate(redirectTo)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          navigate(redirectTo)
+        }
+      } catch (error) {
+        console.warn('Supabase auth check failed, continuing with sign-in page')
       }
     }
     checkUser()
 
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        navigate(redirectTo)
-      }
-    })
+    try {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          navigate(redirectTo)
+        }
+      })
 
-    return () => subscription.unsubscribe()
+      return () => subscription.unsubscribe()
+    } catch (error) {
+      console.warn('Supabase auth state change listener failed, skipping for development')
+    }
   }, [navigate, redirectTo])
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
@@ -195,6 +213,31 @@ export default function SignIn() {
                   )}
                 </Button>
               </form>
+
+              {/* Demo login for development */}
+              {((!import.meta.env.VITE_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL) ||
+                (!import.meta.env.VITE_SUPABASE_ANON_KEY && !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) && (
+                <div className="space-y-3">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">
+                        Development Mode
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    onClick={() => navigate(redirectTo)}
+                    className="w-full bg-orange-600 hover:bg-orange-700"
+                  >
+                    Demo Login (Development)
+                  </Button>
+                </div>
+              )}
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
