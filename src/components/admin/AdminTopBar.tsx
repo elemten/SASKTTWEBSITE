@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { supabase } from "@/lib/supabaseClient";
+import { mockAuth } from "@/lib/mock-auth";
 
 export const AdminTopBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,21 +29,14 @@ export const AdminTopBar = () => {
   useEffect(() => {
     // Get initial user
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = await mockAuth.getCurrentUser();
       setUser(user);
     };
     getUser();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user || null);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await mockAuth.signOut();
     navigate('/');
   };
 
@@ -115,7 +108,7 @@ export const AdminTopBar = () => {
                 </Avatar>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium">
-                    {user?.user_metadata?.full_name || 'Admin User'}
+                    {user?.name || 'Admin User'}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {user?.email || 'admin@tts.ca'}

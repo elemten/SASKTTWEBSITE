@@ -192,10 +192,11 @@ export function Navigation({ className }: NavigationProps) {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
               className="text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200"
+              onClick={() => window.location.href = '/auth/sign-in'}
             >
               Sign In
             </Button>
@@ -360,12 +361,31 @@ export function Navigation({ className }: NavigationProps) {
                 ))}
               </nav>
 
+              {/* Sign In Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.3 }}
+                className="pt-4 border-t border-border/30"
+              >
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full mb-3"
+                  onClick={() => {
+                    closeMobileMenu();
+                    window.location.href = '/auth/sign-in';
+                  }}
+                >
+                  Sign In
+                </Button>
+              </motion.div>
+
               {/* CTA Button */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.3 }}
-                className="pt-4 border-t border-border/30"
               >
                 <Button
                   variant="default"
