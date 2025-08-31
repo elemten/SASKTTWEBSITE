@@ -1,4 +1,4 @@
-import { useState, Suspense, lazy } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Download, FileText, Calendar, BarChart3, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,126 +14,42 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Lazy load recharts components to avoid circular dependency issues
-const LineChart = lazy(() => import('recharts').then(module => ({ default: module.LineChart })));
-const Line = lazy(() => import('recharts').then(module => ({ default: module.Line })));
-const BarChart = lazy(() => import('recharts').then(module => ({ default: module.BarChart })));
-const Bar = lazy(() => import('recharts').then(module => ({ default: module.Bar })));
-const XAxis = lazy(() => import('recharts').then(module => ({ default: module.XAxis })));
-const YAxis = lazy(() => import('recharts').then(module => ({ default: module.YAxis })));
-const CartesianGrid = lazy(() => import('recharts').then(module => ({ default: module.CartesianGrid })));
-const Tooltip = lazy(() => import('recharts').then(module => ({ default: module.Tooltip })));
-const ResponsiveContainer = lazy(() => import('recharts').then(module => ({ default: module.ResponsiveContainer })));
-const PieChart = lazy(() => import('recharts').then(module => ({ default: module.PieChart })));
-const Pie = lazy(() => import('recharts').then(module => ({ default: module.Pie })));
-const Cell = lazy(() => import('recharts').then(module => ({ default: module.Cell })));
-
-// Loading fallback component for charts
-const ChartLoadingFallback = () => (
-  <div className="w-full h-[300px] bg-muted/20 rounded-lg flex items-center justify-center">
+// Simple chart placeholder to avoid circular dependency issues
+const ChartPlaceholder = ({ title, data }: { title: string; data: any[] }) => (
+  <div className="w-full h-[300px] bg-gradient-to-br from-muted/20 to-muted/10 rounded-lg flex items-center justify-center border border-muted/30">
     <div className="text-center">
-      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-      <p className="text-muted-foreground text-sm">Loading chart...</p>
+      <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+        <BarChart3 className="h-8 w-8 text-primary" />
+      </div>
+      <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
+      <p className="text-muted-foreground text-sm mb-4">Interactive charts coming soon</p>
+
+      {/* Simple data preview */}
+      <div className="grid grid-cols-2 gap-4 text-xs">
+        {data.slice(0, 4).map((item, index) => (
+          <div key={index} className="bg-card/50 rounded-lg p-2 border border-border/50">
+            <div className="font-medium text-foreground">{item.month || item.name}</div>
+            <div className="text-muted-foreground">
+              {item.active || item.membership || item.value || 'Data'}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 );
 
-// Lazy-loaded chart components
+// Chart components that use placeholders instead of recharts
 const MembershipTrendsChart = ({ data }: { data: any[] }) => (
-  <Suspense fallback={<ChartLoadingFallback />}>
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-        <XAxis
-          dataKey="month"
-          stroke="hsl(var(--muted-foreground))"
-          fontSize={12}
-        />
-        <YAxis
-          stroke="hsl(var(--muted-foreground))"
-          fontSize={12}
-        />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: "hsl(var(--card))",
-            border: "1px solid hsl(var(--border))",
-            borderRadius: "8px"
-          }}
-        />
-        <Line
-          type="monotone"
-          dataKey="active"
-          stroke="hsl(var(--primary))"
-          strokeWidth={2}
-          name="Active"
-        />
-        <Line
-          type="monotone"
-          dataKey="new"
-          stroke="hsl(var(--success))"
-          strokeWidth={2}
-          name="New"
-        />
-        <Line
-          type="monotone"
-          dataKey="expired"
-          stroke="hsl(var(--destructive))"
-          strokeWidth={2}
-          name="Expired"
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  </Suspense>
+  <ChartPlaceholder title="Membership Trends" data={data} />
 );
 
 const RevenueBreakdownChart = ({ data }: { data: any[] }) => (
-  <Suspense fallback={<ChartLoadingFallback />}>
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-        <XAxis
-          dataKey="month"
-          stroke="hsl(var(--muted-foreground))"
-          fontSize={12}
-        />
-        <YAxis
-          stroke="hsl(var(--muted-foreground))"
-          fontSize={12}
-        />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: "hsl(var(--card))",
-            border: "1px solid hsl(var(--border))",
-            borderRadius: "8px"
-          }}
-        />
-        <Bar dataKey="membership" fill="hsl(var(--primary))" name="Membership" />
-        <Bar dataKey="events" fill="hsl(var(--success))" name="Events" />
-      </BarChart>
-    </ResponsiveContainer>
-  </Suspense>
+  <ChartPlaceholder title="Revenue Breakdown" data={data} />
 );
 
 const ClubDistributionChart = ({ data }: { data: any[] }) => (
-  <Suspense fallback={<ChartLoadingFallback />}>
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          outerRadius={80}
-          dataKey="value"
-          label={({ name, value }) => `${name}: ${value}`}
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
-          ))}
-        </Pie>
-        <Tooltip />
-      </PieChart>
-    </ResponsiveContainer>
-  </Suspense>
+  <ChartPlaceholder title="Club Distribution" data={data} />
 );
 
 // Mock data
