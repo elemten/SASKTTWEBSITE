@@ -16,6 +16,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Secondary pages
 const Clubs = lazy(() => import("./pages/Clubs"));
+const ClubRegistration = lazy(() => import("./pages/ClubRegistration"));
 const Coaching = lazy(() => import("./pages/Coaching"));
 const Officials = lazy(() => import("./pages/Officials"));
 const Resources = lazy(() => import("./pages/Resources"));
@@ -104,6 +105,7 @@ const App = () => (
               <Route path="/play/clinics" element={<PlayClinics />} />
               {/* Other sections */}
               <Route path="/clubs" element={<Clubs />} />
+              <Route path="/clubs/register" element={<ClubRegistration />} />
               <Route path="/coaching" element={<Coaching />} />
               <Route path="/officials" element={<Officials />} />
               <Route path="/resources" element={<Resources />} />

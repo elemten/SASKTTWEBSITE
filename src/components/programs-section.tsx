@@ -124,9 +124,10 @@ export function ProgramsSection() {
                     ))}
                   </ul>
                   
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
+                    onClick={() => window.location.href = program.href}
                   >
                     Learn More
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />

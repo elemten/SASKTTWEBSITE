@@ -31,7 +31,7 @@ const heroCards = [
     icon: UserPlus,
     title: "Register / Start a New Club",
     description: "Register a club and get approved for MAP grants.",
-    href: "/clubs",
+    href: "/clubs/register",
     gradient: "from-primary to-primary-light",
   },
 
@@ -143,7 +143,7 @@ export function HeroSection() {
           {/* Feature Cards */}
           <motion.div
             variants={containerVariants}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 lg:gap-16 xl:gap-20 max-w-7xl mx-auto justify-items-center px-4"
           >
             {heroCards.map((card, index) => (
               <motion.div
@@ -156,36 +156,35 @@ export function HeroSection() {
                 className="group"
                 style={{ willChange: 'transform' }}
               >
-                <Card className="glass p-6 lg:p-8 h-full hover:shadow-strong transition-all duration-500 hover:scale-[1.02] group-hover:shadow-primary/20">
-                  <div className="lg:flex lg:flex-row lg:items-center lg:gap-6">
-                    <div className={`inline-flex p-3 rounded-2xl bg-gradient-to-r ${card.gradient} mb-6 lg:mb-0 shadow-medium lg:flex-shrink-0`}>
+                <Card className="glass p-6 lg:p-8 h-full hover:shadow-strong transition-all duration-500 hover:scale-[1.02] group-hover:shadow-primary/20 flex flex-col max-w-sm w-full">
+                  <div className="flex-1">
+                    <div className={`inline-flex p-3 rounded-2xl bg-gradient-to-r ${card.gradient} mb-6 shadow-medium`}>
                       <card.icon className="h-6 w-6 text-white" />
                     </div>
 
-                    <div className="flex-1">
-                      <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors font-sora">
-                        {card.title}
-                      </h2>
+                    <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors font-sora">
+                      {card.title}
+                    </h2>
 
-                      <p className="text-muted-foreground mb-4 leading-relaxed font-light">
-                        {card.description}
+                    <p className="text-muted-foreground mb-4 leading-relaxed font-light">
+                      {card.description}
+                    </p>
+
+                    {card.pricing && (
+                      <p className="text-sm font-medium text-primary mb-6 bg-primary/10 rounded-lg px-3 py-2">
+                        {card.pricing}
                       </p>
-
-                      {card.pricing && (
-                        <p className="text-sm font-medium text-primary mb-6 bg-primary/10 rounded-lg px-3 py-2">
-                          {card.pricing}
-                        </p>
-                      )}
-
-                      <Button
-                        variant="ghost"
-                        className="w-full group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300"
-                      >
-                        Learn More
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Button>
-                    </div>
+                    )}
                   </div>
+
+                  <Button
+                    variant="hero"
+                    className="w-full mt-auto"
+                    onClick={() => window.location.href = card.href}
+                  >
+                    Learn More
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
                 </Card>
               </motion.div>
             ))}
