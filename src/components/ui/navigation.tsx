@@ -31,7 +31,7 @@ const navigationItems = [
     { href: "/coaching", label: "Coaching" },
     { href: "/officials", label: "Officials" },
   ] },
-  { href: "/events", label: "Training", children: [
+  { href: "/play/training", label: "Training", children: [
     { href: "/play/training", label: "Training Programs" },
     { href: "/play/clinics", label: "Clinics" },
     { href: "/play/advanced-para", label: "Advanced & Para" },

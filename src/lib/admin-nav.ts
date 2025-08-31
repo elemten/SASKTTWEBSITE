@@ -6,7 +6,8 @@ import {
   Calendar,
   Receipt,
   BarChart3,
-  Shield
+  Shield,
+  Trophy
 } from "lucide-react";
 
 export interface AdminNavItem {
@@ -30,6 +31,12 @@ export const ADMIN_NAV: AdminNavItem[] = [
     href: "/admin/members"
   },
   {
+    id: "membership",
+    label: "Membership Analytics",
+    icon: Users,
+    href: "/admin/membership"
+  },
+  {
     id: "clubs",
     label: "Clubs",
     icon: Building2,
@@ -46,6 +53,12 @@ export const ADMIN_NAV: AdminNavItem[] = [
     label: "Events",
     icon: Calendar,
     href: "/admin/events"
+  },
+  {
+    id: "tournaments",
+    label: "Tournaments",
+    icon: Trophy,
+    href: "/admin/tournaments"
   },
   {
     id: "expenses",
@@ -70,9 +83,11 @@ export const ADMIN_NAV: AdminNavItem[] = [
 export type AdminSection =
   | "dashboard"
   | "members"
+  | "membership"
   | "clubs"
   | "invoices"
   | "events"
+  | "tournaments"
   | "expenses"
   | "reports"
   | "admins";

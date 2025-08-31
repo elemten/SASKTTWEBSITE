@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Download, FileText, Calendar, BarChart3, TrendingUp, Users } from "lucide-react";
+import { Download, FileText, Calendar, BarChart3, TrendingUp, Users, DollarSign, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -13,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { FinanceReports } from "./FinanceReports";
 
 // Simple chart placeholder to avoid circular dependency issues
 const ChartPlaceholder = ({ title, data }: { title: string; data: any[] }) => (
@@ -130,6 +132,8 @@ export const Reports = () => {
     }
   };
 
+  const [activeTab, setActiveTab] = useState("overview");
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -140,10 +144,10 @@ export const Reports = () => {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Reports</h1>
-          <p className="text-muted-foreground">Generate and view detailed analytics reports</p>
+          <h1 className="text-3xl font-bold text-foreground">Reports & Analytics</h1>
+          <p className="text-muted-foreground">Comprehensive reporting and financial analytics</p>
         </div>
-        
+
         <div className="flex gap-2">
           <Select value={reportPeriod} onValueChange={setReportPeriod}>
             <SelectTrigger className="w-[140px]">
@@ -155,7 +159,7 @@ export const Reports = () => {
               <SelectItem value="yearly">Yearly</SelectItem>
             </SelectContent>
           </Select>
-          
+
           <Button className="gap-2">
             <FileText className="h-4 w-4" />
             Generate Report
@@ -163,107 +167,102 @@ export const Reports = () => {
         </div>
       </div>
 
-      {/* Quick Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Membership Trends */}
-        <Card className="glass border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Membership Trends
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <MembershipTrendsChart data={membershipTrendData} />
-          </CardContent>
-        </Card>
+      {/* Tabbed Reports Interface */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="finance">Finance</TabsTrigger>
+          <TabsTrigger value="tournaments">Tournaments</TabsTrigger>
+          <TabsTrigger value="members">Members</TabsTrigger>
+        </TabsList>
 
-        {/* Revenue Breakdown */}
-        <Card className="glass border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Revenue Breakdown
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RevenueBreakdownChart data={revenueData} />
-          </CardContent>
-        </Card>
-      </div>
+        <TabsContent value="overview" className="space-y-6">
+          {/* Quick Analytics */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Membership Trends */}
+            <Card className="glass border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Membership Trends
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MembershipTrendsChart data={membershipTrendData} />
+              </CardContent>
+            </Card>
 
-      {/* Club Distribution */}
-      <Card className="glass border-border/50">
-        <CardHeader>
-          <CardTitle>Club Distribution by Region</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center">
-            <ClubDistributionChart data={clubDistributionData} />
+            {/* Revenue Breakdown */}
+            <Card className="glass border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Revenue Breakdown
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RevenueBreakdownChart data={revenueData} />
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Available Reports */}
-      <Card className="glass border-border/50">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Available Reports</CardTitle>
-            <Select value={reportType} onValueChange={setReportType}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="membership">Membership</SelectItem>
-                <SelectItem value="financial">Financial</SelectItem>
-                <SelectItem value="clubs">Clubs</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Report Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Period</TableHead>
-                <TableHead>Generated Date</TableHead>
-                <TableHead>Format</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredReports.map((report) => (
-                <TableRow key={report.id} className="hover:bg-accent/50 transition-colors">
-                  <TableCell className="font-medium">{report.name}</TableCell>
-                  <TableCell>
-                    <Badge className={getTypeColor(report.type)}>
-                      {report.type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{report.period}</TableCell>
-                  <TableCell>{report.generatedDate}</TableCell>
-                  <TableCell>{report.format}</TableCell>
-                  <TableCell className="text-muted-foreground">{report.size}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-1 justify-end">
-                      <Button variant="ghost" size="sm">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        View
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+          {/* Club Distribution */}
+          <Card className="glass border-border/50">
+            <CardHeader>
+              <CardTitle>Club Distribution by Region</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-center">
+                <ClubDistributionChart data={clubDistributionData} />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="finance">
+          <FinanceReports />
+        </TabsContent>
+
+        <TabsContent value="tournaments" className="space-y-6">
+          <Card className="glass border-border/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5" />
+                Tournament Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12">
+                <Trophy className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Tournament Reports Coming Soon</h3>
+                <p className="text-muted-foreground">
+                  Detailed tournament analytics, participation tracking, and revenue reports will be available here.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="members" className="space-y-6">
+          <Card className="glass border-border/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Member Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12">
+                <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Member Reports Coming Soon</h3>
+                <p className="text-muted-foreground">
+                  Comprehensive member analytics, lifecycle tracking, and club health metrics.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </motion.div>
   );
 };

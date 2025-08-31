@@ -24,9 +24,17 @@ export default function SignIn() {
   // Check if user is already authenticated on page load
   useEffect(() => {
     const checkAuth = async () => {
-      const user = await mockAuth.getCurrentUser()
-      if (user) {
-        navigate(redirectTo)
+      try {
+        const user = await mockAuth.getCurrentUser()
+        console.log('Auth check result:', user)
+        if (user) {
+          console.log('User already authenticated, redirecting to:', redirectTo)
+          navigate(redirectTo)
+        } else {
+          console.log('No authenticated user found')
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error)
       }
     }
     checkAuth()
@@ -38,8 +46,11 @@ export default function SignIn() {
     setError('')
     setSuccess('')
 
+    console.log('Attempting sign in with:', { email, password })
+
     try {
       const { user, error: authError } = await mockAuth.signIn(email, password)
+      console.log('Sign in result:', { user, error: authError })
 
       if (authError) {
         setError(authError)
@@ -48,6 +59,7 @@ export default function SignIn() {
 
       if (user) {
         setSuccess('Sign in successful! Redirecting...')
+        console.log('Redirecting to:', redirectTo)
         setTimeout(() => {
           navigate(redirectTo)
         }, 1500)
@@ -65,8 +77,11 @@ export default function SignIn() {
     setError('')
     setSuccess('')
 
+    console.log('Attempting demo login with admin@tts.ca / admin123')
+
     try {
       const { user, error: authError } = await mockAuth.signIn('admin@tts.ca', 'admin123')
+      console.log('Demo login result:', { user, error: authError })
 
       if (authError) {
         setError(authError)
@@ -75,6 +90,7 @@ export default function SignIn() {
 
       if (user) {
         setSuccess('Demo login successful! Redirecting...')
+        console.log('Demo login successful, redirecting to:', redirectTo)
         setTimeout(() => {
           navigate(redirectTo)
         }, 1500)
@@ -85,6 +101,13 @@ export default function SignIn() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Clear any existing auth state for testing
+  const clearAuthState = () => {
+    console.log('Clearing auth state...')
+    localStorage.removeItem('mock_auth_user')
+    window.location.reload()
   }
 
   return (
@@ -209,6 +232,22 @@ export default function SignIn() {
                     'Demo Login (Admin Access)'
                   )}
                 </Button>
+
+                {/* Debug and clear auth button */}
+                <div className="mt-4 p-3 bg-muted/50 rounded-lg text-xs">
+                  <div className="text-center text-muted-foreground mb-2">
+                    Debug Options
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={clearAuthState}
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-xs"
+                  >
+                    Clear Auth State & Reload
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

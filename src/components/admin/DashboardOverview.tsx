@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
-import { Users, UserX, FileText, Calendar, TrendingUp, TrendingDown } from "lucide-react";
+import { Users, UserX, FileText, Calendar, TrendingUp, TrendingDown, Plus, UserPlus, CalendarPlus, Download, Receipt, Trophy, Building2, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const statsData = [
   {
@@ -56,6 +59,74 @@ const financialData = [
 ];
 
 export const DashboardOverview = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleExportCSV = () => {
+    // Mock CSV export functionality
+    toast({
+      title: "Export Started",
+      description: "CSV export has been initiated. Download will begin shortly.",
+    });
+
+    // Simulate export delay
+    setTimeout(() => {
+      const csvContent = "Name,Email,Status,Join Date\nJohn Doe,john@example.com,Active,2024-01-15\nJane Smith,jane@example.com,Active,2024-02-20";
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "members_export.csv");
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Export Complete",
+        description: "Members data has been exported successfully.",
+      });
+    }, 2000);
+  };
+
+  const quickActions = [
+    {
+      label: "Add Member",
+      icon: UserPlus,
+      onClick: () => navigate('/admin/members/new'),
+      color: "bg-blue-500 hover:bg-blue-600",
+      ariaLabel: "Add a new member"
+    },
+    {
+      label: "Create Tournament",
+      icon: Trophy,
+      onClick: () => navigate('/admin/tournaments/new'),
+      color: "bg-purple-500 hover:bg-purple-600",
+      ariaLabel: "Create a new tournament"
+    },
+    {
+      label: "Register Club",
+      icon: Building2,
+      onClick: () => navigate('/admin/clubs/new'),
+      color: "bg-green-500 hover:bg-green-600",
+      ariaLabel: "Register a new club"
+    },
+    {
+      label: "Monthly Report",
+      icon: BarChart3,
+      onClick: () => navigate('/admin/reports/monthly'),
+      color: "bg-indigo-500 hover:bg-indigo-600",
+      ariaLabel: "Generate monthly financial report"
+    },
+    {
+      label: "Export Data",
+      icon: Download,
+      onClick: handleExportCSV,
+      color: "bg-orange-500 hover:bg-orange-600",
+      ariaLabel: "Export current data as CSV"
+    }
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -85,6 +156,34 @@ export const DashboardOverview = () => {
             </div>
           </div>
         </div>
+      </motion.div>
+
+      {/* Quick Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="flex flex-wrap gap-3 justify-start"
+      >
+        {quickActions.map((action, index) => (
+          <motion.div
+            key={action.label}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 + index * 0.1, duration: 0.2 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button
+              onClick={action.onClick}
+              className={`flex items-center gap-2 px-4 py-2 h-auto rounded-full text-white font-medium shadow-sm transition-all duration-200 ${action.color}`}
+              aria-label={action.ariaLabel}
+            >
+              <action.icon className="h-4 w-4" />
+              <span>{action.label}</span>
+            </Button>
+          </motion.div>
+        ))}
       </motion.div>
 
       {/* Stats Cards */}

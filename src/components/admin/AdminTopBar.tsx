@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, User, Settings, LogOut } from "lucide-react";
+import { Search, Bell, User, Settings, LogOut, Command } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { mockAuth } from "@/lib/mock-auth";
+import { GlobalSearch, useGlobalSearch } from "./GlobalSearch";
+import { MobileAdminMode } from "./MobileAdminMode";
 
 export const AdminTopBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,6 +27,7 @@ export const AdminTopBar = () => {
     { id: 3, type: "error", message: "3 overdue invoices" },
   ]);
   const navigate = useNavigate();
+  const globalSearch = useGlobalSearch();
 
   useEffect(() => {
     // Get initial user
@@ -48,6 +51,21 @@ export const AdminTopBar = () => {
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-center justify-between">
+        {/* Branding */}
+        <div className="flex items-center gap-4 mr-8">
+          <div className="w-10 h-10 rounded-lg overflow-hidden shadow-sm">
+            <img
+              src="/logo.png"
+              alt="Table Tennis Saskatchewan logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="hidden md:block">
+            <h1 className="text-lg font-semibold text-foreground">Admin Panel</h1>
+            <p className="text-xs text-muted-foreground">Table Tennis Saskatchewan</p>
+          </div>
+        </div>
+
         {/* Search */}
         <div className="flex items-center gap-4 flex-1 max-w-md">
           <div className="relative flex-1">
@@ -63,6 +81,17 @@ export const AdminTopBar = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-4">
+          {/* Global Search */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={globalSearch.open}
+            className="hover:bg-accent"
+            title="Search everything (⌘K)"
+          >
+            <Search className="h-5 w-5" />
+          </Button>
+
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -139,6 +168,12 @@ export const AdminTopBar = () => {
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Global Search Modal */}
+      <GlobalSearch
+        isOpen={globalSearch.isOpen}
+        onClose={globalSearch.close}
+      />
     </motion.header>
   );
 };
