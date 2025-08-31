@@ -45,8 +45,7 @@ export function HeroSection() {
     offset: ["start start", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -30]);
 
   const isMobileDevice = isMobile();
 
@@ -107,7 +106,7 @@ export function HeroSection() {
 
         {/* Content Container */}
         <motion.div
-          style={{ y, opacity }}
+          style={{ y }}
           className="relative z-10 container mx-auto px-6 lg:px-8"
         >
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[80vh]">
@@ -146,10 +145,10 @@ export function HeroSection() {
                     Table Tennis
                   </span>
                   <br />
-                  <span className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white/90">
+                  <span className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white">
                     Journey
                   </span>
-                </h1>
+          </h1>
               </motion.div>
 
               {/* Enhanced Subtitle */}
@@ -157,7 +156,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
-                className="text-lg sm:text-xl lg:text-2xl text-white/90 max-w-2xl leading-relaxed font-light"
+                className="text-lg sm:text-xl lg:text-2xl text-white max-w-2xl leading-relaxed font-light"
               >
                 Join Saskatchewan's premier table tennis community.
                 From beginner fundamentals to competitive excellence,
@@ -176,12 +175,12 @@ export function HeroSection() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button
-                    variant="hero"
-                    size="xl"
+            <Button 
+              variant="hero" 
+              size="xl"
                     className="group px-8 py-6 text-lg font-bold shadow-2xl hover:shadow-3xl"
-                  >
-                    Get Started Today
+            >
+              Get Started Today
                     <motion.div
                       className="ml-3"
                       whileHover={{ x: 4 }}
@@ -189,21 +188,21 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-6 w-6" />
                     </motion.div>
-                  </Button>
+            </Button>
                 </motion.div>
-
+            
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button
-                    variant="glass"
-                    size="xl"
+            <Button 
+              variant="glass" 
+              size="xl"
                     className="px-8 py-6 text-lg font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300"
-                  >
+            >
                     <Play className="mr-2 h-5 w-5" />
-                    View Programs
-                  </Button>
+              View Programs
+            </Button>
                 </motion.div>
               </motion.div>
 
@@ -212,7 +211,7 @@ export function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8, delay: 1.0 }}
-                className="flex flex-wrap justify-center lg:justify-start gap-6 pt-8 text-white/70"
+                className="flex flex-wrap justify-center lg:justify-start gap-6 pt-8 text-white"
               >
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
@@ -263,11 +262,11 @@ export function HeroSection() {
                   >
                     <div className="text-center">
                       <div className="text-3xl font-bold text-white mb-1">1800+</div>
-                      <div className="text-sm text-white/70">Active Members</div>
+                      <div className="text-sm text-white">Active Members</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-white mb-1">23</div>
-                      <div className="text-sm text-white/70">Clubs Province-Wide</div>
+                      <div className="text-sm text-white">Clubs Province-Wide</div>
                     </div>
                   </motion.div>
 
@@ -448,8 +447,8 @@ export function HeroSection() {
                 {/* Content */}
                 <div className="flex-1 space-y-4">
                   <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
-                    Become a Member
-                  </h3>
+                  Become a Member
+                </h3>
                   <p className="text-gray-600 leading-relaxed">
                     Join Saskatchewan's premier table tennis community and unlock exclusive member benefits,
                     priority tournament registration, and access to provincial coaching programs.
@@ -478,12 +477,12 @@ export function HeroSection() {
                   whileTap={{ scale: 0.98 }}
                   className="mt-6"
                 >
-                  <Button
-                    variant="hero"
-                    size="lg"
+                <Button
+                  variant="hero"
+                  size="lg"
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
-                  >
-                    Learn More
+                >
+                  Learn More
                     <motion.div
                       className="ml-2"
                       whileHover={{ x: 3 }}
@@ -491,7 +490,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-5 w-5" />
                     </motion.div>
-                  </Button>
+                </Button>
                 </motion.div>
               </div>
             </motion.article>
@@ -530,8 +529,8 @@ export function HeroSection() {
 
                 <div className="flex-1 space-y-4">
                   <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
-                    Book Training
-                  </h3>
+                  Book Training
+                </h3>
                   <p className="text-gray-600 leading-relaxed">
                     Schedule personalized or group training sessions with certified provincial coaches.
                     Available at multiple locations across Saskatchewan.
@@ -558,12 +557,12 @@ export function HeroSection() {
                   whileTap={{ scale: 0.98 }}
                   className="mt-6"
                 >
-                  <Button
-                    variant="hero"
-                    size="lg"
+                <Button
+                  variant="hero"
+                  size="lg"
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
-                  >
-                    Learn More
+                >
+                  Learn More
                     <motion.div
                       className="ml-2"
                       whileHover={{ x: 3 }}
@@ -571,7 +570,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-5 w-5" />
                     </motion.div>
-                  </Button>
+                </Button>
                 </motion.div>
               </div>
             </motion.article>
@@ -610,8 +609,8 @@ export function HeroSection() {
 
                 <div className="flex-1 space-y-4">
                   <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
-                    Book a Clinic
-                  </h3>
+                  Book a Clinic
+                </h3>
                   <p className="text-gray-600 leading-relaxed">
                     Reserve on-site coaching clinics for your school, organization, or community group.
                     Perfect for introducing table tennis to new players.
@@ -638,12 +637,12 @@ export function HeroSection() {
                   whileTap={{ scale: 0.98 }}
                   className="mt-6"
                 >
-                  <Button
-                    variant="hero"
-                    size="lg"
+                <Button
+                  variant="hero"
+                  size="lg"
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
-                  >
-                    Learn More
+                >
+                  Learn More
                     <motion.div
                       className="ml-2"
                       whileHover={{ x: 3 }}
@@ -651,7 +650,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-5 w-5" />
                     </motion.div>
-                  </Button>
+                </Button>
                 </motion.div>
               </div>
             </motion.article>
@@ -712,18 +711,18 @@ export function HeroSection() {
                     </li>
                   </ul>
                 </div>
-
+                
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="mt-6"
                 >
-                  <Button
-                    variant="hero"
-                    size="lg"
+                <Button
+                  variant="hero"
+                  size="lg"
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
-                  >
-                    Learn More
+                >
+                  Learn More
                     <motion.div
                       className="ml-2"
                       whileHover={{ x: 3 }}
@@ -731,7 +730,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-5 w-5" />
                     </motion.div>
-                  </Button>
+                </Button>
                 </motion.div>
               </div>
             </motion.article>

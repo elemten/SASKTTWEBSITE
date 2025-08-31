@@ -485,6 +485,32 @@ html, body {
       will-change: auto !important;
     }
   }
+
+  /* Enhanced text readability on dark backgrounds */
+  .hero h1, .hero h2, .hero h3, .hero p, .hero span, .hero div {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Enhanced text shadows for hero content */
+  .hero .text-white {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.15);
+  }
+
+  .hero .text-white\/90, .hero .text-white\/70 {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7), 0 0 12px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Ensure gradient text has proper shadows */
+  .hero .bg-gradient-primary {
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 0.2);
+  }
+
+  /* Enhanced readability for mobile */
+  @media (max-width: 768px) {
+    .hero h1, .hero h2, .hero p, .hero span {
+      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 0.2);
+    }
+  }
   
   /* Animation performance classes */
   .animate-60fps {

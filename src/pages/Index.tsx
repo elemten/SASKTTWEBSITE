@@ -17,10 +17,12 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
-      
-      {/* Unified light green gradient background for entire homepage */}
-      <div className="bg-gradient-to-b from-emerald-50 via-emerald-50/90 to-emerald-50">
-        <HeroSection />
+
+      {/* Hero Section with its own dark background */}
+      <HeroSection />
+
+      {/* Content sections with subtle light green background */}
+      <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50">
         <AboutUsSection />
         <SupportedBySection />
         <ImpactStatsSection />
@@ -32,7 +34,7 @@ const Index = () => {
         <PartnersSection />
         <Sitemap />
       </div>
-      
+
       <Footer />
       <FloatingCTA />
     </div>
