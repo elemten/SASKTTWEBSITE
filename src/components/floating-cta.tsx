@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X, UserPlus } from "lucide-react";
+import { isLowEndMobile } from "@/lib/performance-utils";
 
 export function FloatingCTA() {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const rafRef = useRef<number>();
   const lastScrollY = useRef(0);
+  const isLowEnd = isLowEndMobile();
 
   const throttledScrollHandler = useCallback(() => {
     if (rafRef.current) return;
@@ -32,6 +34,18 @@ export function FloatingCTA() {
   }, [isDismissed]);
 
   useEffect(() => {
+    // Skip scroll listener on low-end devices for performance
+    if (isLowEnd) {
+      // Show CTA after a delay on low-end devices
+      const timer = setTimeout(() => {
+        if (!isDismissed) {
+          setIsVisible(true);
+        }
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+
     // Use passive listener for better performance
     window.addEventListener("scroll", throttledScrollHandler, { passive: true });
 
@@ -41,7 +55,7 @@ export function FloatingCTA() {
         cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [throttledScrollHandler]);
+  }, [throttledScrollHandler, isDismissed, isLowEnd]);
 
   const handleDismiss = () => {
     setIsDismissed(true);
@@ -52,12 +66,12 @@ export function FloatingCTA() {
     <AnimatePresence>
       {isVisible && !isDismissed && (
         <motion.div
-          initial={{ opacity: 0, y: 100, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 100, scale: 0.8 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 300, 
+          initial={isLowEnd ? { opacity: 0 } : { opacity: 0, y: 100, scale: 0.8 }}
+          animate={isLowEnd ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+          exit={isLowEnd ? { opacity: 0 } : { opacity: 0, y: 100, scale: 0.8 }}
+          transition={isLowEnd ? { duration: 0.15 } : {
+            type: "spring",
+            stiffness: 300,
             damping: 30,
             opacity: { duration: 0.3 }
           }}

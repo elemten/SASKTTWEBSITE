@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Component, ReactNode, Suspense, lazy, useEffect } from "react";
 import { PageLoadingFallback } from "@/components/ui/loading-spinner";
+import { isLowEndMobile } from "@/lib/performance-utils";
 
 // Lazy-loaded components for better code splitting
 const Index = lazy(() => import("./pages/Index"));
@@ -96,11 +97,54 @@ const queryClient = new QueryClient({
 const App = () => {
   // Performance optimizations
   useEffect(() => {
+    const lowEnd = isLowEndMobile();
+
     // Enable CSS containment for better performance
     document.documentElement.style.contain = 'layout style paint';
 
     // Optimize scroll behavior
-    document.documentElement.style.scrollBehavior = 'smooth';
+    document.documentElement.style.scrollBehavior = lowEnd ? 'auto' : 'smooth';
+
+    // Aggressive performance optimizations for low-end devices
+    if (lowEnd) {
+      // Disable all animations and transitions
+      const style = document.createElement('style');
+      style.textContent = `
+        *, *::before, *::after {
+          animation: none !important;
+          transition: none !important;
+          transform: none !important;
+          will-change: auto !important;
+        }
+
+        .animate-gpu, .gpu-accelerated, .hover-optimized {
+          transform: none !important;
+          will-change: auto !important;
+          animation: none !important;
+          transition: none !important;
+        }
+
+        /* Simplify shadows on low-end devices */
+        .shadow-soft, .shadow-medium, .shadow-strong, .shadow-lg, .shadow-xl {
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Disable hover effects on touch devices */
+        @media (hover: none) {
+          .group:hover, .hover\:scale-105:hover, .hover\:shadow-xl:hover {
+            transform: none !important;
+            box-shadow: none !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+
+      return () => {
+        document.head.removeChild(style);
+        document.documentElement.style.contain = '';
+        document.documentElement.style.scrollBehavior = '';
+      };
+    }
 
     return () => {
       // Cleanup

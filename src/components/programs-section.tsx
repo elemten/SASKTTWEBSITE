@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Users, Trophy, Zap, Target } from "lucide-react";
+import { isLowEndMobile } from "@/lib/performance-utils";
 
 const programs = [
   {
@@ -61,14 +62,15 @@ const cardVariants = {
 export function ProgramsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const isLowEnd = isLowEndMobile();
 
   return (
     <section ref={ref} className="py-24">
       <div className="container mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
+          initial={isLowEnd ? { opacity: 0 } : { opacity: 0, y: 30 }}
+          animate={isInView ? (isLowEnd ? { opacity: 1 } : { opacity: 1, y: 0 }) : (isLowEnd ? { opacity: 0 } : { opacity: 0, y: 30 })}
+          transition={isLowEnd ? { duration: 0.15 } : { duration: 0.6 }}
           className="text-center mb-16"
         >
           <h2 className="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold tracking-tight mb-6 font-sora text-green-800">
@@ -88,13 +90,16 @@ export function ProgramsSection() {
           {programs.map((program, index) => (
             <motion.div
               key={program.title}
-              variants={cardVariants}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              whileHover={{
+              variants={isLowEnd ? {
+                hidden: { opacity: 0 },
+                visible: { opacity: 1 }
+              } : cardVariants}
+              transition={isLowEnd ? { duration: 0.15 } : { duration: 0.6, ease: "easeOut" }}
+              whileHover={isLowEnd ? undefined : {
                 scale: 1.03,
                 transition: { type: "spring", stiffness: 300, damping: 20 }
               }}
-              className="group h-full animate-gpu hover-optimized"
+              className={`group h-full ${isLowEnd ? '' : 'animate-gpu hover-optimized'}`}
             >
               <Card className="bg-white h-full overflow-hidden hover:shadow-xl transition-all duration-500 group-hover:shadow-lg border border-gray-100">
                 <div className="aspect-video bg-gradient-to-br from-green-100 to-green-200 relative overflow-hidden">

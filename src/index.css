@@ -397,6 +397,94 @@ html, body {
     overscroll-behavior: contain;
     scroll-behavior: smooth;
   }
+
+  /* Mobile performance optimizations */
+  @media (max-width: 768px) {
+    /* Reduce motion on mobile */
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.2s !important;
+      animation-delay: 0s !important;
+      transition-duration: 0.2s !important;
+      transition-delay: 0s !important;
+    }
+
+    /* Disable expensive animations on mobile */
+    .animate-gpu {
+      transform: none !important;
+      will-change: auto !important;
+      animation: none !important;
+    }
+
+    /* Optimize button interactions */
+    button, .btn, [role="button"] {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    /* Disable hover effects on touch devices */
+    @media (hover: none) {
+      .group:hover .group-hover\:scale-105 {
+        transform: none !important;
+      }
+
+      .hover\:scale-105:hover {
+        transform: none !important;
+      }
+
+      .hover\:shadow-xl:hover {
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  /* Low-end device optimizations */
+  @media (max-width: 480px) {
+    /* Disable all animations on very small screens */
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
+
+    /* Remove will-change to prevent memory issues */
+    .animate-gpu,
+    .gpu-accelerated {
+      will-change: auto !important;
+    }
+
+    /* Simplify shadows */
+    .shadow-soft,
+    .shadow-medium,
+    .shadow-strong,
+    .shadow-lg,
+    .shadow-xl {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    }
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .animate-gpu,
+    .gpu-accelerated {
+      transform: none !important;
+      will-change: auto !important;
+    }
+  }
   
   /* Animation performance classes */
   .animate-60fps {
