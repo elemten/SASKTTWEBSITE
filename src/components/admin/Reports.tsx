@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import { Download, FileText, Calendar, BarChart3, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,128 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+
+// Lazy load recharts components to avoid circular dependency issues
+const LineChart = lazy(() => import('recharts').then(module => ({ default: module.LineChart })));
+const Line = lazy(() => import('recharts').then(module => ({ default: module.Line })));
+const BarChart = lazy(() => import('recharts').then(module => ({ default: module.BarChart })));
+const Bar = lazy(() => import('recharts').then(module => ({ default: module.Bar })));
+const XAxis = lazy(() => import('recharts').then(module => ({ default: module.XAxis })));
+const YAxis = lazy(() => import('recharts').then(module => ({ default: module.YAxis })));
+const CartesianGrid = lazy(() => import('recharts').then(module => ({ default: module.CartesianGrid })));
+const Tooltip = lazy(() => import('recharts').then(module => ({ default: module.Tooltip })));
+const ResponsiveContainer = lazy(() => import('recharts').then(module => ({ default: module.ResponsiveContainer })));
+const PieChart = lazy(() => import('recharts').then(module => ({ default: module.PieChart })));
+const Pie = lazy(() => import('recharts').then(module => ({ default: module.Pie })));
+const Cell = lazy(() => import('recharts').then(module => ({ default: module.Cell })));
+
+// Loading fallback component for charts
+const ChartLoadingFallback = () => (
+  <div className="w-full h-[300px] bg-muted/20 rounded-lg flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+      <p className="text-muted-foreground text-sm">Loading chart...</p>
+    </div>
+  </div>
+);
+
+// Lazy-loaded chart components
+const MembershipTrendsChart = ({ data }: { data: any[] }) => (
+  <Suspense fallback={<ChartLoadingFallback />}>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+        <XAxis
+          dataKey="month"
+          stroke="hsl(var(--muted-foreground))"
+          fontSize={12}
+        />
+        <YAxis
+          stroke="hsl(var(--muted-foreground))"
+          fontSize={12}
+        />
+        <Tooltip
+          contentStyle={{
+            backgroundColor: "hsl(var(--card))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "8px"
+          }}
+        />
+        <Line
+          type="monotone"
+          dataKey="active"
+          stroke="hsl(var(--primary))"
+          strokeWidth={2}
+          name="Active"
+        />
+        <Line
+          type="monotone"
+          dataKey="new"
+          stroke="hsl(var(--success))"
+          strokeWidth={2}
+          name="New"
+        />
+        <Line
+          type="monotone"
+          dataKey="expired"
+          stroke="hsl(var(--destructive))"
+          strokeWidth={2}
+          name="Expired"
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  </Suspense>
+);
+
+const RevenueBreakdownChart = ({ data }: { data: any[] }) => (
+  <Suspense fallback={<ChartLoadingFallback />}>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+        <XAxis
+          dataKey="month"
+          stroke="hsl(var(--muted-foreground))"
+          fontSize={12}
+        />
+        <YAxis
+          stroke="hsl(var(--muted-foreground))"
+          fontSize={12}
+        />
+        <Tooltip
+          contentStyle={{
+            backgroundColor: "hsl(var(--card))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "8px"
+          }}
+        />
+        <Bar dataKey="membership" fill="hsl(var(--primary))" name="Membership" />
+        <Bar dataKey="events" fill="hsl(var(--success))" name="Events" />
+      </BarChart>
+    </ResponsiveContainer>
+  </Suspense>
+);
+
+const ClubDistributionChart = ({ data }: { data: any[] }) => (
+  <Suspense fallback={<ChartLoadingFallback />}>
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          outerRadius={80}
+          dataKey="value"
+          label={({ name, value }) => `${name}: ${value}`}
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+  </Suspense>
+);
 
 // Mock data
 const availableReports = [
@@ -137,48 +258,7 @@ export const Reports = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={membershipTrendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="month" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="active" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
-                  name="Active"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="new" 
-                  stroke="hsl(var(--success))" 
-                  strokeWidth={2}
-                  name="New"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="expired" 
-                  stroke="hsl(var(--destructive))" 
-                  strokeWidth={2}
-                  name="Expired"
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <MembershipTrendsChart data={membershipTrendData} />
           </CardContent>
         </Card>
 
@@ -191,30 +271,7 @@ export const Reports = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="month" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }}
-                />
-                <Bar dataKey="membership" fill="hsl(var(--primary))" name="Membership" />
-                <Bar dataKey="events" fill="hsl(var(--success))" name="Events" />
-
-              </BarChart>
-            </ResponsiveContainer>
+            <RevenueBreakdownChart data={revenueData} />
           </CardContent>
         </Card>
       </div>
@@ -226,23 +283,7 @@ export const Reports = () => {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={clubDistributionData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  dataKey="value"
-                  label={({ name, value }) => `${name}: ${value}`}
-                >
-                  {clubDistributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            <ClubDistributionChart data={clubDistributionData} />
           </div>
         </CardContent>
       </Card>
