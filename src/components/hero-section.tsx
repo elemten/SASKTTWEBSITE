@@ -142,7 +142,7 @@ export function HeroSection() {
                 <h1 className="text-5xl sm:text-6xl lg:text-8xl xl:text-9xl font-black text-white leading-[0.9] tracking-tight">
                   Elevate Your
                   <br />
-                  <span className="bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent">
+                  <span className="bg-gradient-primary bg-clip-text text-transparent">
                     Table Tennis
                   </span>
                   <br />
@@ -179,7 +179,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="xl"
-                    className="group px-8 py-6 text-lg font-bold shadow-2xl hover:shadow-3xl bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-300 hover:to-orange-400 text-gray-900 border-0"
+                    className="group px-8 py-6 text-lg font-bold shadow-2xl hover:shadow-3xl"
                   >
                     Get Started Today
                     <motion.div
@@ -392,13 +392,13 @@ export function HeroSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <Badge className="mb-6 px-6 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 border-emerald-200 hover:from-emerald-200 hover:to-teal-200 transition-all duration-300">
+              <Badge className="mb-6 px-6 py-2 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-all duration-300 font-semibold">
                 🚀 Explore Our Services
               </Badge>
             </motion.div>
             <h2 className="text-4xl lg:text-6xl font-black text-gray-900 mb-6">
               Everything You Need to
-              <span className="block bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-primary bg-clip-text text-transparent font-black">
                 Excel at Table Tennis
               </span>
             </h2>
@@ -424,8 +424,8 @@ export function HeroSection() {
               className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl border border-gray-100/50 overflow-hidden"
             >
 
-              {/* Gradient Border Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+              {/* Consistent Green Border Effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
 
               <div className="relative p-8 h-full flex flex-col">
 
@@ -438,7 +438,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500"
+                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
                   >
                     <UserPlus className="h-6 w-6" />
                     <span className="ml-2 font-bold">Become a Member</span>
@@ -447,7 +447,7 @@ export function HeroSection() {
 
                 {/* Content */}
                 <div className="flex-1 space-y-4">
-                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
                     Become a Member
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
@@ -458,15 +458,15 @@ export function HeroSection() {
                   {/* Feature List */}
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       Priority tournament registration
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       Access to provincial coaching
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       Member-exclusive events
                     </li>
                   </ul>
@@ -481,7 +481,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full py-4 font-semibold shadow-lg hover:shadow-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600"
+                    className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
                   >
                     Learn More
                     <motion.div
@@ -509,7 +509,7 @@ export function HeroSection() {
               className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl border border-gray-100/50 overflow-hidden"
             >
 
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-indigo-500/10 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
 
               <div className="relative p-8 h-full flex flex-col">
 
@@ -521,7 +521,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500"
+                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
                   >
                     <Zap className="h-6 w-6" />
                     <span className="ml-2 font-bold">Book Training</span>
@@ -529,7 +529,7 @@ export function HeroSection() {
                 </motion.div>
 
                 <div className="flex-1 space-y-4">
-                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
                     Book Training
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
@@ -539,15 +539,15 @@ export function HeroSection() {
 
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       1-on-1 and group sessions
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       Certified provincial coaches
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       All skill levels welcome
                     </li>
                   </ul>
@@ -561,7 +561,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full py-4 font-semibold shadow-lg hover:shadow-xl bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600"
+                    className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
                   >
                     Learn More
                     <motion.div
@@ -589,7 +589,7 @@ export function HeroSection() {
               className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl border border-gray-100/50 overflow-hidden"
             >
 
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 via-red-500/10 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
 
               <div className="relative p-8 h-full flex flex-col">
 
@@ -601,7 +601,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500"
+                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
                   >
                     <Trophy className="h-6 w-6" />
                     <span className="ml-2 font-bold">Book a Clinic</span>
@@ -609,7 +609,7 @@ export function HeroSection() {
                 </motion.div>
 
                 <div className="flex-1 space-y-4">
-                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-orange-700 transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
                     Book a Clinic
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
@@ -619,15 +619,15 @@ export function HeroSection() {
 
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-orange-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       On-site clinic visits
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-orange-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       Schools and communities
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-orange-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       Beginner-friendly programs
                     </li>
                   </ul>
@@ -641,7 +641,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full py-4 font-semibold shadow-lg hover:shadow-xl bg-gradient-to-r from-orange-600 to-red-700 hover:from-orange-500 hover:to-red-600"
+                    className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
                   >
                     Learn More
                     <motion.div
@@ -669,7 +669,7 @@ export function HeroSection() {
               className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl border border-gray-100/50 overflow-hidden"
             >
 
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/10 to-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
 
               <div className="relative p-8 h-full flex flex-col">
 
@@ -681,7 +681,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500"
+                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
                   >
                     <Award className="h-6 w-6" />
                     <span className="ml-2 font-bold">Start a Club</span>
@@ -689,8 +689,8 @@ export function HeroSection() {
                 </motion.div>
 
                 <div className="flex-1 space-y-4">
-                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">
-                    Register / Start a New Club
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300">
+                    Start a Club
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
                     Start your own table tennis club and get approved for provincial funding and grants.
@@ -699,15 +699,15 @@ export function HeroSection() {
 
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       Provincial funding available
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       Expert guidance provided
                     </li>
                     <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full flex-shrink-0" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
                       MAP grant applications
                     </li>
                   </ul>
@@ -721,7 +721,7 @@ export function HeroSection() {
                   <Button
                     variant="hero"
                     size="lg"
-                    className="w-full py-4 font-semibold shadow-lg hover:shadow-xl bg-gradient-to-r from-purple-600 to-pink-700 hover:from-purple-500 hover:to-pink-600"
+                    className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
                   >
                     Learn More
                     <motion.div
@@ -752,7 +752,7 @@ export function HeroSection() {
               <Button
                 variant="hero"
                 size="xl"
-                className="px-12 py-6 text-xl font-bold shadow-2xl hover:shadow-3xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600"
+                className="px-12 py-6 text-xl font-bold shadow-2xl hover:shadow-3xl"
               >
                 Explore All Programs
                 <ArrowRight className="ml-3 h-7 w-7" />
