@@ -28,7 +28,15 @@ const programs = [
     description: "Regular tournaments from beginner-friendly to provincial championships",
     features: ["Monthly events", "All skill levels", "Rating system", "Prize categories"],
     image: "/api/placeholder/400/250",
-    href: "/programs/tournaments",
+    href: "/events",
+  },
+  {
+    icon: Trophy,
+    title: "Clinics",
+    description: "On-site coaching clinics for schools and communities.",
+    features: ["Customized sessions", "School & community options", "Qualified coaches", "All skill levels"],
+    image: "/api/placeholder/400/250",
+    href: "/play/clinics",
   },
 ];
 

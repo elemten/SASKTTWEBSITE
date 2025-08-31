@@ -8,7 +8,7 @@ const heroCards = [
   {
     icon: UserPlus,
     title: "Become a Member",
-    description: "Join our community of table tennis enthusiasts",
+    description: "Join the provincial association and unlock member benefits.",
     href: "/membership",
     gradient: "from-primary to-primary-light",
     pricing: "Monthly: $45, Yearly: $450",
@@ -16,8 +16,22 @@ const heroCards = [
   {
     icon: Zap,
     title: "Book Training",
-    description: "Reserve your spot in SPED classes and events",
-    href: "/events",
+    description: "Schedule personal or group training with certified coaches.",
+    href: "/play/training",
+    gradient: "from-primary to-primary-light",
+  },
+  {
+    icon: Trophy,
+    title: "Book a Clinic",
+    description: "Book a clinic for your school.",
+    href: "/play/clinics",
+    gradient: "from-primary to-primary-light",
+  },
+  {
+    icon: UserPlus,
+    title: "Register / Start a New Club",
+    description: "Register a club and get approved for MAP grants.",
+    href: "/clubs",
     gradient: "from-primary to-primary-light",
   },
 
@@ -127,9 +141,9 @@ export function HeroSection() {
           </motion.div>
 
           {/* Feature Cards */}
-          <motion.div 
+          <motion.div
             variants={containerVariants}
-            className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
           >
             {heroCards.map((card, index) => (
               <motion.div
