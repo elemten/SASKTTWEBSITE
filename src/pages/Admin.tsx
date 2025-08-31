@@ -4,31 +4,25 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ADMIN_NAV, AdminSection } from "@/lib/admin-nav";
+import { AuthGuard } from "@/components/auth/AuthGuard";
 
 // Lazy load heavy admin components
 const DashboardOverview = lazy(() => import("@/components/admin/DashboardOverview").then(m => ({ default: m.DashboardOverview })));
 const MembersManagement = lazy(() => import("@/components/admin/MembersManagement").then(m => ({ default: m.MembersManagement })));
 const ClubsManagement = lazy(() => import("@/components/admin/ClubsManagement").then(m => ({ default: m.ClubsManagement })));
 const InvoicesPayments = lazy(() => import("@/components/admin/InvoicesPayments").then(m => ({ default: m.InvoicesPayments })));
-const EventsRentals = lazy(() => import("@/components/admin/EventsRentals").then(m => ({ default: m.EventsRentals })));
+const Events = lazy(() => import("@/components/admin/Events").then(m => ({ default: m.Events })));
 const ExpensesReimbursements = lazy(() => import("@/components/admin/ExpensesReimbursements").then(m => ({ default: m.ExpensesReimbursements })));
 const Reports = lazy(() => import("@/components/admin/Reports").then(m => ({ default: m.Reports })));
 const AdminsLogs = lazy(() => import("@/components/admin/AdminsLogs").then(m => ({ default: m.AdminsLogs })));
 
-type AdminSection = 
-  | "dashboard" 
-  | "members" 
-  | "clubs" 
-  | "invoices" 
-  | "events" 
-  | "expenses" 
-  | "reports" 
-  | "admins";
+
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState<AdminSection>("dashboard");
 
-  const renderContent = () => {
+  const renderContentSwitch = () => {
     const contentVariants = {
       initial: { opacity: 0, y: 20 },
       animate: { opacity: 1, y: 0 },
@@ -63,7 +57,7 @@ const Admin = () => {
       case "events":
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <EventsRentals />
+            <Events />
           </Suspense>
         );
       case "expenses":
@@ -94,32 +88,33 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <AuthGuard>
       <SidebarProvider>
-        <div className="flex w-full">
-          <AdminSidebar 
-            activeSection={activeSection} 
-            onSectionChange={setActiveSection} 
-          />
-          
-          <div className="flex-1 flex flex-col">
-            <AdminTopBar />
-            
-            <main className="flex-1 p-6">
+        <div className="min-h-screen bg-gradient-subtle">
+          <AdminTopBar />
+          <div className="flex">
+            <AdminSidebar
+              activeSection={activeSection}
+              onSectionChange={setActiveSection}
+            />
+            <main className="flex-1 p-8">
               <motion.div
                 key={activeSection}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                transition={{ duration: 0.3 }}
+                className="max-w-7xl mx-auto"
               >
-                {renderContent()}
+                <Suspense fallback={<LoadingSpinner />}>
+                  {renderContentSwitch()}
+                </Suspense>
               </motion.div>
             </main>
           </div>
         </div>
       </SidebarProvider>
-    </div>
+    </AuthGuard>
   );
 };
 

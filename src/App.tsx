@@ -34,6 +34,12 @@ const PlayTraining = lazy(() => import("./pages/play/Training"));
 const PlayAdvancedPara = lazy(() => import("./pages/play/AdvancedPara"));
 const PlayClinics = lazy(() => import("./pages/play/Clinics"));
 
+// Auth pages
+const SignIn = lazy(() => import("./pages/auth/sign-in"));
+const AuthCallback = lazy(() => import("./pages/auth/callback"));
+const Forbidden = lazy(() => import("./pages/auth/forbidden"));
+const SignOut = lazy(() => import("./pages/auth/sign-out"));
+
 // Error boundary for lazy routes
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -111,6 +117,13 @@ const App = () => (
               <Route path="/resources" element={<Resources />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/contact" element={<Contact />} />
+
+              {/* Auth routes */}
+              <Route path="/auth/sign-in" element={<SignIn />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/auth/forbidden" element={<Forbidden />} />
+              <Route path="/auth/sign-out" element={<SignOut />} />
+
               <Route path="/admin" element={<Admin />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

@@ -1,78 +1,27 @@
 import { motion } from "framer-motion";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Building2, 
-  FileText, 
-  Calendar, 
-  Receipt, 
-  BarChart3, 
-  Shield,
-  ChevronLeft,
-  ChevronRight
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { 
-  Sidebar, 
-  SidebarContent, 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarGroupLabel, 
-  SidebarMenu, 
-  SidebarMenuButton, 
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
   useSidebar
 } from "@/components/ui/sidebar";
+import { ADMIN_NAV } from "@/lib/admin-nav";
 
 interface AdminSidebarProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
 }
 
-const sidebarItems = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    id: "members",
-    label: "Members",
-    icon: Users,
-  },
-  {
-    id: "clubs",
-    label: "Clubs",
-    icon: Building2,
-  },
-  {
-    id: "invoices",
-    label: "Invoices & Payments",
-    icon: FileText,
-  },
-  {
-    id: "events",
-    label: "Events & Rentals",
-    icon: Calendar,
-  },
-  {
-    id: "expenses",
-    label: "Expenses",
-    icon: Receipt,
-  },
-  {
-    id: "reports",
-    label: "Reports",
-    icon: BarChart3,
-  },
-  {
-    id: "admins",
-    label: "Admins & Logs",
-    icon: Shield,
-  },
-];
+
 
 export const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarProps) => {
   const { state } = useSidebar();
@@ -112,7 +61,7 @@ export const AdminSidebar = ({ activeSection, onSectionChange }: AdminSidebarPro
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {sidebarItems.map((item, index) => (
+              {ADMIN_NAV.map((item, index) => (
                 <SidebarMenuItem key={item.id}>
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}

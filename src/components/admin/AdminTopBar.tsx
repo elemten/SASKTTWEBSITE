@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Search, Bell, User, Settings, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,14 +14,38 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/lib/supabaseClient";
 
 export const AdminTopBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState<any>(null);
   const [notifications] = useState([
     { id: 1, type: "warning", message: "5 memberships expiring this week" },
     { id: 2, type: "info", message: "New club registration pending" },
     { id: 3, type: "error", message: "3 overdue invoices" },
   ]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Get initial user
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   return (
     <motion.header 
@@ -85,12 +110,16 @@ export const AdminTopBar = () => {
               <Button variant="ghost" className="flex items-center gap-2 hover:bg-accent">
                 <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-primary text-primary-foreground">
-                    AD
+                    {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block text-left">
-                  <p className="text-sm font-medium">Admin User</p>
-                  <p className="text-xs text-muted-foreground">admin@tts.ca</p>
+                  <p className="text-sm font-medium">
+                    {user?.user_metadata?.full_name || 'Admin User'}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {user?.email || 'admin@tts.ca'}
+                  </p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
@@ -106,9 +135,12 @@ export const AdminTopBar = () => {
                 Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer text-destructive">
+              <DropdownMenuItem
+                className="cursor-pointer text-destructive"
+                onClick={handleSignOut}
+              >
                 <LogOut className="mr-2 h-4 w-4" />
-                Log out
+                Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
