@@ -1,9 +1,9 @@
-import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   NavigationMenu as RadixNav,
   NavigationMenuList,
@@ -11,6 +11,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
 } from "@/components/ui/navigation-menu";
+import { X } from "lucide-react";
 
 
 interface NavigationProps {
@@ -43,7 +44,68 @@ const navigationItems = [
 
 export function Navigation({ className }: NavigationProps) {
   const [openIndex] = useState<number | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [savedScrollPosition, setSavedScrollPosition] = useState(0);
+  const location = useLocation();
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
+
+  // Scroll lock functionality
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      // Save current scroll position
+      setSavedScrollPosition(window.scrollY);
+
+      // Prevent scrolling
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      // Restore scrolling and position
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+
+      // Restore scroll position
+      window.scrollTo(0, savedScrollPosition);
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
+  }, [isMobileMenuOpen, savedScrollPosition]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isMobileMenuOpen]);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
+    <>
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -147,10 +209,13 @@ export function Navigation({ className }: NavigationProps) {
           </div>
 
           {/* Mobile Menu Button */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="md:hidden p-2 hover:bg-muted/50"
+            onClick={toggleMobileMenu}
+            aria-expanded={isMobileMenuOpen}
+            aria-label="Toggle mobile menu"
           >
             <svg
               className="h-5 w-5"
@@ -162,12 +227,163 @@ export function Navigation({ className }: NavigationProps) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
+                d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
               />
             </svg>
           </Button>
         </div>
       </div>
     </motion.nav>
+
+    {/* Mobile Drawer */}
+    <AnimatePresence>
+      {isMobileMenuOpen && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            onClick={closeMobileMenu}
+            aria-hidden="true"
+          />
+
+          {/* Drawer */}
+          <motion.div
+            initial={{ y: "-100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "-100%", opacity: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+              opacity: { duration: 0.2 }
+            }}
+            className="fixed top-0 left-0 right-0 bg-white shadow-xl rounded-b-2xl z-50 md:hidden"
+            style={{
+              paddingTop: 'env(safe-area-inset-top)',
+              maxHeight: '100vh',
+              overflowY: 'auto'
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation menu"
+          >
+            {/* Header with Logo and Close Button */}
+            <div className="flex items-center justify-between p-6 border-b border-border/30">
+              <NavLink
+                to="/"
+                className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+                onClick={closeMobileMenu}
+              >
+                <div className="h-10 w-10 rounded-full overflow-hidden shadow-medium bg-white flex items-center justify-center">
+                  <img src={logo} alt="Table Tennis Saskatchewan" className="h-full w-full object-contain" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold tracking-tight text-foreground">
+                    Table Tennis Saskatchewan
+                  </h2>
+                  <p className="text-[10px] text-muted-foreground font-medium leading-none">Official Association</p>
+                </div>
+              </NavLink>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={closeMobileMenu}
+                className="p-2 hover:bg-muted/50"
+                aria-label="Close mobile menu"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            {/* Navigation Links */}
+            <div className="px-6 py-8 space-y-6">
+              {/* Main Navigation */}
+              <nav className="space-y-2" role="navigation" aria-label="Mobile navigation">
+                {navigationItems.map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05, duration: 0.3 }}
+                  >
+                    {item.children ? (
+                      <div className="space-y-2">
+                        <div className="px-3 py-2 text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                          {item.label}
+                        </div>
+                        {item.children.map((child, childIndex) => (
+                          <motion.div
+                            key={child.href}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: (index * 0.05) + (childIndex * 0.03), duration: 0.3 }}
+                          >
+                            <NavLink
+                              to={child.href}
+                              onClick={closeMobileMenu}
+                              className={({ isActive }) =>
+                                cn(
+                                  "block px-4 py-3 text-base rounded-lg transition-colors min-h-[44px] flex items-center",
+                                  isActive
+                                    ? "bg-primary/10 text-primary font-medium"
+                                    : "text-foreground hover:bg-primary/5 hover:text-primary"
+                                )
+                              }
+                            >
+                              {child.label}
+                            </NavLink>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <NavLink
+                        to={item.href}
+                        onClick={closeMobileMenu}
+                        className={({ isActive }) =>
+                          cn(
+                            "block px-4 py-3 text-base rounded-lg transition-colors min-h-[44px] flex items-center font-medium",
+                            isActive
+                              ? "bg-primary/10 text-primary"
+                              : "text-foreground hover:bg-primary/5 hover:text-primary"
+                          )
+                        }
+                      >
+                        {item.label}
+                      </NavLink>
+                    )}
+                  </motion.div>
+                ))}
+              </nav>
+
+              {/* CTA Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.3 }}
+                className="pt-4 border-t border-border/30"
+              >
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="w-full bg-gradient-primary hover:bg-gradient-primary/90 shadow-medium hover:shadow-strong transition-all duration-200 min-h-[48px]"
+                  onClick={() => {
+                    closeMobileMenu();
+                    window.location.href = '/membership';
+                  }}
+                >
+                  Get Started
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+    </>
   );
 }
