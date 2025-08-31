@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ArrowRight, Trophy, UserPlus, Zap } from "lucide-react";
+import HeroBackground from "./hero-background";
 
 const heroCards = [
   {
@@ -34,191 +35,177 @@ const heroCards = [
     href: "/clubs/register",
     gradient: "from-primary to-primary-light",
   },
-
 ];
-
-// Optimized animation variants for 60fps
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1, // Reduced from 0.2 for faster loading
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 }, // Reduced y distance for smoother animation
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.4, // Reduced from 0.6-0.8 for snappier feel
-      ease: [0.4, 0, 0.2, 1] // Custom easing for smooth motion
-    }
-  },
-};
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-subtle opacity-50" />
-      <div 
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(circle at 25% 25%, hsl(var(--primary)) 0%, transparent 50%),
-                           radial-gradient(circle at 75% 75%, hsl(var(--primary-light)) 0%, transparent 50%)`,
-        }}
-      />
-
-      <div className="container mx-auto px-6 py-20 relative z-10">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="text-center max-w-4xl mx-auto"
-        >
+    <>
+      {/* Hero Section - Static, Clean */}
+      <section id="home-hero" className="relative bg-gradient-to-b from-[#0b7d59] via-[#10a678] to-[#12b07b] min-h-[72vh] flex items-center">
+        <div className="mx-auto max-w-4xl px-6 text-center">
           {/* Badge */}
-          <motion.div 
-            variants={itemVariants} 
-            className="mb-6"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            <Badge 
-              variant="secondary" 
-              className="px-4 py-2 text-sm font-medium bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors duration-200"
-            >
-              Official Saskatchewan Table Tennis Association
-            </Badge>
-          </motion.div>
+          <p className="inline-block rounded-full px-4 py-1.5 text-xs sm:text-sm font-semibold tracking-wide text-white/90 bg-white/15 backdrop-blur-sm">
+            Official Saskatchewan Table Tennis Association
+          </p>
 
           {/* Main Heading */}
-          <motion.h1 
-            variants={itemVariants}
-            className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            Excellence in
-            <br />
-            <span className="bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-              Table Tennis
-            </span>
-          </motion.h1>
+          <h1 className="mt-6 font-extrabold tracking-tight text-white text-4xl sm:text-5xl lg:text-6xl">
+            Excellence in<br className="hidden sm:block"/> Table Tennis
+          </h1>
 
-          {/* Subtitle - Critical LCP content loads immediately */}
-          <motion.p 
-            variants={itemVariants}
-            className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed font-light"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            Join Saskatchewan's premier table tennis community. From beginner 
-            training to competitive play, we're here to elevate your game.
-          </motion.p>
+          {/* Subtext */}
+          <p className="mt-5 text-base sm:text-lg text-white/85 max-w-3xl mx-auto">
+            Join Saskatchewan's premier table tennis community. From beginner training to competitive play, we're here to elevate your game.
+          </p>
 
           {/* CTA Buttons */}
-          <motion.div 
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-20"
-            style={{ willChange: 'transform, opacity' }}
-          >
+          <div className="hero__actions">
             <Button 
               variant="hero" 
               size="xl"
-              className="group"
+              className="group shadow-soft hover:shadow-medium hover:bg-green-600 transition-all duration-250 ease-in-out"
             >
               Get Started Today
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
+            
             <Button 
               variant="glass" 
               size="xl"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50 transition-all duration-250 ease-in-out backdrop-blur-sm"
             >
               View Programs
             </Button>
-          </motion.div>
+          </div>
+        </div>
+      </section>
 
-          {/* Feature Cards */}
-          <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 lg:gap-16 xl:gap-20 max-w-7xl mx-auto justify-items-center px-4"
-          >
-            {heroCards.map((card, index) => (
-              <motion.div
-                key={card.title}
-                variants={itemVariants}
-                whileHover={{ 
-                  scale: 1.05,
-                  transition: { type: "spring", stiffness: 300, damping: 10 }
-                }}
-                className="group"
-                style={{ willChange: 'transform' }}
-              >
-                <Card className="glass p-6 lg:p-8 h-full hover:shadow-strong transition-all duration-500 hover:scale-[1.02] group-hover:shadow-primary/20 flex flex-col max-w-sm w-full">
-                  <div className="flex-1">
-                    <div className={`inline-flex p-3 rounded-2xl bg-gradient-to-r ${card.gradient} mb-6 shadow-medium`}>
-                      <card.icon className="h-6 w-6 text-white" />
-                    </div>
-
-                    <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors font-sora">
-                      {card.title}
-                    </h2>
-
-                    <p className="text-muted-foreground mb-4 leading-relaxed font-light">
-                      {card.description}
-                    </p>
-
-                    {card.pricing && (
-                      <p className="text-sm font-medium text-primary mb-6 bg-primary/10 rounded-lg px-3 py-2">
-                        {card.pricing}
-                      </p>
-                    )}
-                  </div>
-
+      {/* CTA Cards Section */}
+      <section className="bg-gradient-to-b from-[#eaf7f1] to-[#f6fff9] py-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Card 1: Become a Member */}
+            <article className="group rounded-2xl bg-white shadow-sm hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1">
+              <div className="p-5 flex flex-col h-full">
+                {/* Icon Header */}
+                <div className="inline-flex p-3 rounded-2xl bg-gradient-to-r from-[#0b7d59] to-[#10a678] mb-4 shadow-medium group-hover:shadow-strong transition-all duration-300 transform group-hover:scale-105">
+                  <UserPlus className="h-6 w-6 text-white" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#0b7d59] transition-colors duration-200">
+                  Become a Member
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 flex-grow">
+                  Join the provincial association and unlock member benefits.
+                </p>
+                
+                {/* Button */}
+                <div className="mt-auto">
                   <Button
                     variant="hero"
-                    className="w-full mt-auto"
-                    onClick={() => window.location.href = card.href}
+                    size="sm"
+                    className="w-full group-hover:bg-[#0a6e50] transition-all duration-200"
                   >
                     Learn More
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-      </div>
+                </div>
+              </div>
+            </article>
 
-      {/* Floating Elements */}
-      <motion.div
-        animate={{ 
-          y: [0, -20, 0],
-          rotate: [0, 5, 0] 
-        }}
-        transition={{ 
-          duration: 6, 
-          repeat: Infinity, 
-          ease: "easeInOut" 
-        }}
-        className="absolute top-20 right-20 w-20 h-20 bg-gradient-to-r from-primary/20 to-primary-light/20 rounded-full blur-xl hidden lg:block"
-      />
-      
-      <motion.div
-        animate={{ 
-          y: [0, 15, 0],
-          rotate: [0, -3, 0] 
-        }}
-        transition={{ 
-          duration: 8, 
-          repeat: Infinity, 
-          ease: "easeInOut",
-          delay: 1 
-        }}
-        className="absolute bottom-32 left-16 w-16 h-16 bg-gradient-to-r from-primary-light/20 to-primary-lighter/20 rounded-full blur-xl hidden lg:block"
-      />
-    </section>
+            {/* Card 2: Book Training */}
+            <article className="group rounded-2xl bg-white shadow-sm hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1">
+              <div className="p-5 flex flex-col h-full">
+                {/* Icon Header */}
+                <div className="inline-flex p-3 rounded-2xl bg-gradient-to-r from-[#0b7d59] to-[#10a678] mb-4 shadow-medium group-hover:shadow-strong transition-all duration-300 transform group-hover:scale-105">
+                  <Zap className="h-6 w-6 text-white" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#0b7d59] transition-colors duration-200">
+                  Book Training
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 flex-grow">
+                  Schedule personal or group training with certified coaches.
+                </p>
+                
+                {/* Button */}
+                <div className="mt-auto">
+                  <Button
+                    variant="hero"
+                    size="sm"
+                    className="w-full group-hover:bg-[#0a6e50] transition-all duration-200"
+                  >
+                    Learn More
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </div>
+              </div>
+            </article>
+
+            {/* Card 3: Book a Clinic */}
+            <article className="group rounded-2xl bg-white shadow-sm hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1">
+              <div className="p-5 flex flex-col h-full">
+                {/* Icon Header */}
+                <div className="inline-flex p-3 rounded-2xl bg-gradient-to-r from-[#0b7d59] to-[#10a678] mb-4 shadow-medium group-hover:shadow-strong transition-all duration-300 transform group-hover:scale-105">
+                  <Trophy className="h-6 w-6 text-white" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#0b7d59] transition-colors duration-200">
+                  Book a Clinic
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 flex-grow">
+                  Book a clinic for your school or organization.
+                </p>
+                
+                {/* Button */}
+                <div className="mt-auto">
+                  <Button
+                    variant="hero"
+                    size="sm"
+                    className="w-full group-hover:bg-[#0a6e50] transition-all duration-200"
+                  >
+                    Learn More
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </div>
+              </div>
+            </article>
+
+            {/* Card 4: Register / Start a New Club */}
+            <article className="group rounded-2xl bg-white shadow-sm hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1">
+              <div className="p-5 flex flex-col h-full">
+                {/* Icon Header */}
+                <div className="inline-flex p-3 rounded-2xl bg-gradient-to-r from-[#0b7d59] to-[#10a678] mb-4 shadow-medium group-hover:shadow-strong transition-all duration-300 transform group-hover:scale-105">
+                  <Trophy className="h-6 w-6 text-white" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#0b7d59] transition-colors duration-200">
+                  Register / Start a New Club
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 flex-grow">
+                  Register a club and get approved for MAP grants.
+                </p>
+                
+                {/* Button */}
+                <div className="mt-auto">
+                  <Button
+                    variant="hero"
+                    size="sm"
+                    className="w-full group-hover:bg-[#0a6e50] transition-all duration-200"
+                  >
+                    Learn More
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

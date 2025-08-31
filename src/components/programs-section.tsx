@@ -63,7 +63,7 @@ export function ProgramsSection() {
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section ref={ref} className="py-24 bg-gradient-subtle">
+    <section ref={ref} className="py-24">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -71,10 +71,10 @@ export function ProgramsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 font-sora">
-            Our <span className="bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">Programs</span>
+          <h2 className="text-[clamp(1.6rem,3vw,2.4rem)] font-semibold tracking-tight mb-6 font-sora text-green-800">
+            Our <span className="bg-gradient-to-r from-green-800 to-green-600 bg-clip-text text-transparent">Programs</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-light">
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto font-normal font-sora">
             Whether you're just starting or aiming for the podium, we have programs designed to help you achieve your table tennis goals.
           </p>
         </motion.div>
@@ -96,9 +96,9 @@ export function ProgramsSection() {
               }}
               className="group h-full"
             >
-              <Card className="glass h-full overflow-hidden hover:shadow-strong transition-all duration-500 group-hover:shadow-primary/20">
-                <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary-light/20 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
+              <Card className="bg-white h-full overflow-hidden hover:shadow-xl transition-all duration-500 group-hover:shadow-lg border border-gray-100">
+                <div className="aspect-video bg-gradient-to-br from-green-100 to-green-200 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-green-500/50 to-transparent" />
                   <div className="absolute bottom-4 left-4">
                     <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm">
                       <program.icon className="h-5 w-5 text-white" />

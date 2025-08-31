@@ -1,0 +1,44 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="url(#gradient4)"/>
+  
+  <!-- Background pattern -->
+  <defs>
+    <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#065f46;stop-opacity:0.1"/>
+      <stop offset="50%" style="stop-color:#064e3b;stop-opacity:0.2"/>
+      <stop offset="100%" style="stop-color:#022c22;stop-opacity:0.1"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Trophy -->
+  <rect x="380" y="150" width="40" height="60" rx="20" fill="#f59e0b" opacity="0.8"/>
+  <circle cx="400" cy="140" r="25" fill="#f59e0b" opacity="0.8"/>
+  <rect x="375" y="210" width="50" height="10" rx="5" fill="#f59e0b" opacity="0.8"/>
+  
+  <!-- Tournament bracket -->
+  <rect x="200" y="300" width="400" height="200" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  
+  <!-- Bracket lines -->
+  <line x1="300" y1="320" x2="300" y2="340" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="300" y1="360" x2="300" y2="380" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="500" y1="320" x2="500" y2="340" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="500" y1="360" x2="500" y2="380" stroke="#cbd5e1" stroke-width="2"/>
+  
+  <!-- Horizontal connector -->
+  <line x1="300" y1="330" x2="500" y2="330" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="300" y1="370" x2="500" y2="370" stroke="#cbd5e1" stroke-width="2"/>
+  
+  <!-- Players -->
+  <circle cx="250" cy="320" r="15" fill="#10b981" opacity="0.7"/>
+  <circle cx="250" cy="360" r="15" fill="#10b981" opacity="0.7"/>
+  <circle cx="550" cy="320" r="15" fill="#10b981" opacity="0.7"/>
+  <circle cx="550" cy="360" r="15" fill="#10b981" opacity="0.7"/>
+  
+  <!-- Winner highlight -->
+  <circle cx="400" cy="350" r="20" fill="#f59e0b" opacity="0.6"/>
+  
+  <!-- Text overlay -->
+  <text x="400" y="550" font-family="Arial, sans-serif" font-size="24" font-weight="600" text-anchor="middle" fill="#374151" opacity="0.8">
+    Tournaments & Competition
+  </text>
+</svg>

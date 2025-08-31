@@ -1,5 +1,7 @@
 import { Navigation } from "@/components/ui/navigation";
 import { HeroSection } from "@/components/hero-section";
+import { AboutUsSection } from "@/components/about-us-section";
+import { SupportedBySection } from "@/components/supported-by-section";
 import { ImpactStatsSection } from "@/components/impact-stats-section";
 import { ProgramsSection } from "@/components/programs-section";
 import { HowItWorksSection } from "@/components/how-it-works-section";
@@ -15,15 +17,22 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
-      <HeroSection />
-      <ImpactStatsSection />
-      <ProgramsSection />
-      <HowItWorksSection />
-      <TestimonialsSection />
-      <UpcomingEventsSection />
-      <CommunitySpotlightSection />
-      <PartnersSection />
-      <Sitemap />
+      
+      {/* Unified light green gradient background for entire homepage */}
+      <div className="bg-gradient-to-b from-emerald-50 via-emerald-50/90 to-emerald-50">
+        <HeroSection />
+        <AboutUsSection />
+        <SupportedBySection />
+        <ImpactStatsSection />
+        <ProgramsSection />
+        <HowItWorksSection />
+        <TestimonialsSection />
+        <UpcomingEventsSection />
+        <CommunitySpotlightSection />
+        <PartnersSection />
+        <Sitemap />
+      </div>
+      
       <Footer />
       <FloatingCTA />
     </div>
