@@ -196,7 +196,7 @@ export default function Events() {
                     </ul>
                   </div>
 
-                  <Button className="w-full">
+                  <Button variant="hero" className="w-full">
                     Learn More
                   </Button>
                 </Card>
@@ -222,10 +222,10 @@ export default function Events() {
                 Join one of our events or training programs and take your table tennis skills to the next level!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-gradient-primary">
+                <Button variant="hero" size="lg">
                   View All Events
                 </Button>
-                <Button variant="outline" size="lg">
+                <Button variant="hero" size="lg">
                   Contact Us
                 </Button>
               </div>

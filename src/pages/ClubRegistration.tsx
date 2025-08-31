@@ -184,7 +184,7 @@ export default function ClubRegistration() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
-                  variant="outline"
+                  variant="hero"
                   size="xl"
                   onClick={() => window.location.href = '/contact'}
                   aria-label="Contact our team for registration assistance"
@@ -629,9 +629,8 @@ export default function ClubRegistration() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
-                  variant="secondary"
+                  variant="hero"
                   size="xl"
-                  className="bg-white text-primary hover:bg-gray-100"
                   aria-label="Download the club registration application form"
                 >
                   <FileText className="mr-2 h-5 w-5" />
@@ -643,9 +642,8 @@ export default function ClubRegistration() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
-                  variant="secondary"
+                  variant="hero"
                   size="xl"
-                  className="bg-white text-primary hover:bg-gray-100"
                   onClick={() => window.location.href = '/contact'}
                   aria-label="Contact our team for registration assistance"
                 >

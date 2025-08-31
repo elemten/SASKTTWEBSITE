@@ -154,9 +154,9 @@ export default function Membership() {
                     ))}
                   </ul>
 
-                  <Button 
-                    variant={plan.popular ? "hero" : "outline"} 
-                    size="lg" 
+                  <Button
+                    variant="hero"
+                    size="lg"
                     className="w-full"
                   >
                     Choose {plan.name}

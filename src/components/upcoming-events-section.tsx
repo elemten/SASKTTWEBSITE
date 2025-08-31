@@ -97,12 +97,12 @@ export function UpcomingEventsSection() {
               key={event.title}
               variants={eventVariants}
               transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.02,
                 transition: { type: "spring", stiffness: 300, damping: 20 }
               }}
             >
-              <Card className="glass h-full p-6 hover:shadow-strong transition-all duration-500 group hover:shadow-primary/20">
+              <Card className="glass h-full p-6 hover:shadow-strong transition-all duration-300 group hover:shadow-primary/20 animate-gpu hover-optimized">
                 <div className="flex items-start justify-between mb-4">
                   <Badge className={getCategoryColor(event.category)}>
                     {event.category}
@@ -139,9 +139,9 @@ export function UpcomingEventsSection() {
                   </div>
                 </div>
 
-                <Button 
-                  variant="outline" 
-                  className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
+                <Button
+                  variant="hero"
+                  className="w-full"
                 >
                   Register / RSVP
                 </Button>
@@ -156,7 +156,7 @@ export function UpcomingEventsSection() {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="text-center mt-12"
         >
-          <Button variant="ghost" className="text-primary hover:bg-primary/10">
+          <Button variant="hero">
             View Full Calendar →
           </Button>
         </motion.div>

@@ -40,39 +40,41 @@ const heroCards = [
 export function HeroSection() {
   return (
     <>
-      {/* Hero Section - Static, Clean */}
-      <section id="home-hero" className="relative bg-gradient-to-b from-[#0b7d59] via-[#10a678] to-[#12b07b] min-h-[72vh] flex items-center">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          {/* Badge */}
-          <p className="inline-block rounded-full px-4 py-1.5 text-xs sm:text-sm font-semibold tracking-wide text-white/90 bg-white/15 backdrop-blur-sm">
-            Official Saskatchewan Table Tennis Association
-          </p>
+      {/* Hero Section - Clean & Minimal */}
+      <section id="home-hero" className="hero relative bg-gradient-to-b from-[#0b7d59] via-[#10a678] to-[#12b07b] min-h-[80vh] flex items-center">
+        <div className="mx-auto max-w-5xl px-8 text-center">
+          {/* Clean Badge */}
+          <div className="inline-block rounded-full px-8 py-4 bg-white/15 backdrop-blur-md border border-white/20 mb-12">
+            <h2 className="text-lg sm:text-xl font-semibold text-white tracking-wide">
+              Table Tennis Saskatchewan
+            </h2>
+          </div>
 
-          {/* Main Heading */}
-          <h1 className="mt-6 font-extrabold tracking-tight text-white text-4xl sm:text-5xl lg:text-6xl">
+          {/* Main Heading - Clean & Spacious */}
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-8">
             Excellence in<br className="hidden sm:block"/> Table Tennis
           </h1>
 
-          {/* Subtext */}
-          <p className="mt-5 text-base sm:text-lg text-white/85 max-w-3xl mx-auto">
+          {/* Subtext - Better Spacing */}
+          <p className="text-xl sm:text-2xl text-white/90 max-w-4xl mx-auto mb-12 leading-relaxed">
             Join Saskatchewan's premier table tennis community. From beginner training to competitive play, we're here to elevate your game.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="hero__actions">
-            <Button 
-              variant="hero" 
+          {/* CTA Buttons - Clean & Spaced */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <Button
+              variant="hero"
               size="xl"
-              className="group shadow-soft hover:shadow-medium hover:bg-green-600 transition-all duration-250 ease-in-out"
+              className="px-12 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Get Started Today
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-1" />
             </Button>
             
             <Button 
               variant="glass" 
               size="xl"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50 transition-all duration-250 ease-in-out backdrop-blur-sm"
+              className="btn-secondary px-12 py-6 text-lg font-semibold bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50 transition-all duration-300 backdrop-blur-sm"
             >
               View Programs
             </Button>
@@ -80,127 +82,130 @@ export function HeroSection() {
         </div>
       </section>
 
-      {/* CTA Cards Section */}
-      <section className="bg-gradient-to-b from-[#eaf7f1] to-[#f6fff9] py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* CTA Cards Section - Cleaner Spacing */}
+      <section className="bg-gradient-to-b from-[#eaf7f1] to-[#f6fff9] py-24">
+        <div className="mx-auto max-w-7xl px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Card 1: Become a Member */}
-            <article className="group rounded-2xl bg-white shadow-sm hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1">
-              <div className="p-5 flex flex-col h-full">
-                {/* Icon Header */}
-                <div className="inline-flex p-3 rounded-2xl bg-gradient-to-r from-[#0b7d59] to-[#10a678] mb-4 shadow-medium group-hover:shadow-strong transition-all duration-300 transform group-hover:scale-105">
-                  <UserPlus className="h-6 w-6 text-white" />
-                </div>
+            <article className="group rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+              <div className="p-8 flex flex-col h-full">
+                {/* Icon Header - Hero Button Style */}
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="mb-6 px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
+                >
+                  <UserPlus className="h-8 w-8" />
+                  <span className="ml-2">Become a Member</span>
+                </Button>
                 
-                {/* Content */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#0b7d59] transition-colors duration-200">
+                {/* Content - Better Typography */}
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-[#0b7d59] transition-colors duration-300">
                   Become a Member
                 </h3>
-                <p className="text-sm text-gray-600 mb-4 flex-grow">
+                <p className="text-base text-gray-600 mb-8 flex-grow leading-relaxed">
                   Join the provincial association and unlock member benefits.
                 </p>
                 
-                {/* Button */}
-                <div className="mt-auto">
-                  <Button
-                    variant="hero"
-                    size="sm"
-                    className="w-full group-hover:bg-[#0a6e50] transition-all duration-200"
-                  >
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </div>
+                {/* Button - Cleaner */}
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="w-full py-4 text-base font-semibold"
+                >
+                  Learn More
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
               </div>
             </article>
 
             {/* Card 2: Book Training */}
-            <article className="group rounded-2xl bg-white shadow-sm hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1">
-              <div className="p-5 flex flex-col h-full">
-                {/* Icon Header */}
-                <div className="inline-flex p-3 rounded-2xl bg-gradient-to-r from-[#0b7d59] to-[#10a678] mb-4 shadow-medium group-hover:shadow-strong transition-all duration-300 transform group-hover:scale-105">
-                  <Zap className="h-6 w-6 text-white" />
-                </div>
+            <article className="group rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+              <div className="p-8 flex flex-col h-full">
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="mb-6 px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
+                >
+                  <Zap className="h-8 w-8" />
+                  <span className="ml-2">Book Training</span>
+                </Button>
                 
-                {/* Content */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#0b7d59] transition-colors duration-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-[#0b7d59] transition-colors duration-300">
                   Book Training
                 </h3>
-                <p className="text-sm text-gray-600 mb-4 flex-grow">
+                <p className="text-base text-gray-600 mb-8 flex-grow leading-relaxed">
                   Schedule personal or group training with certified coaches.
                 </p>
                 
-                {/* Button */}
-                <div className="mt-auto">
-                  <Button
-                    variant="hero"
-                    size="sm"
-                    className="w-full group-hover:bg-[#0a6e50] transition-all duration-200"
-                  >
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </div>
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="w-full py-4 text-base font-semibold"
+                >
+                  Learn More
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
               </div>
             </article>
 
             {/* Card 3: Book a Clinic */}
-            <article className="group rounded-2xl bg-white shadow-sm hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1">
-              <div className="p-5 flex flex-col h-full">
-                {/* Icon Header */}
-                <div className="inline-flex p-3 rounded-2xl bg-gradient-to-r from-[#0b7d59] to-[#10a678] mb-4 shadow-medium group-hover:shadow-strong transition-all duration-300 transform group-hover:scale-105">
-                  <Trophy className="h-6 w-6 text-white" />
-                </div>
+            <article className="group rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+              <div className="p-8 flex flex-col h-full">
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="mb-6 px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
+                >
+                  <Trophy className="h-8 w-8" />
+                  <span className="ml-2">Book a Clinic</span>
+                </Button>
                 
-                {/* Content */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#0b7d59] transition-colors duration-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-[#0b7d59] transition-colors duration-300">
                   Book a Clinic
                 </h3>
-                <p className="text-sm text-gray-600 mb-4 flex-grow">
+                <p className="text-base text-gray-600 mb-8 flex-grow leading-relaxed">
                   Book a clinic for your school or organization.
                 </p>
                 
-                {/* Button */}
-                <div className="mt-auto">
-                  <Button
-                    variant="hero"
-                    size="sm"
-                    className="w-full group-hover:bg-[#0a6e50] transition-all duration-200"
-                  >
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </div>
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="w-full py-4 text-base font-semibold"
+                >
+                  Learn More
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
               </div>
             </article>
 
             {/* Card 4: Register / Start a New Club */}
-            <article className="group rounded-2xl bg-white shadow-sm hover:shadow-medium transition-all duration-300 transform hover:-translate-y-1">
-              <div className="p-5 flex flex-col h-full">
-                {/* Icon Header */}
-                <div className="inline-flex p-3 rounded-2xl bg-gradient-to-r from-[#0b7d59] to-[#10a678] mb-4 shadow-medium group-hover:shadow-strong transition-all duration-300 transform group-hover:scale-105">
-                  <Trophy className="h-6 w-6 text-white" />
-                </div>
+            <article className="group rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+              <div className="p-8 flex flex-col h-full">
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="mb-6 px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
+                >
+                  <Trophy className="h-8 w-8" />
+                  <span className="ml-2">Register / Start a New Club</span>
+                </Button>
                 
-                {/* Content */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#0b7d59] transition-colors duration-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-[#0b7d59] transition-colors duration-300">
                   Register / Start a New Club
                 </h3>
-                <p className="text-sm text-gray-600 mb-4 flex-grow">
+                <p className="text-base text-gray-600 mb-8 flex-grow leading-relaxed">
                   Register a club and get approved for MAP grants.
                 </p>
                 
-                {/* Button */}
-                <div className="mt-auto">
-                  <Button
-                    variant="hero"
-                    size="sm"
-                    className="w-full group-hover:bg-[#0a6e50] transition-all duration-200"
-                  >
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </div>
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="w-full py-4 text-base font-semibold"
+                >
+                  Learn More
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
               </div>
             </article>
           </div>

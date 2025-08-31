@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Component, ReactNode, Suspense, lazy } from "react";
+import { Component, ReactNode, Suspense, lazy, useEffect } from "react";
 import { PageLoadingFallback } from "@/components/ui/loading-spinner";
 
 // Lazy-loaded components for better code splitting
@@ -84,60 +84,84 @@ class ErrorBoundary extends Component<
   }
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      >
-        <ErrorBoundary>
-          <Suspense fallback={<PageLoadingFallback />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/membership" element={<Membership />} />
-              <Route path="/events" element={<Events />} />
+const App = () => {
+  // Performance optimizations
+  useEffect(() => {
+    // Enable CSS containment for better performance
+    document.documentElement.style.contain = 'layout style paint';
 
-              <Route path="/about" element={<About />} />
-              {/* About subsections */}
-              <Route path="/about/history-mission" element={<AboutHistoryMission />} />
-              <Route path="/about/staff-board" element={<AboutStaffBoard />} />
-              <Route path="/about/governance" element={<AboutGovernance />} />
-              {/* Play & Train */}
-              <Route path="/play/locations" element={<PlayLocations />} />
-              <Route path="/play/training" element={<PlayTraining />} />
-              <Route path="/play/advanced-para" element={<PlayAdvancedPara />} />
-              <Route path="/play/clinics" element={<PlayClinics />} />
-              {/* Other sections */}
-              <Route path="/clubs" element={<Clubs />} />
-              <Route path="/clubs/register" element={<ClubRegistration />} />
-              <Route path="/coaching" element={<Coaching />} />
-              <Route path="/officials" element={<Officials />} />
-              <Route path="/resources" element={<Resources />} />
-              <Route path="/gallery" element={<Gallery />} />
-              <Route path="/contact" element={<Contact />} />
+    // Optimize scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
 
-              {/* Auth routes */}
-              <Route path="/auth/sign-in" element={<SignIn />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/auth/forbidden" element={<Forbidden />} />
-              <Route path="/auth/sign-out" element={<SignOut />} />
+    return () => {
+      // Cleanup
+      document.documentElement.style.contain = '';
+      document.documentElement.style.scrollBehavior = '';
+    };
+  }, []);
 
-              <Route path="/admin" element={<Admin />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <ErrorBoundary>
+            <Suspense fallback={<PageLoadingFallback />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/membership" element={<Membership />} />
+                <Route path="/events" element={<Events />} />
+
+                <Route path="/about" element={<About />} />
+                {/* About subsections */}
+                <Route path="/about/history-mission" element={<AboutHistoryMission />} />
+                <Route path="/about/staff-board" element={<AboutStaffBoard />} />
+                <Route path="/about/governance" element={<AboutGovernance />} />
+                {/* Play & Train */}
+                <Route path="/play/locations" element={<PlayLocations />} />
+                <Route path="/play/training" element={<PlayTraining />} />
+                <Route path="/play/advanced-para" element={<PlayAdvancedPara />} />
+                <Route path="/play/clinics" element={<PlayClinics />} />
+                {/* Other sections */}
+                <Route path="/clubs" element={<Clubs />} />
+                <Route path="/clubs/register" element={<ClubRegistration />} />
+                <Route path="/coaching" element={<Coaching />} />
+                <Route path="/officials" element={<Officials />} />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/gallery" element={<Gallery />} />
+                <Route path="/contact" element={<Contact />} />
+
+                {/* Auth routes */}
+                <Route path="/auth/sign-in" element={<SignIn />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/auth/forbidden" element={<Forbidden />} />
+                <Route path="/auth/sign-out" element={<SignOut />} />
+
+                <Route path="/admin" element={<Admin />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

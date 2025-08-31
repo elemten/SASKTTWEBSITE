@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X, UserPlus } from "lucide-react";
@@ -6,23 +6,42 @@ import { X, UserPlus } from "lucide-react";
 export function FloatingCTA() {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const rafRef = useRef<number>();
+  const lastScrollY = useRef(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
+  const throttledScrollHandler = useCallback(() => {
+    if (rafRef.current) return;
+
+    rafRef.current = requestAnimationFrame(() => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      
-      // Show after scrolling 50% of viewport height
-      if (scrollY > windowHeight * 0.5 && !isDismissed) {
-        setIsVisible(true);
-      } else if (scrollY <= windowHeight * 0.3) {
-        setIsVisible(false);
+
+      // Only update if scroll position changed significantly (reduce unnecessary re-renders)
+      if (Math.abs(scrollY - lastScrollY.current) > 10) {
+        // Show after scrolling 50% of viewport height
+        if (scrollY > windowHeight * 0.5 && !isDismissed) {
+          setIsVisible(true);
+        } else if (scrollY <= windowHeight * 0.3) {
+          setIsVisible(false);
+        }
+        lastScrollY.current = scrollY;
+      }
+
+      rafRef.current = undefined;
+    });
+  }, [isDismissed]);
+
+  useEffect(() => {
+    // Use passive listener for better performance
+    window.addEventListener("scroll", throttledScrollHandler, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", throttledScrollHandler);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
       }
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isDismissed]);
+  }, [throttledScrollHandler]);
 
   const handleDismiss = () => {
     setIsDismissed(true);

@@ -301,10 +301,10 @@ export default function About() {
                 excellence across Saskatchewan!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-gradient-primary">
+                <Button variant="hero" size="lg">
                   Become a Member
                 </Button>
-                <Button variant="outline" size="lg">
+                <Button variant="hero" size="lg">
                   Contact Us
                 </Button>
               </div>

@@ -90,11 +90,11 @@ export function ProgramsSection() {
               key={program.title}
               variants={cardVariants}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.03,
                 transition: { type: "spring", stiffness: 300, damping: 20 }
               }}
-              className="group h-full"
+              className="group h-full animate-gpu hover-optimized"
             >
               <Card className="bg-white h-full overflow-hidden hover:shadow-xl transition-all duration-500 group-hover:shadow-lg border border-gray-100">
                 <div className="aspect-video bg-gradient-to-br from-green-100 to-green-200 relative overflow-hidden">
@@ -125,8 +125,8 @@ export function ProgramsSection() {
                   </ul>
                   
                   <Button
-                    variant="outline"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
+                    variant="hero"
+                    className="w-full"
                     onClick={() => window.location.href = program.href}
                   >
                     Learn More

@@ -9,16 +9,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary-light hover:scale-[1.02] active:scale-[0.98]",
+        default: "bg-primary text-primary-foreground hover:bg-primary-light hover:scale-[1.02] active:scale-[0.98] animate-gpu touch-optimized",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:scale-[1.02] active:scale-[0.98]",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:scale-[1.02] active:scale-[0.98] animate-gpu touch-optimized",
         outline:
-          "border border-input-border bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/30 hover:scale-[1.02] active:scale-[0.98]",
+          "border border-input-border bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/30 hover:scale-[1.02] active:scale-[0.98] animate-gpu touch-optimized",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:scale-[1.02] active:scale-[0.98]",
-        ghost: "hover:bg-accent hover:text-accent-foreground hover:scale-[1.02] active:scale-[0.98]",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:scale-[1.02] active:scale-[0.98] animate-gpu touch-optimized",
+        ghost: "hover:bg-accent hover:text-accent-foreground hover:scale-[1.02] active:scale-[0.98] animate-gpu touch-optimized",
         link: "text-primary underline-offset-4 hover:underline hover:text-primary-light",
-        hero: "bg-gradient-primary text-primary-foreground hover:shadow-strong hover:scale-[1.05] active:scale-[0.95] font-semibold",
+        hero: "bg-gradient-primary text-primary-foreground hover:shadow-strong hover:scale-[1.05] active:scale-[0.95] font-semibold animate-gpu touch-optimized",
         glass: "glass text-foreground hover:bg-accent/10 hover:scale-[1.02] active:scale-[0.98] border border-border/50",
       },
       size: {

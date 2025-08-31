@@ -200,10 +200,9 @@ export function Navigation({ className }: NavigationProps) {
             >
               Sign In
             </Button>
-            <Button 
-              variant="default" 
-              size="sm" 
-              className="bg-gradient-primary hover:bg-gradient-primary/90 shadow-medium hover:shadow-strong transition-all duration-200"
+            <Button
+              variant="hero"
+              size="sm"
             >
               Get Started
             </Button>
@@ -388,9 +387,9 @@ export function Navigation({ className }: NavigationProps) {
                 transition={{ delay: 0.4, duration: 0.3 }}
               >
                 <Button
-                  variant="default"
+                  variant="hero"
                   size="lg"
-                  className="w-full bg-gradient-primary hover:bg-gradient-primary/90 shadow-medium hover:shadow-strong transition-all duration-200 min-h-[48px]"
+                  className="w-full"
                   onClick={() => {
                     closeMobileMenu();
                     window.location.href = '/membership';
