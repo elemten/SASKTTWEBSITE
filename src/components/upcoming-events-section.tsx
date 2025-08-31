@@ -16,16 +16,7 @@ const events = [
     description: "Annual youth championship for ages 12-17. All skill levels welcome.",
     status: "Open Registration",
   },
-  {
-    title: "Adult League - Spring Season",
-    date: "2024-03-20",
-    time: "7:00 PM - 10:00 PM",
-    location: "Saskatoon TT Club",
-    category: "League",
-    participants: "16 teams",
-    description: "Competitive league play for adult players. Teams still forming.",
-    status: "Few Spots Left",
-  },
+
   {
     title: "SPED Training Camp",
     date: "2024-03-25",
@@ -73,7 +64,6 @@ export function UpcomingEventsSection() {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Tournament': return 'bg-primary/10 text-primary border-primary/20';
-      case 'League': return 'bg-success/10 text-success border-success/20';
       case 'Training': return 'bg-warning/10 text-warning border-warning/20';
       default: return 'bg-muted/10 text-muted-foreground border-muted/20';
     }
@@ -92,7 +82,7 @@ export function UpcomingEventsSection() {
             Upcoming <span className="bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">Events</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-light">
-            Join us for tournaments, training sessions, and league play. There's always something exciting happening in our community.
+            Join us for tournaments and training sessions. There's always something exciting happening in our community.
           </p>
         </motion.div>
 

@@ -10,7 +10,6 @@ const footerSections = [
       { label: "Home", href: "/" },
       { label: "Membership", href: "/membership" },
       { label: "Events", href: "/events" },
-      { label: "Rentals", href: "/rentals" },
     ],
   },
   {
@@ -18,7 +17,6 @@ const footerSections = [
     links: [
       { label: "SPED Training", href: "/events#sped" },
       { label: "Youth Programs", href: "/events#youth" },
-      { label: "Adult Leagues", href: "/events#adult" },
       { label: "Tournaments", href: "/events#tournaments" },
     ],
   },

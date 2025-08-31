@@ -17,7 +17,7 @@ const membershipPlans = [
       "Access to all club facilities",
       "Monthly newsletter",
       "Tournament entry discounts",
-      "Equipment rental discounts",
+
       "Basic training resources",
     ],
   },
@@ -192,11 +192,11 @@ export default function Membership() {
               },
               {
                 title: "Community Events",
-                description: "Regular tournaments, leagues, and social events throughout the year",
+                description: "Regular tournaments and social events throughout the year",
               },
               {
                 title: "Equipment Access",
-                description: "Discounted equipment rentals and exclusive member pricing",
+                description: "Access to club equipment and exclusive member pricing",
               },
             ].map((benefit, index) => (
               <motion.div

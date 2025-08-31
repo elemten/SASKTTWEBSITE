@@ -3,30 +3,35 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Component, ReactNode } from "react";
+import { Component, ReactNode, Suspense, lazy } from "react";
+import { PageLoadingFallback } from "@/components/ui/loading-spinner";
 
-// Direct imports to fix white screen issue
-import Index from "./pages/Index";
-import Membership from "./pages/Membership";
-import Events from "./pages/Events";
-import Rentals from "./pages/Rentals";
-import About from "./pages/About";
-import Admin from "./pages/Admin";
-import NotFound from "./pages/NotFound";
-// New pages (shells)
-import Clubs from "./pages/Clubs";
-import Coaching from "./pages/Coaching";
-import Officials from "./pages/Officials";
-import Resources from "./pages/Resources";
-import Gallery from "./pages/Gallery";
-import Contact from "./pages/Contact";
-import AboutHistoryMission from "./pages/about/HistoryMission";
-import AboutStaffBoard from "./pages/about/StaffBoard";
-import AboutGovernance from "./pages/about/Governance";
-import PlayLocations from "./pages/play/Locations";
-import PlayTraining from "./pages/play/Training";
-import PlayAdvancedPara from "./pages/play/AdvancedPara";
-import PlayClinics from "./pages/play/Clinics";
+// Lazy-loaded components for better code splitting
+const Index = lazy(() => import("./pages/Index"));
+const Membership = lazy(() => import("./pages/Membership"));
+const Events = lazy(() => import("./pages/Events"));
+const About = lazy(() => import("./pages/About"));
+const Admin = lazy(() => import("./pages/Admin"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Secondary pages
+const Clubs = lazy(() => import("./pages/Clubs"));
+const Coaching = lazy(() => import("./pages/Coaching"));
+const Officials = lazy(() => import("./pages/Officials"));
+const Resources = lazy(() => import("./pages/Resources"));
+const Gallery = lazy(() => import("./pages/Gallery"));
+const Contact = lazy(() => import("./pages/Contact"));
+
+// About subsections
+const AboutHistoryMission = lazy(() => import("./pages/about/HistoryMission"));
+const AboutStaffBoard = lazy(() => import("./pages/about/StaffBoard"));
+const AboutGovernance = lazy(() => import("./pages/about/Governance"));
+
+// Play subsections
+const PlayLocations = lazy(() => import("./pages/play/Locations"));
+const PlayTraining = lazy(() => import("./pages/play/Training"));
+const PlayAdvancedPara = lazy(() => import("./pages/play/AdvancedPara"));
+const PlayClinics = lazy(() => import("./pages/play/Clinics"));
 
 // Error boundary for lazy routes
 class ErrorBoundary extends Component<
@@ -42,7 +47,7 @@ class ErrorBoundary extends Component<
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Route loading error:", error, errorInfo);
   }
 
@@ -81,32 +86,34 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ErrorBoundary>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/membership" element={<Membership />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/rentals" element={<Rentals />} />
-            <Route path="/about" element={<About />} />
-            {/* About subsections */}
-            <Route path="/about/history-mission" element={<AboutHistoryMission />} />
-            <Route path="/about/staff-board" element={<AboutStaffBoard />} />
-            <Route path="/about/governance" element={<AboutGovernance />} />
-            {/* Play & Train */}
-            <Route path="/play/locations" element={<PlayLocations />} />
-            <Route path="/play/training" element={<PlayTraining />} />
-            <Route path="/play/advanced-para" element={<PlayAdvancedPara />} />
-            <Route path="/play/clinics" element={<PlayClinics />} />
-            {/* Other sections */}
-            <Route path="/clubs" element={<Clubs />} />
-            <Route path="/coaching" element={<Coaching />} />
-            <Route path="/officials" element={<Officials />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/admin" element={<Admin />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<PageLoadingFallback />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/membership" element={<Membership />} />
+              <Route path="/events" element={<Events />} />
+
+              <Route path="/about" element={<About />} />
+              {/* About subsections */}
+              <Route path="/about/history-mission" element={<AboutHistoryMission />} />
+              <Route path="/about/staff-board" element={<AboutStaffBoard />} />
+              <Route path="/about/governance" element={<AboutGovernance />} />
+              {/* Play & Train */}
+              <Route path="/play/locations" element={<PlayLocations />} />
+              <Route path="/play/training" element={<PlayTraining />} />
+              <Route path="/play/advanced-para" element={<PlayAdvancedPara />} />
+              <Route path="/play/clinics" element={<PlayClinics />} />
+              {/* Other sections */}
+              <Route path="/clubs" element={<Clubs />} />
+              <Route path="/coaching" element={<Coaching />} />
+              <Route path="/officials" element={<Officials />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/admin" element={<Admin />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </ErrorBoundary>
       </BrowserRouter>
     </TooltipProvider>

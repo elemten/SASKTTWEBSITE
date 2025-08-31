@@ -19,7 +19,6 @@ const sitemapSections = [
     icon: Wrench,
     links: [
       { label: "Membership", href: "/membership", description: "Join our community" },
-      { label: "Equipment Rentals", href: "/rentals", description: "Professional equipment for rent" },
       { label: "Coaching", href: "/coaching", description: "Coach education and certifications" },
       { label: "Officials", href: "/officials", description: "Umpire and referee information" },
     ],

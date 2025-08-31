@@ -27,7 +27,6 @@ const navigationItems = [
   ] },
   { href: "/membership", label: "Services", children: [
     { href: "/membership", label: "Membership" },
-    { href: "/rentals", label: "Equipment Rentals" },
     { href: "/coaching", label: "Coaching" },
     { href: "/officials", label: "Officials" },
   ] },
@@ -61,15 +60,17 @@ export function Navigation({ className }: NavigationProps) {
           <motion.div
             className="flex items-center space-x-4"
           >
-            <div className="h-12 w-12 rounded-full overflow-hidden shadow-medium bg-white flex items-center justify-center">
-              <img src={logo} alt="Table Tennis Saskatchewan" className="h-full w-full object-contain" />
-            </div>
-            <div className="hidden md:block">
-              <h1 className="text-lg font-semibold tracking-tight text-foreground">
-                Table Tennis Saskatchewan
-              </h1>
-              <p className="text-[11px] text-muted-foreground font-medium leading-none">Official Association</p>
-            </div>
+            <NavLink to="/" className="flex items-center space-x-4 hover:opacity-80 transition-opacity">
+              <div className="h-12 w-12 rounded-full overflow-hidden shadow-medium bg-white flex items-center justify-center">
+                <img src={logo} alt="Table Tennis Saskatchewan" className="h-full w-full object-contain" />
+              </div>
+              <div className="hidden md:block">
+                <h1 className="text-lg font-semibold tracking-tight text-foreground">
+                  Table Tennis Saskatchewan
+                </h1>
+                <p className="text-[11px] text-muted-foreground font-medium leading-none">Official Association</p>
+              </div>
+            </NavLink>
           </motion.div>
 
           {/* Desktop Navigation */}

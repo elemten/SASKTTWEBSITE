@@ -76,8 +76,7 @@ export const EventsRentals = () => {
         return "bg-primary text-primary-foreground";
       case "training":
         return "bg-secondary text-secondary-foreground";
-      case "rental":
-        return "bg-accent text-accent-foreground";
+
       default:
         return "bg-muted text-muted-foreground";
     }
@@ -93,8 +92,8 @@ export const EventsRentals = () => {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Events & Rentals</h1>
-          <p className="text-muted-foreground">Manage tournaments, training sessions, and facility rentals</p>
+          <h1 className="text-3xl font-bold text-foreground">Events Management</h1>
+          <p className="text-muted-foreground">Manage tournaments and training sessions</p>
         </div>
         
         <div className="flex gap-2">
@@ -125,9 +124,9 @@ export const EventsRentals = () => {
             </DialogTrigger>
             <DialogContent className="glass max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Add New Event/Rental</DialogTitle>
+                <DialogTitle>Add New Event</DialogTitle>
                 <DialogDescription>
-                  Create a new tournament, training session, or facility rental.
+                  Create a new tournament or training session.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
@@ -139,7 +138,7 @@ export const EventsRentals = () => {
                     <SelectContent>
                       <SelectItem value="tournament">Tournament</SelectItem>
                       <SelectItem value="training">Training</SelectItem>
-                      <SelectItem value="rental">Rental</SelectItem>
+
                     </SelectContent>
                   </Select>
                   <Input placeholder="Event Title" />

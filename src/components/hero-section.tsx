@@ -20,13 +20,7 @@ const heroCards = [
     href: "/events",
     gradient: "from-primary to-primary-light",
   },
-  {
-    icon: Trophy,
-    title: "Rent Equipment",
-    description: "Tables, chairs, nets and more available",
-    href: "/rentals",
-    gradient: "from-primary to-primary-light",
-  },
+
 ];
 
 // Optimized animation variants for 60fps

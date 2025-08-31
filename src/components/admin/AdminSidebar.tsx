@@ -28,7 +28,7 @@ import {
 
 interface AdminSidebarProps {
   activeSection: string;
-  onSectionChange: (section: any) => void;
+  onSectionChange: (section: string) => void;
 }
 
 const sidebarItems = [

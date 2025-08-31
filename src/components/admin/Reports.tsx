@@ -56,12 +56,12 @@ const membershipTrendData = [
 ];
 
 const revenueData = [
-  { month: 'Jan', membership: 8500, events: 2200, rentals: 1800 },
-  { month: 'Feb', membership: 9200, events: 1900, rentals: 2100 },
-  { month: 'Mar', membership: 10100, events: 2800, rentals: 2200 },
-  { month: 'Apr', membership: 9800, events: 2400, rentals: 1600 },
-  { month: 'May', membership: 11200, events: 2900, rentals: 2100 },
-  { month: 'Jun', membership: 12500, events: 3200, rentals: 1800 }
+  { month: 'Jan', membership: 8500, events: 2200 },
+  { month: 'Feb', membership: 9200, events: 1900 },
+  { month: 'Mar', membership: 10100, events: 2800 },
+  { month: 'Apr', membership: 9800, events: 2400 },
+  { month: 'May', membership: 11200, events: 2900 },
+  { month: 'Jun', membership: 12500, events: 3200 }
 ];
 
 const clubDistributionData = [
@@ -212,7 +212,7 @@ export const Reports = () => {
                 />
                 <Bar dataKey="membership" fill="hsl(var(--primary))" name="Membership" />
                 <Bar dataKey="events" fill="hsl(var(--success))" name="Events" />
-                <Bar dataKey="rentals" fill="hsl(var(--secondary))" name="Rentals" />
+
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
-import { DashboardOverview } from "@/components/admin/DashboardOverview";
-import { MembersManagement } from "@/components/admin/MembersManagement";
-import { ClubsManagement } from "@/components/admin/ClubsManagement";
-import { InvoicesPayments } from "@/components/admin/InvoicesPayments";
-import { EventsRentals } from "@/components/admin/EventsRentals";
-import { ExpensesReimbursements } from "@/components/admin/ExpensesReimbursements";
-import { Reports } from "@/components/admin/Reports";
-import { AdminsLogs } from "@/components/admin/AdminsLogs";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+
+// Lazy load heavy admin components
+const DashboardOverview = lazy(() => import("@/components/admin/DashboardOverview").then(m => ({ default: m.DashboardOverview })));
+const MembersManagement = lazy(() => import("@/components/admin/MembersManagement").then(m => ({ default: m.MembersManagement })));
+const ClubsManagement = lazy(() => import("@/components/admin/ClubsManagement").then(m => ({ default: m.ClubsManagement })));
+const InvoicesPayments = lazy(() => import("@/components/admin/InvoicesPayments").then(m => ({ default: m.InvoicesPayments })));
+const EventsRentals = lazy(() => import("@/components/admin/EventsRentals").then(m => ({ default: m.EventsRentals })));
+const ExpensesReimbursements = lazy(() => import("@/components/admin/ExpensesReimbursements").then(m => ({ default: m.ExpensesReimbursements })));
+const Reports = lazy(() => import("@/components/admin/Reports").then(m => ({ default: m.Reports })));
+const AdminsLogs = lazy(() => import("@/components/admin/AdminsLogs").then(m => ({ default: m.AdminsLogs })));
 
 type AdminSection = 
   | "dashboard" 
@@ -34,23 +37,59 @@ const Admin = () => {
 
     switch (activeSection) {
       case "dashboard":
-        return <DashboardOverview />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DashboardOverview />
+          </Suspense>
+        );
       case "members":
-        return <MembersManagement />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <MembersManagement />
+          </Suspense>
+        );
       case "clubs":
-        return <ClubsManagement />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ClubsManagement />
+          </Suspense>
+        );
       case "invoices":
-        return <InvoicesPayments />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <InvoicesPayments />
+          </Suspense>
+        );
       case "events":
-        return <EventsRentals />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <EventsRentals />
+          </Suspense>
+        );
       case "expenses":
-        return <ExpensesReimbursements />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ExpensesReimbursements />
+          </Suspense>
+        );
       case "reports":
-        return <Reports />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <Reports />
+          </Suspense>
+        );
       case "admins":
-        return <AdminsLogs />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <AdminsLogs />
+          </Suspense>
+        );
       default:
-        return <DashboardOverview />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DashboardOverview />
+          </Suspense>
+        );
     }
   };
 

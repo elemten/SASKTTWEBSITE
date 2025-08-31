@@ -13,14 +13,7 @@ const programs = [
     image: "/api/placeholder/400/250",
     href: "/programs/youth",
   },
-  {
-    icon: Trophy,
-    title: "Adult Leagues",
-    description: "Competitive and recreational leagues for players of all skill levels",
-    features: ["Multiple divisions", "Regular tournaments", "Social events", "Skill development"],
-    image: "/api/placeholder/400/250",
-    href: "/programs/adult",
-  },
+
   {
     icon: Zap,
     title: "SPED Training",
