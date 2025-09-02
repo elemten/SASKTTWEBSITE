@@ -81,6 +81,13 @@ export default function MobileMenu({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
+  // Ensure menu is closed on mount
+  useEffect(() => {
+    if (!open) {
+      onOpenChange(false);
+    }
+  }, [open, onOpenChange]);
+
   // Body scroll lock + focus trap
   useEffect(() => {
     const original = document.body.style.overflow;
@@ -121,8 +128,13 @@ export default function MobileMenu({
       {/* Overlay */}
       <div
         aria-hidden={!open}
+        style={{
+          opacity: open ? 0.4 : 0,
+          visibility: open ? 'visible' : 'hidden',
+          pointerEvents: open ? 'auto' : 'none'
+        }}
         className={`fixed inset-0 z-[1000] bg-black/40 transition-opacity md:hidden ${
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none mobile-overlay-hidden"
         }`}
         onClick={() => onOpenChange(false)}
       />
@@ -132,8 +144,15 @@ export default function MobileMenu({
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        className={`safe-top fixed right-0 top-0 z-[1001] h-[100dvh] w-[86vw] max-w-[380px] bg-white shadow-xl outline-none transition-transform md:hidden ${
-          open ? "translate-x-0" : "translate-x-full"
+        data-mobile-menu={open.toString()}
+        style={{
+          transform: open ? 'translateX(0)' : 'translateX(100%)',
+          visibility: open ? 'visible' : 'hidden',
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? 'auto' : 'none'
+        }}
+        className={`safe-top fixed right-0 top-0 z-[1001] h-[100dvh] w-[86vw] max-w-[380px] bg-white shadow-xl outline-none transition-transform md:hidden mobile-menu-container ${
+          open ? "translate-x-0" : "translate-x-full mobile-menu-hidden"
         }`}
         onKeyDown={handleKeyDown}
         ref={panelRef}

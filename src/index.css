@@ -620,6 +620,7 @@ html, body {
     background: rgba(0,0,0,.06);
   }
 }
+}
 /* path: src/index.css  (APPEND AT END) */
 /* ===== MOBILE NAV OVERRIDES (do not alter desktop) ===== */
 @media (max-width: 768px) {
@@ -628,7 +629,38 @@ html, body {
 
   /* Utility for iOS safe area */
   .safe-top { padding-top: env(safe-area-inset-top); }
-}
-
-
+  
+  /* Ensure mobile menu is hidden by default */
+  .mobile-menu-hidden {
+    transform: translateX(100%) !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  
+  /* Mobile menu overlay hidden by default */
+  .mobile-overlay-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Force hide mobile menu on small screens by default */
+  @media (max-width: 768px) {
+    [data-mobile-menu="false"] {
+      transform: translateX(100%) !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    
+    /* Additional safety: ensure mobile menu is hidden by default */
+    .mobile-menu-container:not([data-mobile-menu="true"]) {
+      transform: translateX(100%) !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      display: none !important;
+    }
+  }
 }
