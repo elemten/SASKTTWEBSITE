@@ -620,5 +620,15 @@ html, body {
     background: rgba(0,0,0,.06);
   }
 }
+/* path: src/index.css  (APPEND AT END) */
+/* ===== MOBILE NAV OVERRIDES (do not alter desktop) ===== */
+@media (max-width: 768px) {
+  /* Use a separate mobile header; keep desktop grid hidden */
+  .nav__inner { display: none !important; }
+
+  /* Utility for iOS safe area */
+  .safe-top { padding-top: env(safe-area-inset-top); }
+}
+
 
 }

@@ -1,16 +1,14 @@
+// path: src/components/ui/navigation.tsx
 import { NavLink } from "react-router-dom";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
 import { useState, useEffect } from "react";
-
-
+import MobileMenu from "./MobileMenu";
 
 interface NavigationProps {
   className?: string;
 }
-
-
 
 const navigationItems = [
   { href: "/", label: "Home" },
@@ -53,19 +51,20 @@ const navigationItems = [
 
 export function Navigation({ className }: NavigationProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     // Close dropdowns on outside click
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('.has-dropdown') && !target.closest('.dropdown')) {
+      if (!target.closest(".has-dropdown")) {
         setOpenDropdown(null);
       }
     };
 
-    // Close dropdowns on escape
+    // Close dropdowns on Esc
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setOpenDropdown(null);
       }
     };
@@ -84,8 +83,9 @@ export function Navigation({ className }: NavigationProps) {
   };
 
   return (
-    <header className={cn("nav", className)}>
-      <div className="nav__inner">
+    <header className={cn("nav safe-top", className)}>
+      {/* ===== Desktop header (unchanged) ===== */}
+      <div className="nav__inner hidden md:grid">
         {/* Brand Section */}
         <NavLink to="/" className="brand">
           <img
@@ -99,9 +99,10 @@ export function Navigation({ className }: NavigationProps) {
           </div>
         </NavLink>
 
-        {/* Navigation Menu */}
-        <nav className="primary" aria-label="primary">
+        {/* Primary Navigation */}
+        <nav className="primary" aria-label="Primary">
           <ul className="primary__list">
+            {/* Home */}
             <li>
               <NavLink
                 to="/"
@@ -113,7 +114,7 @@ export function Navigation({ className }: NavigationProps) {
               </NavLink>
             </li>
 
-            {/* About Us Dropdown */}
+            {/* About Dropdown */}
             <li className="has-dropdown">
               <button
                 className="nav-item nav-item--trigger"
@@ -130,7 +131,7 @@ export function Navigation({ className }: NavigationProps) {
                 role="menu"
               >
                 <NavLink to="/about/history-mission" className="dropdown__item">
-                  History & Mission
+                  History &amp; Mission
                 </NavLink>
                 <NavLink to="/about/staff-board" className="dropdown__item">
                   Team Members
@@ -201,7 +202,7 @@ export function Navigation({ className }: NavigationProps) {
                   Clinics
                 </NavLink>
                 <NavLink to="/play/advanced-para" className="dropdown__item">
-                  Advanced & Para
+                  Advanced &amp; Para
                 </NavLink>
                 <NavLink to="/play/locations" className="dropdown__item">
                   Where to Play
@@ -264,6 +265,36 @@ export function Navigation({ className }: NavigationProps) {
             Get Started
           </NavLink>
         </div>
+      </div>
+
+      {/* ===== Mobile header (new) ===== */}
+      <div className="md:hidden">
+        <div className="flex h-14 items-center justify-between px-3">
+          <div className="flex items-center">
+            <NavLink to="/" className="flex items-center gap-2" aria-label="Home">
+              <img src={logo} alt="TTS" className="h-9 w-9 rounded-md object-contain" />
+              <span className="text-base font-bold tracking-tight">TTS</span>
+            </NavLink>
+            <NavLink
+              to="/signup"
+              className="ml-2 inline-flex h-9 items-center rounded-full bg-[var(--brandGreen)] px-3 text-sm font-semibold text-white"
+            >
+              Join
+            </NavLink>
+          </div>
+
+          <button
+            aria-label="Open menu"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100"
+            onClick={() => setMobileOpen(true)}
+          >
+            <svg className="h-6 w-6" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <MobileMenu open={mobileOpen} onOpenChange={setMobileOpen} />
       </div>
     </header>
   );
