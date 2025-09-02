@@ -576,4 +576,49 @@ html, body {
     outline: 2px solid var(--tt-green);
     outline-offset: 2px;
   }
+  /* ====== MOBILE NAVBAR FIX (<= 768px) ====== */
+@media (max-width: 768px) {
+  /* Tight container so logo hugs left and CTAs fit right */
+  .nav__inner {
+    grid-template-columns: auto 1fr auto; /* brand | (empty) | ctas */
+    gap: 10px;
+    padding: 0 12px;
+    height: 56px; /* keep your bar height consistent */
+  }
+
+  /* Brand compact: no divider on mobile to prevent overlay halos */
+  .brand {
+    gap: 8px;
+    padding-right: 8px;
+    margin-right: 0;
+    border-right: 0;
+  }
+  .brand__logo { width: 36px; height: 36px; }
+  .brand__title { font-size: 16px; line-height: 1; }
+  .brand__sub { display: none; } /* hide "Official Association" on phones */
+
+  /* Center menu: force-hide everything on mobile */
+  .primary,
+  .primary__list,
+  .primary .nav-item {
+    display: none !important;
+  }
+
+  /* CTAs: smaller pills so both fit without wrapping */
+  .cta {
+    gap: 8px;
+    white-space: nowrap;
+    justify-self: end;
+  }
+  .cta .btn {
+    height: 40px;
+    padding: 0 12px;
+  }
+  /* Make "Sign In" a lighter, smaller pill so it doesn't collide */
+  .cta .btn--ghost {
+    padding: 0 10px;
+    background: rgba(0,0,0,.06);
+  }
+}
+
 }
