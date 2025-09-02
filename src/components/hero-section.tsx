@@ -55,7 +55,7 @@ export function HeroSection() {
       <section
         ref={containerRef}
         id="home-hero"
-        className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-900"
+        className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-900 pt-14"
       >
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
