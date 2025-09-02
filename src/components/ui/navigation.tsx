@@ -270,28 +270,36 @@ export function Navigation({ className }: NavigationProps) {
       {/* ===== Mobile header (new) ===== */}
       <div className="md:hidden">
         <div className="flex h-14 items-center justify-between px-3">
-          <div className="flex items-center">
+          <div className="flex items-center mobile-header-container">
             <NavLink to="/" className="flex items-center gap-2" aria-label="Home">
-              <img src={logo} alt="TTS" className="h-9 w-9 rounded-md object-contain" />
-              <span className="text-base font-bold tracking-tight">TTS</span>
-            </NavLink>
-            <NavLink
-              to="/signup"
-              className="ml-2 inline-flex h-9 items-center rounded-full bg-[var(--brandGreen)] px-3 text-sm font-semibold text-white"
-            >
-              Join
+              <img src={logo} alt="Table Tennis Saskatchewan" className="h-9 w-9 rounded-md object-contain" />
+              <span className="text-base font-bold tracking-tight text-sm mobile-header-text">Table Tennis Saskatchewan</span>
             </NavLink>
           </div>
 
-          <button
-            aria-label="Open menu"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100"
-            onClick={() => setMobileOpen(true)}
-          >
-            <svg className="h-6 w-6" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            <NavLink
+              to="/auth/sign-in"
+              className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-3 text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors"
+            >
+              Log In
+            </NavLink>
+            <NavLink
+              to="/membership"
+              className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-3 text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors"
+            >
+              Join
+            </NavLink>
+            <button
+              aria-label="Open menu"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100"
+              onClick={() => setMobileOpen(true)}
+            >
+              <svg className="h-6 w-6" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <MobileMenu open={mobileOpen} onOpenChange={setMobileOpen} />

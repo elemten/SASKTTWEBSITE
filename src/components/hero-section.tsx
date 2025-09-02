@@ -127,7 +127,7 @@ export function HeroSection() {
                 className="inline-block"
               >
                 <Badge className="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300 text-base font-semibold tracking-wide">
-                  🏆 Table Tennis Saskatchewan
+                  Table Tennis Saskatchewan
                 </Badge>
               </motion.div>
 
@@ -141,7 +141,7 @@ export function HeroSection() {
                 <h1 className="text-5xl sm:text-6xl lg:text-8xl xl:text-9xl font-black text-white leading-[0.9] tracking-tight">
                   Elevate Your
                   <br />
-                  <span className="bg-gradient-primary bg-clip-text text-transparent">
+                  <span className="text-[var(--tt-green-vibrant)]">
                     Table Tennis
                   </span>
                   <br />

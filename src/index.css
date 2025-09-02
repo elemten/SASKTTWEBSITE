@@ -62,16 +62,16 @@ Inspired by Apple's design language with colors derived from the TTS logo
   --radius-xl: 2rem;
 
   /* Glass & shadows */
-  --glass-bg: 255 255 255 / 0.8;
-  --glass-border: 255 255 255 / 0.2;
+
+
   --shadow-soft: 0 4px 24px -1px hsl(0 0% 0% / 0.06);
   --shadow-medium: 0 8px 32px -4px hsl(0 0% 0% / 0.1);
   --shadow-strong: 0 16px 48px -8px hsl(0 0% 0% / 0.15);
 
   /* Animation timings */
-  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+
+
 
   /* Sidebar system */
   --sidebar-background: 0 0% 99%;
@@ -87,7 +87,7 @@ Inspired by Apple's design language with colors derived from the TTS logo
   --navH: 56px;
   --navFS: 14px;   /* slightly smaller labels */
   --navPadX: 10px; /* tighter pill padding */
-  --navGap: 12px;
+
   --pillR: 999px;
 
   /* brand tokens (match existing UI) */
@@ -487,10 +487,10 @@ html, body {
    Utilities & Performance
    ========================= */
 @layer utilities {
-  .gpu-accelerated { transform: translateZ(0); will-change: transform; backface-visibility: hidden; perspective: 1000px; }
-  .no-layout-shift { contain: layout style paint; }
-  .smooth-scroll { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
-  .performance-container { contain: layout style paint; will-change: transform; }
+
+
+
+
   .animate-gpu { transform: translateZ(0); will-change: transform, opacity; backface-visibility: hidden; }
 
   .hover-optimized {
@@ -523,7 +523,7 @@ html, body {
   /* Low-end device optimizations */
   @media (max-width: 480px) {
     *, *::before, *::after { animation: none !important; transition: none !important; transform: none !important; }
-    .animate-gpu, .gpu-accelerated { will-change: auto !important; }
+    .animate-gpu { will-change: auto !important; }
     .shadow-soft, .shadow-medium, .shadow-strong, .shadow-lg, .shadow-xl { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important; }
   }
 
@@ -534,7 +534,7 @@ html, body {
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
-    .animate-gpu, .gpu-accelerated { transform: none !important; will-change: auto !important; }
+    .animate-gpu { transform: none !important; will-change: auto !important; }
   }
 
   /* Enhanced text readability on dark backgrounds (hero) */
@@ -551,9 +551,7 @@ html, body {
     }
   }
 
-  .animate-60fps { transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1); }
-  .animate-smooth-enter { transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-  .animate-smooth-exit  { transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
 }
 
 /* =========================
@@ -563,6 +561,8 @@ html, body {
   :root {
     --tt-green: #0b7d59;
     --tt-green-dark: #0a6e50;
+    --tt-green-vibrant: #16a34a;
+    --tt-green-vibrant-dark: #15803d;
   }
 
   #home-hero {
@@ -596,6 +596,30 @@ html, body {
   .brand__logo { width: 36px; height: 36px; }
   .brand__title { font-size: 16px; line-height: 1; }
   .brand__sub { display: none; } /* hide "Official Association" on phones */
+  
+  /* Mobile header text sizing to prevent overflow */
+  .mobile-header-text {
+    font-size: clamp(10px, 2.5vw, 14px);
+    line-height: 1.2;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Ensure mobile header layout is stable */
+  .mobile-header-container {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+  
+  /* Prevent text from breaking layout on very small screens */
+  @media (max-width: 360px) {
+    .mobile-header-text {
+      font-size: 10px;
+      max-width: 100px;
+    }
+  }
 
   /* Center menu: force-hide everything on mobile */
   .primary,
@@ -620,6 +644,7 @@ html, body {
     background: rgba(0,0,0,.06);
   }
 }
+
 }
 /* path: src/index.css  (APPEND AT END) */
 /* ===== MOBILE NAV OVERRIDES (do not alter desktop) ===== */

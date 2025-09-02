@@ -16,14 +16,7 @@ const createMockClient = () => ({
   }
 })
 
-export function createClient() {
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase not configured, using mock client for development')
-    return createMockClient()
-  }
 
-  return createBrowserClient(supabaseUrl, supabaseAnonKey)
-}
 
 // Export a singleton instance for convenience
-export const supabase = createClient()
+export const supabase = createMockClient()

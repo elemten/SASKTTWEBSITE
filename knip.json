@@ -1,0 +1,30 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/pages/**/*.tsx",
+    "src/components/**/*.tsx"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "public/**/*",
+    "src/assets/**/*"
+  ],
+  "ignoreDependencies": [
+    "@types/*",
+    "typescript",
+    "eslint*",
+    "postcss*",
+    "tailwindcss*",
+    "autoprefixer",
+    "vite*",
+    "rollup*"
+  ],
+  "ignoreBinaries": [
+    "vite",
+    "tsc",
+    "eslint"
+  ],
+  "ignoreWorkspaces": []
+}
