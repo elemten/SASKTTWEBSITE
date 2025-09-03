@@ -210,26 +210,7 @@ export function HeroSection() {
                 </motion.div>
               </motion.div>
 
-              {/* Trust Indicators */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 1.0 }}
-                className="flex flex-wrap justify-center lg:justify-start gap-6 pt-8 text-white"
-              >
-                <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  <span className="text-sm font-medium">1800+ Members</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Award className="h-5 w-5" />
-                  <span className="text-sm font-medium">23 Clubs</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  <span className="text-sm font-medium">80+ Events</span>
-                </div>
-              </motion.div>
+
             </motion.div>
 
             {/* Right Visual Side */}
@@ -264,7 +245,7 @@ export function HeroSection() {
                     aria-label="Neon table tennis paddle"
                     focusable="false"
                     pointer-events="none"
-                    className="drop-shadow-2xl"
+                     className="drop-shadow-2xl"
                   >
                     <defs>
                       {/* Neon Glow Filter */}
@@ -312,11 +293,17 @@ export function HeroSection() {
                       className="grid grid-cols-2 gap-6 mb-4"
                     >
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-white drop-shadow-lg">600+</div>
+                        <div className="flex items-center justify-center gap-2 mb-1">
+                          <Users className="h-4 w-4 text-white drop-shadow-lg" />
+                          <div className="text-2xl font-bold text-white drop-shadow-lg">600+</div>
+                        </div>
                         <div className="text-xs text-white drop-shadow-lg">Members</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-white drop-shadow-lg">12</div>
+                        <div className="flex items-center justify-center gap-2 mb-1">
+                          <Award className="h-4 w-4 text-white drop-shadow-lg" />
+                          <div className="text-2xl font-bold text-white drop-shadow-lg">12</div>
+                        </div>
                         <div className="text-xs text-white drop-shadow-lg">Clubs</div>
                       </div>
                     </motion.div>
@@ -327,7 +314,10 @@ export function HeroSection() {
                       transition={{ delay: 1.4, type: "spring", stiffness: 200 }}
                       className="text-center"
                     >
-                      <div className="text-2xl font-bold text-white drop-shadow-lg">50+</div>
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        <Target className="h-4 w-4 text-white drop-shadow-lg" />
+                        <div className="text-2xl font-bold text-white drop-shadow-lg">50+</div>
+                      </div>
                       <div className="text-xs text-white drop-shadow-lg">Events</div>
                     </motion.div>
                   </div>
