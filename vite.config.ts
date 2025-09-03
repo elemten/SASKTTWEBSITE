@@ -27,12 +27,13 @@ export default defineConfig(({ mode, command }) => ({
     },
     dedupe: ["react", "react-dom"],
   },
-  optimizeDeps: {
+   optimizeDeps: {
     include: [
       "react", 
       "react-dom", 
       "react/jsx-runtime",
-      "react-dom/client"
+      "react-dom/client",
+      "scheduler"
     ],
     exclude: [],
     esbuildOptions: {
@@ -54,15 +55,20 @@ export default defineConfig(({ mode, command }) => ({
       output: {
         globals: {},
         manualChunks: (id) => {
-          // Core React libraries - strict isolation
+          // Core React libraries - strict isolation including scheduler
           if (id.includes('node_modules/react/index.js') || 
               id.includes('node_modules/react/cjs/') ||
-              id.includes('node_modules/react/umd/')) {
+              id.includes('node_modules/react/umd/') ||
+              id.includes('node_modules/react/') && !id.includes('node_modules/react-')) {
             return 'react-vendor';
           }
           if (id.includes('node_modules/react-dom/') && 
               !id.includes('node_modules/react-dom-') &&
               !id.includes('node_modules/react-dnd')) {
+            return 'react-vendor';
+          }
+          // Include scheduler with React
+          if (id.includes('node_modules/scheduler/')) {
             return 'react-vendor';
           }
           // UI libraries (Radix, shadcn)
