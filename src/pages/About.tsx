@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, Trophy, Heart, Target, Award, Globe } from "lucide-react";
 import { Sitemap } from "@/components/sitemap";
 import { Navigation } from "@/components/ui/navigation";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 const values = [
   {
@@ -83,6 +84,7 @@ export default function About() {
   return (
     <div className="min-h-screen">
       <Navigation />
+      <Breadcrumbs />
       {/* Hero Section */}
       <section className="py-20 bg-gradient-subtle">
         <div className="container mx-auto px-6">

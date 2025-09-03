@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import MobileMenu from "./MobileMenu";
 
 interface NavigationProps {
@@ -52,16 +52,9 @@ const navigationItems = [
 export function Navigation({ className }: NavigationProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Close dropdowns on outside click
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest(".has-dropdown")) {
-        setOpenDropdown(null);
-      }
-    };
-
     // Close dropdowns on Esc
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -69,17 +62,27 @@ export function Navigation({ className }: NavigationProps) {
       }
     };
 
-    document.addEventListener('click', handleClick);
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('click', handleClick);
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
-  const toggleDropdown = (href: string) => {
-    setOpenDropdown(openDropdown === href ? null : href);
+  const handleMouseEnter = (href: string) => {
+    // Clear any pending close timeout
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
+    }
+    setOpenDropdown(href);
+  };
+
+  const handleMouseLeave = () => {
+    // Small delay to prevent accidental closing when moving between button and dropdown
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setOpenDropdown(null);
+    }, 150);
   };
 
   return (
@@ -115,11 +118,14 @@ export function Navigation({ className }: NavigationProps) {
             </li>
 
             {/* About Dropdown */}
-            <li className="has-dropdown">
+            <li 
+              className="has-dropdown"
+              onMouseEnter={() => handleMouseEnter('/about')}
+              onMouseLeave={handleMouseLeave}
+            >
               <button
                 className="nav-item nav-item--trigger"
                 aria-expanded={openDropdown === '/about'}
-                onClick={() => toggleDropdown('/about')}
               >
                 About Us <span className="chev" />
               </button>
@@ -129,6 +135,8 @@ export function Navigation({ className }: NavigationProps) {
                   openDropdown === '/about' && "dropdown--open"
                 )}
                 role="menu"
+                onMouseEnter={() => handleMouseEnter('/about')}
+                onMouseLeave={handleMouseLeave}
               >
                 <NavLink to="/about/history-mission" className="dropdown__item">
                   History &amp; Mission
@@ -146,11 +154,14 @@ export function Navigation({ className }: NavigationProps) {
             </li>
 
             {/* Services Dropdown */}
-            <li className="has-dropdown">
+            <li 
+              className="has-dropdown"
+              onMouseEnter={() => handleMouseEnter('/membership')}
+              onMouseLeave={handleMouseLeave}
+            >
               <button
                 className="nav-item nav-item--trigger"
                 aria-expanded={openDropdown === '/membership'}
-                onClick={() => toggleDropdown('/membership')}
               >
                 Services <span className="chev" />
               </button>
@@ -160,6 +171,8 @@ export function Navigation({ className }: NavigationProps) {
                   openDropdown === '/membership' && "dropdown--open"
                 )}
                 role="menu"
+                onMouseEnter={() => handleMouseEnter('/membership')}
+                onMouseLeave={handleMouseLeave}
               >
                 <NavLink to="/membership" className="dropdown__item">
                   Membership
@@ -180,11 +193,14 @@ export function Navigation({ className }: NavigationProps) {
             </li>
 
             {/* Training Dropdown */}
-            <li className="has-dropdown">
+            <li 
+              className="has-dropdown"
+              onMouseEnter={() => handleMouseEnter('/play/training')}
+              onMouseLeave={handleMouseLeave}
+            >
               <button
                 className="nav-item nav-item--trigger"
                 aria-expanded={openDropdown === '/play/training'}
-                onClick={() => toggleDropdown('/play/training')}
               >
                 Training <span className="chev" />
               </button>
@@ -194,6 +210,8 @@ export function Navigation({ className }: NavigationProps) {
                   openDropdown === '/play/training' && "dropdown--open"
                 )}
                 role="menu"
+                onMouseEnter={() => handleMouseEnter('/play/training')}
+                onMouseLeave={handleMouseLeave}
               >
                 <NavLink to="/play/training" className="dropdown__item">
                   Training Programs

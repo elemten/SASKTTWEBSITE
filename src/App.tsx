@@ -14,6 +14,7 @@ const Events = lazy(() => import("./pages/Events"));
 const About = lazy(() => import("./pages/About"));
 const Admin = lazy(() => import("./pages/Admin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const FAQ = lazy(() => import("./pages/FAQ"));
 
 // Secondary pages
 const Clubs = lazy(() => import("./pages/Clubs"));
@@ -189,6 +190,7 @@ const App = () => {
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
 
                 {/* Auth routes */}
                 <Route path="/auth/sign-in" element={<SignIn />} />
