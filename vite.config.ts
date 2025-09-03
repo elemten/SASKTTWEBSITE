@@ -28,9 +28,14 @@ export default defineConfig(({ mode, command }) => ({
     dedupe: ["react", "react-dom"],
   },
   build: {
-    target: "es2019",
+    target: "es2017",
     minify: "esbuild",
     sourcemap: false,
+    chunkSizeWarningLimit: 1000,
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -62,8 +67,27 @@ export default defineConfig(({ mode, command }) => ({
           if (id.includes('node_modules/lucide-react')) {
             return 'icons';
           }
-          // Other vendor dependencies
+          // Utilities and misc
+          if (id.includes('node_modules/date-fns') || 
+              id.includes('node_modules/clsx') || 
+              id.includes('node_modules/class-variance-authority') || 
+              id.includes('node_modules/tailwind-merge')) {
+            return 'utils';
+          }
+          // Supabase
+          if (id.includes('node_modules/@supabase')) {
+            return 'supabase';
+          }
+          // Other vendor dependencies - more specific grouping
           if (id.includes('node_modules/')) {
+            // Group by package type to avoid circular dependencies
+            if (id.includes('node_modules/embla') || id.includes('node_modules/react-dnd')) {
+              return 'ui-extras';
+            }
+            if (id.includes('node_modules/sonner')) {
+              return 'notifications';
+            }
+            // Default vendor chunk for remaining packages
             return 'vendor';
           }
         },
