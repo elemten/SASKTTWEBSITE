@@ -28,7 +28,7 @@ const staffMembers = [
     bgColor: "bg-green-50"
   },
   {
-    name: "Huaifa Ishaq",
+    name: "Huzaifa Ishaq",
     title: "Office Administrator", 
     email: "info@ttsask.ca",
     icon: Briefcase,
@@ -46,10 +46,10 @@ const boardMembers = [
     bgColor: "bg-green-50"
   },
   {
-    name: "Attila Anyos",
-    title: "VP Marketing",
-    icon: TrendingUp,
-    color: "text-green-600",
+    name: "Murray Sproule",
+    title: "VP Finance",
+    icon: DollarSign,
+    color: "text-green-700",
     bgColor: "bg-green-50"
   },
   {
@@ -60,11 +60,12 @@ const boardMembers = [
     bgColor: "bg-green-50"
   },
   {
-    name: "Murray Sproule",
-    title: "VP Finance",
-    icon: DollarSign,
-    color: "text-green-700",
+    name: "Attila Anyos",
+    title: "VP Marketing",
+    icon: TrendingUp,
+    color: "text-green-600",
     bgColor: "bg-green-50"
+        
   },
   {
     name: "Phil Duke",
@@ -121,19 +122,19 @@ const agmDocuments = [
   {
     title: "2023-2024 AGM Minutes",
     year: "2023-2024",
-    url: "#", // Replace with actual PDF URL
+    url: "/documents/agm/2023-2024-agm-minutes.pdf",
     color: "text-green-600"
   },
   {
     title: "2022-2023 AGM Minutes",
     year: "2022-2023", 
-    url: "#", // Replace with actual PDF URL
+    url: "/documents/agm/2022-2023-agm-minutes.pdf",
     color: "text-green-700"
   },
   {
     title: "2021-2022 AGM Minutes",
     year: "2021-2022",
-    url: "#", // Replace with actual PDF URL
+    url: "/documents/agm/2021-2022-agm-minutes.pdf",
     color: "text-green-600"
   }
 ];
@@ -173,24 +174,26 @@ const StaffBoard = () => {
       </section>
 
       {/* Staff Section */}
-      <section className="py-16 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-16"
           >
-            <div className="flex items-center justify-center mb-4">
-              <Briefcase className="h-8 w-8 text-green-600 mr-3" />
-              <h2 className="text-3xl font-bold">Staff</h2>
+            <div className="flex items-center justify-center mb-6">
+              <div className="p-3 bg-green-100 rounded-2xl text-green-700 mr-4 shadow-md">
+                <Briefcase className="h-8 w-8" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Staff</h2>
             </div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Our professional staff members who manage daily operations and programs
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {staffMembers.map((member, index) => (
               <motion.div
                 key={member.name}
@@ -198,27 +201,28 @@ const StaffBoard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="h-full hover:shadow-lg transition-all duration-300 group">
-                  <CardHeader className="text-center pb-4">
-                    <div className={`mx-auto w-16 h-16 rounded-full ${member.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <member.icon className={`h-8 w-8 ${member.color}`} />
+                <Card className="h-full hover:shadow-xl transition-all duration-300 group border-0 bg-white/80 backdrop-blur-sm shadow-lg">
+                  <CardHeader className="text-center pb-6">
+                    <div className={`mx-auto w-20 h-20 rounded-2xl ${member.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-md`}>
+                      <member.icon className={`h-10 w-10 ${member.color}`} />
                     </div>
-                    <CardTitle className="text-lg font-semibold">
+                    <CardTitle className="text-2xl font-bold text-gray-900 mb-3 text-center">
                       {member.name}
                     </CardTitle>
-                    <Badge variant="secondary" className="text-sm">
+                    <Badge variant="secondary" className="text-sm px-4 py-2 bg-green-100 text-green-800 border-green-200 text-center">
                       {member.title}
                     </Badge>
                   </CardHeader>
                   <CardContent className="pt-0 text-center">
-                    <Button 
+                    <div 
                       onClick={() => handleEmailClick(member.email)}
-                      variant="outline"
-                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300"
+                      className="w-full p-3 border border-gray-300 rounded-xl bg-white hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer relative"
                     >
-                      <Mail className="h-4 w-4 mr-2" />
-                      {member.email}
-                    </Button>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Mail className="h-5 w-5 mr-2" />
+                        <span>{member.email}</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -228,24 +232,26 @@ const StaffBoard = () => {
       </section>
 
       {/* Board Section */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-16"
           >
-            <div className="flex items-center justify-center mb-4">
-              <Users className="h-8 w-8 text-green-600 mr-3" />
-              <h2 className="text-3xl font-bold">Board of Directors</h2>
+            <div className="flex items-center justify-center mb-6">
+              <div className="p-3 bg-green-100 rounded-2xl text-green-700 mr-4 shadow-md">
+                <Users className="h-8 w-8" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Board of Directors</h2>
             </div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Our volunteer board members who provide strategic leadership and governance
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {boardMembers.map((member, index) => (
               <motion.div
                 key={member.name}
@@ -253,13 +259,13 @@ const StaffBoard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.05 }}
               >
-                <Card className="h-full hover:shadow-md transition-all duration-300 group">
-                  <CardContent className="p-4 text-center">
-                    <div className={`mx-auto w-12 h-12 rounded-full ${member.bgColor} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                      <member.icon className={`h-6 w-6 ${member.color}`} />
+                <Card className="h-full hover:shadow-lg transition-all duration-300 group border-0 bg-white/80 backdrop-blur-sm shadow-md">
+                  <CardContent className="p-6 text-center">
+                    <div className={`mx-auto w-16 h-16 rounded-2xl ${member.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-md`}>
+                      <member.icon className={`h-8 w-8 ${member.color}`} />
                     </div>
-                    <h3 className="font-semibold text-sm mb-1">{member.name}</h3>
-                    <Badge variant="outline" className="text-xs">
+                    <h3 className="font-bold text-lg mb-3 text-gray-900">{member.name}</h3>
+                    <Badge variant="outline" className="text-sm bg-green-50 text-green-700 border-green-200 px-3 py-1">
                       {member.title}
                     </Badge>
                   </CardContent>
@@ -271,24 +277,26 @@ const StaffBoard = () => {
       </section>
 
       {/* AGM Documents */}
-      <section className="py-16 bg-slate-100">
+      <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-16"
           >
-            <div className="flex items-center justify-center mb-4">
-              <Calendar className="h-8 w-8 text-green-600 mr-3" />
-              <h2 className="text-3xl font-bold">Activities</h2>
+            <div className="flex items-center justify-center mb-6">
+              <div className="p-3 bg-green-100 rounded-2xl text-green-700 mr-4 shadow-md">
+                <Calendar className="h-8 w-8" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Activities</h2>
             </div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Annual General Meeting minutes and organizational activities
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {agmDocuments.map((doc, index) => (
               <motion.div
                 key={doc.title}
@@ -296,15 +304,15 @@ const StaffBoard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                  <CardHeader className="text-center pb-4">
-                    <div className="mx-auto w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <FileText className={`h-8 w-8 ${doc.color}`} />
+                <Card className="h-full hover:shadow-xl transition-all duration-300 cursor-pointer group border-0 bg-white/80 backdrop-blur-sm shadow-lg">
+                  <CardHeader className="text-center pb-6">
+                    <div className="mx-auto w-20 h-20 rounded-2xl bg-green-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-md">
+                      <FileText className="h-10 w-10 text-green-600" />
                     </div>
-                    <CardTitle className="text-lg font-semibold text-center">
+                    <CardTitle className="text-xl font-bold text-gray-900 mb-3">
                       AGM Minutes
                     </CardTitle>
-                    <Badge variant="secondary">
+                    <Badge variant="secondary" className="text-sm px-4 py-2 bg-green-100 text-green-800 border-green-200">
                       {doc.year}
                     </Badge>
                   </CardHeader>
@@ -312,9 +320,10 @@ const StaffBoard = () => {
                     <Button 
                       onClick={() => handleDocumentClick(doc.url)}
                       variant="outline"
-                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300"
+                      size="lg"
+                      className="w-full group-hover:bg-green-600 group-hover:text-white group-hover:border-green-600 transition-all duration-300 shadow-md hover:shadow-lg"
                     >
-                      <Download className="h-4 w-4 mr-2" />
+                      <Download className="h-5 w-5 mr-2" />
                       View Minutes
                     </Button>
                   </CardContent>
@@ -322,7 +331,7 @@ const StaffBoard = () => {
               </motion.div>
             ))}
           </div>
-      </div>
+        </div>
       </section>
 
       <Footer />

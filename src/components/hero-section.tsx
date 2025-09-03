@@ -6,6 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { ArrowRight, Trophy, UserPlus, Zap, Play, Target, Award, Users } from "lucide-react";
 import { isMobile } from "@/lib/performance-utils";
+import NeonPlayer from "./hero/NeonPlayer";
+import StatChip from "./hero/StatChip";
+import Sparkles from "./hero/Sparkles";
 
 const heroCards = [
   {
@@ -110,7 +113,7 @@ export function HeroSection() {
           style={{ y }}
           className="relative z-10 container mx-auto px-6 lg:px-8"
         >
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[80vh]">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-8 items-center min-h-[80vh]">
 
             {/* Left Content Side */}
             <motion.div
@@ -213,119 +216,93 @@ export function HeroSection() {
 
             </motion.div>
 
-            {/* Right Visual Side */}
+            {/* Right Side - Neon Player Hero */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8, x: 50 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ duration: 1.0, delay: 0.6, ease: "easeOut" }}
-              className="relative hidden lg:block"
+              className="relative block"
             >
-
-              {/* Animated Table Tennis Paddle */}
-                              <motion.div
-                  animate={{
-                    rotate: [15, -15, 15],
-                  }}
-                  transition={{
-                    duration: 6,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="relative z-10 flex items-center justify-center"
+              {/* Neon Player Hero Container */}
+              <div className="relative w-full h-[500px] flex items-center justify-center">
+                
+                {/* Neon Player with Float Animation */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 1.0 }}
+                  className="relative z-10"
                 >
-                {/* Custom Table Tennis Paddle SVG */}
-                <div className="relative">
-                  <svg
-                    width="300"
-                    height="400"
-                    viewBox="0 0 300 400"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    role="img"
-                    aria-label="Neon table tennis paddle"
-                    focusable="false"
-                    pointer-events="none"
-                     className="drop-shadow-2xl"
-                  >
-                    <defs>
-                      {/* Neon Glow Filter */}
-                      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
-                        <feMerge>
-                          <feMergeNode in="blur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                    </defs>
+                  <NeonPlayer className="w-full max-w-[560px] mx-auto lg:mx-0 motion-safe:animate-float-slow" />
+                </motion.div>
 
-                    {/* Paddle Handle */}
-                    <rect
-                      x="125"
-                      y="280"
-                      width="50"
-                      height="100"
-                      rx="25"
-                      fill="#39FF14"
-                      stroke="#FFFFFF"
-                      strokeWidth="3"
-                      filter="url(#glow)"
-                    />
-                    
-                    {/* Paddle Blade */}
-                    <ellipse
-                      cx="150"
-                      cy="140"
-                      rx="120"
-                      ry="140"
-                      fill="#39FF14"
-                      stroke="#FFFFFF"
-                      strokeWidth="4"
-                      filter="url(#glow)"
-                    />
-                  </svg>
+                {/* Sparkles Layer */}
+                <Sparkles className="absolute inset-0 pointer-events-none" count={32} />
 
-                  {/* Stats positioned on the paddle */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                {/* Statistics Chips */}
+                
+                {/* 600+ Members - Left of player */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0, x: -50 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 1.2, type: "spring", stiffness: 200 }}
+                  className="absolute left-8 top-32 z-20 lg:left-4 lg:top-28 xl:left-8 xl:top-32"
+                >
+                  <StatChip value="600+" label="Members" icon={<Users className="h-5 w-5" />} />
+                </motion.div>
+
+                {/* 12 Clubs - Above player's head */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0, y: -50 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.4, type: "spring", stiffness: 200 }}
+                  className="absolute right-16 top-8 z-20 lg:right-12 lg:top-6 xl:right-16 xl:top-8"
+                >
+                  <StatChip value="12" label="Clubs" icon={<Award className="h-5 w-5" />} />
+                </motion.div>
+
+                {/* 50+ Events - Below player's legs */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0, y: 50 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.6, type: "spring", stiffness: 200 }}
+                  className="absolute left-16 bottom-8 z-20 lg:left-12 lg:bottom-6 xl:left-16 xl:bottom-8"
+                >
+                  <StatChip value="50+" label="Events" icon={<Target className="h-5 w-5" />} />
+                </motion.div>
+
+
+
+                {/* Animated Background Particles */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  {[...Array(8)].map((_, i) => (
                     <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-                      className="grid grid-cols-2 gap-6 mb-4"
-                    >
-                      <div className="text-center">
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <Users className="h-4 w-4 text-white drop-shadow-lg" />
-                          <div className="text-2xl font-bold text-white drop-shadow-lg">600+</div>
-                        </div>
-                        <div className="text-xs text-white drop-shadow-lg">Members</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <Award className="h-4 w-4 text-white drop-shadow-lg" />
-                          <div className="text-2xl font-bold text-white drop-shadow-lg">12</div>
-                        </div>
-                        <div className="text-xs text-white drop-shadow-lg">Clubs</div>
-                      </div>
-                    </motion.div>
-                    
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 1.4, type: "spring", stiffness: 200 }}
-                      className="text-center"
-                    >
-                      <div className="flex items-center justify-center gap-2 mb-1">
-                        <Target className="h-4 w-4 text-white drop-shadow-lg" />
-                        <div className="text-2xl font-bold text-white drop-shadow-lg">50+</div>
-                      </div>
-                      <div className="text-xs text-white drop-shadow-lg">Events</div>
-                    </motion.div>
-                  </div>
+                      key={i}
+                      animate={{
+                        x: [0, Math.random() * 100 - 50],
+                        y: [0, Math.random() * 100 - 50],
+                        opacity: [0.3, 0.8, 0.3],
+                      }}
+                      transition={{
+                        duration: 3 + Math.random() * 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: Math.random() * 2,
+                      }}
+                      className="absolute w-2 h-2 bg-[#39FF14] rounded-full opacity-30"
+                      style={{
+                        left: `${20 + Math.random() * 60}%`,
+                        top: `${20 + Math.random() * 60}%`,
+                      }}
+                    />
+                  ))}
                 </div>
-              </motion.div>
+              </div>
 
-              {/* Feature Highlights */}
-              <div className="space-y-4 mt-8">
+
+
+              {/* Desktop Feature Highlights */}
+              <div className="hidden lg:block space-y-4 mt-8">
                   {[
                     { icon: Trophy, text: "Provincial Championships" },
                     { icon: Users, text: "Expert Coaching" },

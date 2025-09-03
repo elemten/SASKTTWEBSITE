@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Component, ReactNode, Suspense, lazy, useEffect } from "react";
 import { PageLoadingFallback } from "@/components/ui/loading-spinner";
 import { isLowEndMobile } from "@/lib/performance-utils";
@@ -13,7 +13,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Membership = lazy(() => import("./pages/Membership"));
 const GetStarted = lazy(() => import("./pages/GetStarted"));
 const Events = lazy(() => import("./pages/Events"));
-const About = lazy(() => import("./pages/About"));
+
 const Admin = lazy(() => import("./pages/Admin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const FAQ = lazy(() => import("./pages/FAQ"));
@@ -24,7 +24,6 @@ const Clubs = lazy(() => import("./pages/Clubs"));
 const ClubRegistration = lazy(() => import("./pages/ClubRegistration"));
 const Coaching = lazy(() => import("./pages/Coaching"));
 const Officials = lazy(() => import("./pages/Officials"));
-const Resources = lazy(() => import("./pages/Resources"));
 const Gallery = lazy(() => import("./pages/Gallery"));
 const Contact = lazy(() => import("./pages/Contact"));
 
@@ -41,11 +40,7 @@ const PlayTraining = lazy(() => import("./pages/play/Training"));
 const PlayAdvancedPara = lazy(() => import("./pages/play/AdvancedPara"));
 const PlayClinics = lazy(() => import("./pages/play/Clinics"));
 
-// Auth pages
-const SignIn = lazy(() => import("./pages/auth/sign-in"));
-const AuthCallback = lazy(() => import("./pages/auth/callback"));
-const Forbidden = lazy(() => import("./pages/auth/forbidden"));
-const SignOut = lazy(() => import("./pages/auth/sign-out"));
+// Auth pages - REMOVED
 
 // Error boundary for lazy routes
 class ErrorBoundary extends Component<
@@ -185,7 +180,7 @@ const App = () => {
                 <Route path="/get-started" element={<GetStarted />} />
                 <Route path="/events" element={<Events />} />
 
-                <Route path="/about" element={<About />} />
+                <Route path="/about" element={<Navigate to="/about/history-mission" replace />} />
                 {/* About subsections */}
                 <Route path="/about/history-mission" element={<AboutHistoryMission />} />
                 <Route path="/about/staff-board" element={<AboutStaffBoard />} />
@@ -200,7 +195,6 @@ const App = () => {
                 <Route path="/clubs/register" element={<ClubRegistration />} />
                 <Route path="/coaching" element={<Coaching />} />
                 <Route path="/officials" element={<Officials />} />
-                <Route path="/resources" element={<Resources />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQ />} />
@@ -208,12 +202,7 @@ const App = () => {
                 {/* Coming Soon page for auth features */}
                 <Route path="/coming-soon" element={<ComingSoon />} />
 
-                {/* Auth routes - ALL temporarily redirected to Coming Soon */}
-                {/* This ensures no one can access the old auth pages */}
-                <Route path="/auth/sign-in" element={<ComingSoon />} />
-                <Route path="/auth/callback" element={<ComingSoon />} />
-                <Route path="/auth/forbidden" element={<ComingSoon />} />
-                <Route path="/auth/sign-out" element={<ComingSoon />} />
+                {/* Auth routes - REMOVED */}
 
                 <Route path="/admin" element={<Admin />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

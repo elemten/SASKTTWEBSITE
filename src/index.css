@@ -490,8 +490,19 @@ html, body {
    ========================= */
 @layer utilities {
 
+  /* Neon Player Hero Animations */
+  @keyframes twinkle { 
+    0%, 100% { opacity: 0.25 } 
+    50% { opacity: 1 } 
+  }
 
+  @keyframes float { 
+    0%, 100% { transform: translateY(0) } 
+    50% { transform: translateY(-6px) } 
+  }
 
+  .twinkle { animation: twinkle 2.4s ease-in-out infinite; }
+  .float-slow { animation: float 8s ease-in-out infinite; }
 
   .animate-gpu { transform: translateZ(0); will-change: transform, opacity; backface-visibility: hidden; }
 

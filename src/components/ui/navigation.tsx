@@ -19,7 +19,7 @@ const navigationItems = [
       { href: "/about/history-mission", label: "History & Mission" },
       { href: "/about/staff-board", label: "Staff & Board" },
       { href: "/about/governance", label: "Governance" },
-      { href: "/about", label: "Our Story" },
+
     ]
   },
   {
@@ -149,9 +149,7 @@ export function Navigation({ className }: NavigationProps) {
                 <NavLink to="/about/governance" className="dropdown__item">
                   Governance
                 </NavLink>
-                <NavLink to="/about" className="dropdown__item">
-                  Our Story
-                </NavLink>
+
               </div>
             </li>
 

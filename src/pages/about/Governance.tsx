@@ -21,7 +21,7 @@ const governanceDocuments = [
     description: "Official bylaws and constitutional documents governing Table Tennis Saskatchewan",
     icon: Scale,
     type: "pdf",
-    url: "#", // Replace with actual PDF URL
+    url: "/documents/bylaws.pdf",
     color: "text-green-600"
   },
   {
@@ -29,7 +29,7 @@ const governanceDocuments = [
     description: "Comprehensive policies and procedures governing our operations and activities",
     icon: FileText,
     type: "pdf",
-    url: "#", // Replace with actual PDF URL
+    url: "/documents/policies.pdf",
     color: "text-green-600"
   },
   {
@@ -37,7 +37,7 @@ const governanceDocuments = [
     description: "Our commitment to creating a safe and inclusive environment for all participants",
     icon: Shield,
     type: "pdf",
-    url: "#", // Replace with actual PDF URL
+    url: "/documents/safe-sports.pdf",
     color: "text-green-700"
   },
   {
@@ -61,7 +61,7 @@ const governanceDocuments = [
     description: "Official statutes and governing documents from the International Table Tennis Federation",
     icon: BookOpen,
     type: "pdf",
-    url: "#", // Replace with actual PDF URL
+    url: "https://documents.ittf.sport/document/341",
     color: "text-green-600"
   },
   {
@@ -90,7 +90,7 @@ const Governance = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 text-white py-12 md:py-20">
+      <section className="bg-gradient-to-br from-green-950 via-green-900 to-green-800 text-white py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
