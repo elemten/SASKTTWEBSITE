@@ -281,7 +281,7 @@ export function Navigation({ className }: NavigationProps) {
           <NavLink to="/coming-soon" className="btn btn--ghost">
             Sign In
           </NavLink>
-          <NavLink to="/coming-soon" className="btn btn--primary">
+          <NavLink to="/get-started" className="btn btn--primary">
             Get Started
           </NavLink>
         </div>
@@ -307,7 +307,7 @@ export function Navigation({ className }: NavigationProps) {
               Log In
             </NavLink>
             <NavLink
-              to="/coming-soon"
+              to="/get-started"
               className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-2 sm:px-3 text-xs sm:text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors whitespace-nowrap"
             >
               Get Started
