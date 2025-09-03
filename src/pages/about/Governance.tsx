@@ -90,18 +90,18 @@ const Governance = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 text-white py-20">
-        <div className="container mx-auto px-6">
+      <section className="bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 text-white py-12 md:py-20">
+        <div className="container mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight">
               Governance & Policies
             </h1>
-            <p className="text-xl text-green-100 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-green-100 leading-relaxed px-2">
               Access our organizational documents, policies, and governance resources. 
               We maintain transparency and accountability through comprehensive documentation 
               and adherence to national and international standards.
