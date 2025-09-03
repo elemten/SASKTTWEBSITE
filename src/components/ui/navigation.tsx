@@ -145,8 +145,31 @@ export function Navigation({ className }: NavigationProps) {
                   Team Members
                 </NavLink>
                 <NavLink to="/about/governance" className="dropdown__item">
-                  Governance
+                  Governance Overview
                 </NavLink>
+                <div className="dropdown__divider"></div>
+                <NavLink to="/governance/bylaws" className="dropdown__item">
+                  Bylaws
+                </NavLink>
+                <NavLink to="/governance/policies-procedures" className="dropdown__item">
+                  Policies &amp; Procedures
+                </NavLink>
+                <NavLink to="/governance/safe-sport-policy" className="dropdown__item">
+                  Safe Sport Policy
+                </NavLink>
+                <NavLink to="/governance/table-tennis-canada" className="dropdown__item">
+                  Table Tennis Canada
+                </NavLink>
+                <NavLink to="/governance/ittf" className="dropdown__item">
+                  ITTF
+                </NavLink>
+                <NavLink to="/governance/ittf-statutes" className="dropdown__item">
+                  ITTF Statutes
+                </NavLink>
+                <NavLink to="/governance/report-complaint" className="dropdown__item">
+                  Report a Complaint
+                </NavLink>
+                <div className="dropdown__divider"></div>
                 <NavLink to="/about" className="dropdown__item">
                   Our Story
                 </NavLink>
