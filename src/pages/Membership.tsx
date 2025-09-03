@@ -37,8 +37,7 @@ const membershipFeatures = [
 
 export default function Membership() {
   const handleMembershipClick = () => {
-    // This will be replaced with actual Stripe link
-    console.log("Membership application clicked - Stripe link to be added");
+    window.open("https://buy.stripe.com/5kQ9AU2N0eeIcSCfFWf3a04", "_blank");
   };
 
   return (
