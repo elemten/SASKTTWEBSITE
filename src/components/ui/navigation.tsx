@@ -289,26 +289,26 @@ export function Navigation({ className }: NavigationProps) {
 
       {/* ===== Mobile header (new) ===== */}
       <div className="md:hidden">
-        <div className="flex h-14 items-center justify-between px-3">
+        <div className="flex h-14 items-center justify-between px-2 sm:px-3">
           <div className="flex items-center mobile-header-container">
-            <NavLink to="/" className="flex items-center gap-2" aria-label="Home">
+            <NavLink to="/" className="flex items-center gap-1 sm:gap-2" aria-label="Home">
               <div className="h-9 w-9 rounded-lg overflow-hidden shadow-medium bg-primary/20 flex items-center justify-center border border-primary/30">
                 <img src={logo} alt="Table Tennis Saskatchewan" className="h-full w-full object-contain" />
               </div>
-              <span className="text-base font-bold tracking-tight text-sm mobile-header-text">Table Tennis Saskatchewan</span>
+              <span className="text-xs sm:text-sm font-bold tracking-tight mobile-header-text">Table Tennis Saskatchewan</span>
             </NavLink>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <NavLink
               to="/auth/sign-in"
-              className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-3 text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors"
+              className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-2 sm:px-3 text-xs sm:text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors whitespace-nowrap"
             >
               Log In
             </NavLink>
             <NavLink
               to="/get-started"
-              className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-3 text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors"
+              className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-2 sm:px-3 text-xs sm:text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors whitespace-nowrap"
             >
               Get Started
             </NavLink>
