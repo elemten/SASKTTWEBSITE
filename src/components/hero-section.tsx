@@ -241,17 +241,17 @@ export function HeroSection() {
             >
 
               {/* Animated Table Tennis Paddle */}
-              <motion.div
-                animate={{
-                  rotate: [0, 360],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-                className="relative z-10 flex items-center justify-center"
-              >
+                              <motion.div
+                  animate={{
+                    rotate: [15, -15, 15],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="relative z-10 flex items-center justify-center"
+                >
                 {/* Custom Table Tennis Paddle SVG */}
                 <div className="relative">
                   <svg
@@ -260,8 +260,23 @@ export function HeroSection() {
                     viewBox="0 0 300 400"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    role="img"
+                    aria-label="Neon table tennis paddle"
+                    focusable="false"
+                    pointer-events="none"
                     className="drop-shadow-2xl"
                   >
+                    <defs>
+                      {/* Neon Glow Filter */}
+                      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+                        <feMerge>
+                          <feMergeNode in="blur"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                    </defs>
+
                     {/* Paddle Handle */}
                     <rect
                       x="125"
@@ -269,10 +284,10 @@ export function HeroSection() {
                       width="50"
                       height="100"
                       rx="25"
-                      fill="#00ff88"
-                      stroke="#00cc6a"
+                      fill="#39FF14"
+                      stroke="#FFFFFF"
                       strokeWidth="3"
-                      className="animate-pulse"
+                      filter="url(#glow)"
                     />
                     
                     {/* Paddle Blade */}
@@ -281,35 +296,10 @@ export function HeroSection() {
                       cy="140"
                       rx="120"
                       ry="140"
-                      fill="#00ff88"
-                      stroke="#00cc6a"
+                      fill="#39FF14"
+                      stroke="#FFFFFF"
                       strokeWidth="4"
-                      className="animate-pulse"
-                    />
-                    
-                    {/* Paddle Surface Details */}
-                    <ellipse
-                      cx="150"
-                      cy="140"
-                      rx="100"
-                      ry="120"
-                      fill="none"
-                      stroke="#00dd77"
-                      strokeWidth="2"
-                      strokeDasharray="8,4"
-                      className="opacity-70"
-                    />
-                    
-                    {/* Center grip texture */}
-                    <rect
-                      x="130"
-                      y="290"
-                      width="40"
-                      height="80"
-                      fill="none"
-                      stroke="#008844"
-                      strokeWidth="1"
-                      strokeDasharray="4,2"
+                      filter="url(#glow)"
                     />
                   </svg>
 
