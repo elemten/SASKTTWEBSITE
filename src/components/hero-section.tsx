@@ -443,9 +443,7 @@ export function HeroSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <Badge className="mb-6 px-6 py-2 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-all duration-300 font-semibold">
-                🚀 Explore Our Services
-              </Badge>
+             
             </motion.div>
             <h2 className="text-4xl lg:text-6xl font-black text-gray-900 mb-6">
               Everything You Need to
