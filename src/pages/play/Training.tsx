@@ -89,9 +89,9 @@ const Training = () => {
     window.location.href = "/membership";
   };
 
-  const handlePaymentClick = (groupId: string) => {
+  const handlePaymentClick = (groupId: string, type: 'yearly' | 'monthly') => {
     // Placeholder for Stripe payment links - will be replaced with actual URLs
-    console.log(`Payment for ${groupId} - Stripe link to be added`);
+    console.log(`Payment for ${groupId} - ${type} - Stripe link to be added`);
   };
 
   return (
@@ -230,14 +230,24 @@ const Training = () => {
                       </Button>
                     </div>
 
-                    {/* Registration Button */}
-                    <Button
-                      onClick={() => handlePaymentClick(group.id)}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Register Now
-                    </Button>
+                    {/* Registration Buttons */}
+                    <div className="space-y-3">
+                      <Button
+                        onClick={() => handlePaymentClick(group.id, 'yearly')}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        <CreditCard className="h-4 w-4 mr-2" />
+                        Join Us Yearly - ${group.pricing.annual}
+                      </Button>
+                      <Button
+                        onClick={() => handlePaymentClick(group.id, 'monthly')}
+                        variant="outline"
+                        className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                      >
+                        <CreditCard className="h-4 w-4 mr-2" />
+                        Join Us Monthly - ${group.pricing.monthly}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>

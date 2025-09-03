@@ -1,5 +1,5 @@
 // path: src/components/ui/MobileMenu.tsx
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 type Child = { label: string; href: string };
@@ -74,17 +74,33 @@ export default function MobileMenu({
   const firstFocusable = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const startX = useRef<number | null>(null);
+  const [openAccordions, setOpenAccordions] = useState<Set<number>>(new Set());
+
+  // Toggle accordion function
+  const toggleAccordion = (index: number) => {
+    setOpenAccordions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
 
   // Close on route change
   useEffect(() => {
     onOpenChange(false);
+    setOpenAccordions(new Set()); // Reset accordions when menu closes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // Ensure menu is closed on mount
+  // Ensure menu is closed on mount and reset accordions when menu closes
   useEffect(() => {
     if (!open) {
       onOpenChange(false);
+      setOpenAccordions(new Set()); // Reset accordions when menu closes
     }
   }, [open, onOpenChange]);
 
@@ -151,7 +167,7 @@ export default function MobileMenu({
           opacity: open ? 1 : 0,
           pointerEvents: open ? 'auto' : 'none'
         }}
-        className={`safe-top fixed right-0 top-0 z-[1001] h-[100dvh] w-[86vw] max-w-[380px] bg-white shadow-xl outline-none transition-transform md:hidden mobile-menu-container ${
+        className={`safe-top fixed right-0 top-0 z-[1001] h-[100dvh] w-[86vw] max-w-[380px] bg-white shadow-xl outline-none transition-transform md:hidden mobile-menu-container overflow-hidden flex flex-col ${
           open ? "translate-x-0" : "translate-x-full mobile-menu-hidden"
         }`}
         onKeyDown={handleKeyDown}
@@ -163,7 +179,7 @@ export default function MobileMenu({
           if (delta < -40) onOpenChange(false);
         }}
       >
-        <div className="flex items-center justify-between px-4 pb-2 pt-4">
+        <div className="flex items-center justify-between px-4 pb-2 pt-4 flex-shrink-0">
           <span className="text-base font-semibold">Menu</span>
           <button
             ref={firstFocusable}
@@ -176,13 +192,13 @@ export default function MobileMenu({
           </button>
         </div>
 
-        <div className="h-px w-full bg-neutral-200" />
+        <div className="h-px w-full bg-neutral-200 flex-shrink-0" />
 
-        <nav role="navigation" aria-label="Mobile" className="overflow-y-auto p-2 pb-8">
+        <nav role="navigation" aria-label="Mobile" className="flex-1 overflow-y-auto p-2 pb-8">
           <ul className="space-y-1">
             {groups.map((item, idx) => {
-              const openId = String(idx);
               const hasChildren = !!item.children?.length;
+              const isOpen = openAccordions.has(idx);
 
               if (!hasChildren) {
                 return (
@@ -198,36 +214,31 @@ export default function MobileMenu({
               }
 
               return (
-                <li key={item.label} id={`accordion-${openId}`} data-open="false">
+                <li key={item.label}>
                   <button
-                    id={`accordion-btn-${openId}`}
                     className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-[15px] font-semibold hover:bg-neutral-100"
-                    aria-expanded="false"
-                    aria-controls={`accordion-panel-${openId}`}
-                    onClick={() => {
-                      const el = document.getElementById(`accordion-${openId}`);
-                      const expanded = el?.getAttribute("data-open") === "true";
-                      el?.setAttribute("data-open", expanded ? "false" : "true");
-                      const btn = document.getElementById(`accordion-btn-${openId}`);
-                      btn?.setAttribute("aria-expanded", expanded ? "false" : "true");
-                    }}
+                    aria-expanded={isOpen}
+                    onClick={() => toggleAccordion(idx)}
                   >
                     <span>{item.label}</span>
-                    <Chevron open={false} />
+                    <Chevron open={isOpen} />
                   </button>
 
                   <div
-                    id={`accordion-panel-${openId}`}
-                    className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 data-[open=true]:grid-rows-[1fr]"
-                    data-open="false"
+                    className={`transition-all duration-200 ease-in-out ${
+                      isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                    style={{
+                      overflow: isOpen ? 'visible' : 'hidden'
+                    }}
                   >
-                    <div className="overflow-hidden">
-                      <ul className="pl-2">
+                    <div className={`${isOpen ? 'py-2' : 'py-0'} transition-all duration-200`}>
+                      <ul className="pl-2 space-y-1">
                         {item.children!.map((c) => (
                           <li key={c.label}>
                             <Link
                               to={c.href}
-                              className="block rounded-lg px-3 py-2 text-[14px] font-medium text-neutral-700 hover:bg-neutral-100"
+                              className="block rounded-lg px-3 py-2 text-[14px] font-medium text-neutral-700 hover:bg-neutral-100 transition-colors duration-150"
                             >
                               {c.label}
                             </Link>
