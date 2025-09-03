@@ -152,7 +152,7 @@ const StaffBoard = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-20">
+      <section className="bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 text-white py-20">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -163,7 +163,7 @@ const StaffBoard = () => {
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               Staff & Board
             </h1>
-            <p className="text-xl text-blue-100 leading-relaxed">
+            <p className="text-xl text-green-100 leading-relaxed">
               Meet the dedicated team behind Table Tennis Saskatchewan. 
               Our staff and board members work tirelessly to promote and develop 
               table tennis across the province.
