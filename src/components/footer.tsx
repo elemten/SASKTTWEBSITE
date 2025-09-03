@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram } from "lucide-react";
+import { PartnerLogos } from "./partner-logos";
 
 const footerSections = [
   {
@@ -150,30 +151,7 @@ export function Footer() {
         >
           <div className="text-center mb-6">
             <h4 className="text-sm font-medium text-gray-400 mb-4">Supported By</h4>
-            <div className="flex justify-center items-center gap-8">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-2"
-              >
-                <img 
-                  src="/partners/sask-sport.svg" 
-                  alt="Sask Sport" 
-                  className="h-8 opacity-70 hover:opacity-100 transition-opacity"
-                />
-                <span className="text-xs text-gray-500">Sask Sport</span>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-2"
-              >
-                <img 
-                  src="/partners/sask-lotteries.svg" 
-                  alt="Sask Lotteries" 
-                  className="h-8 opacity-70 hover:opacity-100 transition-opacity"
-                />
-                <span className="text-xs text-gray-500">Sask Lotteries</span>
-              </motion.div>
-            </div>
+            <PartnerLogos size="md" showLabels={true} />
           </div>
         </motion.div>
 

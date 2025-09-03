@@ -1,16 +1,19 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { PartnerLogos } from "./partner-logos";
 
 const supporters = [
   {
     name: "Sask Sport",
-    logo: "/partners/sask-sport.svg",
+    logo: "/partners/sask-sport.png",
+    fallback: "/partners/sask-sport.svg",
     url: "https://www.sasksport.ca/",
     ariaLabel: "Visit Sask Sport"
   },
   {
     name: "Sask Lotteries",
-    logo: "/partners/sask-lotteries.svg",
+    logo: "/partners/sask-lotteries.png",
+    fallback: "/partners/sask-lotteries.svg",
     url: "https://www.sasklotteries.ca/",
     ariaLabel: "Visit Sask Lotteries"
   }
@@ -43,50 +46,15 @@ export function SupportedBySection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="max-w-4xl mx-auto"
         >
-          {/* Logos Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-8">
-            {supporters.map((supporter, index) => (
-              <motion.div
-                key={supporter.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                whileHover={{ 
-                  scale: 1.03, 
-                  y: -4,
-                  transition: { duration: 0.2 } 
-                }}
-                className="group"
-              >
-                <a
-                  href={supporter.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={supporter.ariaLabel}
-                  className="block focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-4 rounded-xl transition-all duration-200"
-                >
-                  <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white/95 border border-gray-100 relative overflow-hidden">
-                    {/* Subtle background glow on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                    <div className="flex flex-col items-center text-center relative z-10">
-                      <div className="w-32 h-16 mb-4 flex items-center justify-center">
-                        <img
-                          src={supporter.logo}
-                          alt={supporter.name}
-                          className="h-12 w-auto opacity-60 group-hover:opacity-100 transition-all duration-300 filter grayscale group-hover:grayscale-0 group-hover:scale-105"
-                          loading="lazy"
-                        />
-                      </div>
-                      <h3 className="text-lg font-semibold text-green-800 group-hover:text-primary transition-colors duration-200 font-sora">
-                        {supporter.name}
-                      </h3>
-                    </div>
-                  </div>
-                </a>
-              </motion.div>
-            ))}
-          </div>
+          {/* Partner Logos */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mb-8"
+          >
+            <PartnerLogos size="lg" showLabels={true} />
+          </motion.div>
           
           {/* Trust Caption */}
           <motion.div
