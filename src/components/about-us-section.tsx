@@ -8,29 +8,19 @@ import { Users, Trophy, Calendar, Building2 } from "lucide-react";
 // Hero images for rotation
 const heroImages = [
   {
-    src: "/home/hero-1.svg",
+    src: "/home/hero-1.jpg",
     caption: "Table Tennis Action",
     alt: "Dynamic table tennis gameplay with players and ball trajectories"
   },
   {
-    src: "/home/hero-2.svg",
+    src: "/home/hero-2.jpg",
     caption: "Club Community",
     alt: "Table tennis club building with community members"
   },
   {
-    src: "/home/hero-3.svg",
+    src: "/home/hero-3.webp",
     caption: "Coaching & Training",
     alt: "Coach and student working together on technique"
-  },
-  {
-    src: "/home/hero-4.svg",
-    caption: "Provincial Tournament",
-    alt: "Tournament bracket and trophy celebration"
-  },
-  {
-    src: "/home/hero-5.svg",
-    caption: "Youth Development",
-    alt: "Young players learning and growing in table tennis"
   }
 ];
 
@@ -168,7 +158,7 @@ export function AboutUsSection() {
                 </div>
                 
                 {/* CTAs */}
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -179,7 +169,7 @@ export function AboutUsSection() {
                     <Button 
                       variant="hero" 
                       size="lg"
-                      className="group shadow-soft hover:shadow-medium hover:bg-green-600 transition-all duration-250 ease-in-out font-sora"
+                      className="group font-sora min-w-[180px]"
                       asChild
                     >
                       <Link to="/membership">
@@ -197,9 +187,9 @@ export function AboutUsSection() {
                     whileTap={{ scale: 0.98 }}
                   >
                     <Button 
-                      variant="glass" 
+                      variant="outline" 
                       size="lg"
-                      className="hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-250 ease-in-out font-sora"
+                      className="font-sora min-w-[180px] border-2 border-primary/30 hover:border-primary hover:bg-primary hover:text-white transition-all duration-300"
                       asChild
                     >
                       <Link to="/about">
