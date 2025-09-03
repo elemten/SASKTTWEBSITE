@@ -140,6 +140,43 @@ export function Footer() {
           ))}
         </div>
 
+        {/* Partners Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="border-t border-gray-700 mt-12 pt-8"
+        >
+          <div className="text-center mb-6">
+            <h4 className="text-sm font-medium text-gray-400 mb-4">Supported By</h4>
+            <div className="flex justify-center items-center gap-8">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-2"
+              >
+                <img 
+                  src="/partners/sask-sport.svg" 
+                  alt="Sask Sport" 
+                  className="h-8 opacity-70 hover:opacity-100 transition-opacity"
+                />
+                <span className="text-xs text-gray-500">Sask Sport</span>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-2"
+              >
+                <img 
+                  src="/partners/sask-lotteries.svg" 
+                  alt="Sask Lotteries" 
+                  className="h-8 opacity-70 hover:opacity-100 transition-opacity"
+                />
+                <span className="text-xs text-gray-500">Sask Lotteries</span>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Bottom Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
