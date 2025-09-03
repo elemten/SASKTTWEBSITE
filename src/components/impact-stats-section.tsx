@@ -4,28 +4,22 @@ import { Card } from "@/components/ui/card";
 
 const stats = [
   {
-    number: 500,
+    number: 185,
     suffix: "+",
     label: "Active Players",
     description: "Members across Saskatchewan",
   },
   {
-    number: 15,
+    number: 12,
     suffix: "",
     label: "Active Clubs", 
     description: "Throughout the province",
   },
   {
-    number: 50,
+    number: 10,
     suffix: "+",
     label: "Tournaments",
     description: "Organized annually",
-  },
-  {
-    number: 25,
-    suffix: "",
-    label: "Certified Coaches",
-    description: "Professional instruction",
   },
 ];
 

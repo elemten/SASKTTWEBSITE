@@ -36,7 +36,6 @@ const heroImages = [
 
 // Program badges
 const programBadges = [
-  { label: "Youth programs", icon: Users },
   { label: "Coaching & clinics", icon: Trophy },
   { label: "Provincial tournaments", icon: Calendar },
   { label: "Club support & grants", icon: Building2 }
@@ -44,9 +43,9 @@ const programBadges = [
 
 // Stats data
 const stats = [
-  { number: 23, label: "clubs" },
-  { number: 1800, suffix: "+", label: "active members" },
-  { number: 80, suffix: "+", label: "yearly events" }
+  { number: 12, label: "clubs" },
+  { number: 600, suffix: "+", label: "active members" },
+  { number: 10, suffix: "+", label: "yearly events" }
 ];
 
 function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {

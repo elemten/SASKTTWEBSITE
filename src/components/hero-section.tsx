@@ -180,7 +180,9 @@ export function HeroSection() {
               variant="hero" 
               size="xl"
                     className="group px-8 py-6 text-lg font-bold shadow-2xl hover:shadow-3xl"
+                    asChild
             >
+                    <Link to="/get-started">
               Get Started Today
                     <motion.div
                       className="ml-3"
@@ -189,6 +191,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-6 w-6" />
                     </motion.div>
+                    </Link>
             </Button>
                 </motion.div>
             
@@ -237,88 +240,156 @@ export function HeroSection() {
               className="relative hidden lg:block"
             >
 
-              {/* Main Visual Element */}
-              <div className="relative">
-
-                {/* Animated Table Tennis Elements */}
-                <motion.div
-                  animate={{
-                    rotate: [0, 5, -5, 0],
-                    y: [0, -10, 0],
-                  }}
-                  transition={{
-                    duration: 6,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="relative z-10 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/10"
-                >
-
-                  {/* Floating Stats */}
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-                    className="grid grid-cols-2 gap-6 mb-8"
+              {/* Animated Table Tennis Paddle */}
+              <motion.div
+                animate={{
+                  rotate: [0, 360],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+                className="relative z-10 flex items-center justify-center"
+              >
+                {/* Custom Table Tennis Paddle SVG */}
+                <div className="relative">
+                  <svg
+                    width="300"
+                    height="400"
+                    viewBox="0 0 300 400"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="drop-shadow-2xl"
                   >
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-white mb-1">1800+</div>
-                      <div className="text-sm text-white">Active Members</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-white mb-1">23</div>
-                      <div className="text-sm text-white">Clubs Province-Wide</div>
-                    </div>
-                  </motion.div>
+                    {/* Paddle Handle */}
+                    <rect
+                      x="125"
+                      y="280"
+                      width="50"
+                      height="100"
+                      rx="25"
+                      fill="#00ff88"
+                      stroke="#00cc6a"
+                      strokeWidth="3"
+                      className="animate-pulse"
+                    />
+                    
+                    {/* Paddle Blade */}
+                    <ellipse
+                      cx="150"
+                      cy="140"
+                      rx="120"
+                      ry="140"
+                      fill="#00ff88"
+                      stroke="#00cc6a"
+                      strokeWidth="4"
+                      className="animate-pulse"
+                    />
+                    
+                    {/* Paddle Surface Details */}
+                    <ellipse
+                      cx="150"
+                      cy="140"
+                      rx="100"
+                      ry="120"
+                      fill="none"
+                      stroke="#00dd77"
+                      strokeWidth="2"
+                      strokeDasharray="8,4"
+                      className="opacity-70"
+                    />
+                    
+                    {/* Center grip texture */}
+                    <rect
+                      x="130"
+                      y="290"
+                      width="40"
+                      height="80"
+                      fill="none"
+                      stroke="#008844"
+                      strokeWidth="1"
+                      strokeDasharray="4,2"
+                    />
+                  </svg>
 
-                  {/* Feature Highlights */}
-                  <div className="space-y-4">
-                    {[
-                      { icon: Trophy, text: "Provincial Championships" },
-                      { icon: Users, text: "Expert Coaching" },
-                      { icon: Target, text: "All Skill Levels" },
-                      { icon: Award, text: "Tournament Ready" }
-                    ].map((item, index) => (
-                      <motion.div
-                        key={item.text}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 1.4 + index * 0.1 }}
-                        className="flex items-center gap-3 text-white/90"
-                      >
-                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                          <item.icon className="h-5 w-5" />
-                        </div>
-                        <span className="font-medium">{item.text}</span>
-                      </motion.div>
-                    ))}
+                  {/* Stats positioned on the paddle */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
+                      className="grid grid-cols-2 gap-6 mb-4"
+                    >
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-white drop-shadow-lg">600+</div>
+                        <div className="text-xs text-white drop-shadow-lg">Members</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-white drop-shadow-lg">12</div>
+                        <div className="text-xs text-white drop-shadow-lg">Clubs</div>
+                      </div>
+                    </motion.div>
+                    
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1.4, type: "spring", stiffness: 200 }}
+                      className="text-center"
+                    >
+                      <div className="text-2xl font-bold text-white drop-shadow-lg">50+</div>
+                      <div className="text-xs text-white drop-shadow-lg">Events</div>
+                    </motion.div>
                   </div>
-                </motion.div>
+                </div>
+              </motion.div>
 
-                {/* Decorative Elements */}
-                <motion.div
-                  animate={{
-                    rotate: 360,
-                    scale: [1, 1.2, 1],
-                  }}
-                  transition={{
-                    rotate: { duration: 30, repeat: Infinity, ease: "linear" },
-                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                  }}
-                  className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400/20 to-orange-500/20 blur-xl"
-                />
-                <motion.div
-                  animate={{
-                    rotate: -360,
-                    scale: [1.2, 1, 1.2],
-                  }}
-                  transition={{
-                    rotate: { duration: 25, repeat: Infinity, ease: "linear" },
-                    scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-                  }}
-                  className="absolute -bottom-6 -left-6 w-16 h-16 rounded-full bg-gradient-to-br from-teal-400/20 to-cyan-500/20 blur-xl"
-                />
-              </div>
+              {/* Feature Highlights */}
+              <div className="space-y-4 mt-8">
+                  {[
+                    { icon: Trophy, text: "Provincial Championships" },
+                    { icon: Users, text: "Expert Coaching" },
+                    { icon: Target, text: "All Skill Levels" },
+                    { icon: Award, text: "Tournament Ready" }
+                  ].map((item, index) => (
+                    <motion.div
+                      key={item.text}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1.4 + index * 0.1 }}
+                      className="flex items-center gap-3 text-white/90"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <item.icon className="h-5 w-5" />
+                      </div>
+                      <span className="font-medium">{item.text}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+              {/* Decorative Elements */}
+              <motion.div
+                animate={{
+                  rotate: 360,
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  rotate: { duration: 30, repeat: Infinity, ease: "linear" },
+                  scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400/20 to-orange-500/20 blur-xl"
+              />
+              <motion.div
+                animate={{
+                  rotate: -360,
+                  scale: [1.2, 1, 1.2],
+                }}
+                transition={{
+                  rotate: { duration: 25, repeat: Infinity, ease: "linear" },
+                  scale: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="absolute -bottom-6 -left-6 w-16 h-16 rounded-full bg-gradient-to-br from-teal-400/20 to-cyan-500/20 blur-xl"
+              />
             </motion.div>
           </div>
         </motion.div>
@@ -433,16 +504,11 @@ export function HeroSection() {
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  className="mb-6"
+                  className="mb-6 flex justify-center"
                 >
-                  <Button
-                    variant="hero"
-                    size="lg"
-                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
-                  >
-                    <UserPlus className="h-6 w-6" />
-                    <span className="ml-2 font-bold">Become a Member</span>
-                  </Button>
+                  <div className="w-16 h-16 rounded-full shadow-lg bg-green-600 text-white flex items-center justify-center">
+                    <UserPlus className="h-8 w-8" />
+                  </div>
                 </motion.div>
 
                 {/* Content */}
@@ -472,7 +538,7 @@ export function HeroSection() {
                   </ul>
                 </div>
 
-                {/* CTA Button */}
+                                  {/* CTA Button */}
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -482,8 +548,10 @@ export function HeroSection() {
                   variant="hero"
                   size="lg"
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
+                    asChild
                 >
-                  Learn More
+                  <Link to="/membership">
+                  Become a Member
                     <motion.div
                       className="ml-2"
                       whileHover={{ x: 3 }}
@@ -491,6 +559,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-5 w-5" />
                     </motion.div>
+                  </Link>
                 </Button>
                 </motion.div>
               </div>
@@ -516,16 +585,11 @@ export function HeroSection() {
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: -5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  className="mb-6"
+                  className="mb-6 flex justify-center"
                 >
-                  <Button
-                    variant="hero"
-                    size="lg"
-                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
-                  >
-                    <Zap className="h-6 w-6" />
-                    <span className="ml-2 font-bold">Book Training</span>
-                  </Button>
+                  <div className="w-16 h-16 rounded-full shadow-lg bg-green-600 text-white flex items-center justify-center">
+                    <Zap className="h-8 w-8" />
+                  </div>
                 </motion.div>
 
                 <div className="flex-1 space-y-4">
@@ -562,8 +626,10 @@ export function HeroSection() {
                   variant="hero"
                   size="lg"
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
+                    asChild
                 >
-                  Learn More
+                  <Link to="/play/training">
+                  Book Training
                     <motion.div
                       className="ml-2"
                       whileHover={{ x: 3 }}
@@ -571,6 +637,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-5 w-5" />
                     </motion.div>
+                  </Link>
                 </Button>
                 </motion.div>
               </div>
@@ -596,16 +663,11 @@ export function HeroSection() {
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  className="mb-6"
+                  className="mb-6 flex justify-center"
                 >
-                  <Button
-                    variant="hero"
-                    size="lg"
-                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
-                  >
-                    <Trophy className="h-6 w-6" />
-                    <span className="ml-2 font-bold">Book a Clinic</span>
-                  </Button>
+                  <div className="w-16 h-16 rounded-full shadow-lg bg-green-600 text-white flex items-center justify-center">
+                    <Trophy className="h-8 w-8" />
+                  </div>
                 </motion.div>
 
                 <div className="flex-1 space-y-4">
@@ -642,8 +704,10 @@ export function HeroSection() {
                   variant="hero"
                   size="lg"
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
+                    asChild
                 >
-                  Learn More
+                  <Link to="/play/clinics">
+                  Book a Clinic
                     <motion.div
                       className="ml-2"
                       whileHover={{ x: 3 }}
@@ -651,6 +715,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-5 w-5" />
                     </motion.div>
+                  </Link>
                 </Button>
                 </motion.div>
               </div>
@@ -676,16 +741,11 @@ export function HeroSection() {
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: -5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  className="mb-6"
+                  className="mb-6 flex justify-center"
                 >
-                  <Button
-                    variant="hero"
-                    size="lg"
-                    className="w-full px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl"
-                  >
-                    <Award className="h-6 w-6" />
-                    <span className="ml-2 font-bold">Start a Club</span>
-                  </Button>
+                  <div className="w-16 h-16 rounded-full shadow-lg bg-green-600 text-white flex items-center justify-center">
+                    <Award className="h-8 w-8" />
+                  </div>
                 </motion.div>
 
                 <div className="flex-1 space-y-4">
@@ -724,8 +784,8 @@ export function HeroSection() {
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
                     asChild
                 >
-                  <Link to="/about">
-                  Learn More
+                  <Link to="/clubs/register">
+                  Start a Club
                     <motion.div
                       className="ml-2"
                       whileHover={{ x: 3 }}
@@ -758,7 +818,7 @@ export function HeroSection() {
                 className="px-12 py-6 text-xl font-bold shadow-2xl hover:shadow-3xl"
                 asChild
               >
-                <Link to="/membership">
+                <Link to="/get-started">
                 Explore All Programs
                 <ArrowRight className="ml-3 h-7 w-7" />
                 </Link>

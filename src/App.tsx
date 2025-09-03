@@ -6,10 +6,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Component, ReactNode, Suspense, lazy, useEffect } from "react";
 import { PageLoadingFallback } from "@/components/ui/loading-spinner";
 import { isLowEndMobile } from "@/lib/performance-utils";
+import { useScrollRestoration } from "@/hooks/use-scroll-restoration";
 
 // Lazy-loaded components for better code splitting
 const Index = lazy(() => import("./pages/Index"));
 const Membership = lazy(() => import("./pages/Membership"));
+const GetStarted = lazy(() => import("./pages/GetStarted"));
 const Events = lazy(() => import("./pages/Events"));
 const About = lazy(() => import("./pages/About"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -97,6 +99,12 @@ const queryClient = new QueryClient({
   },
 });
 
+// Scroll restoration component that must be inside Router
+function ScrollRestorationWrapper({ children }: { children: ReactNode }) {
+  useScrollRestoration();
+  return <>{children}</>;
+}
+
 const App = () => {
   // Performance optimizations
   useEffect(() => {
@@ -167,11 +175,13 @@ const App = () => {
             v7_relativeSplatPath: true,
           }}
         >
-          <ErrorBoundary>
-            <Suspense fallback={<PageLoadingFallback />}>
-              <Routes>
+          <ScrollRestorationWrapper>
+            <ErrorBoundary>
+              <Suspense fallback={<PageLoadingFallback />}>
+                <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/membership" element={<Membership />} />
+                <Route path="/get-started" element={<GetStarted />} />
                 <Route path="/events" element={<Events />} />
 
                 <Route path="/about" element={<About />} />
@@ -206,6 +216,7 @@ const App = () => {
               </Routes>
             </Suspense>
           </ErrorBoundary>
+          </ScrollRestorationWrapper>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

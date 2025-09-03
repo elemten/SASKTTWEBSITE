@@ -102,26 +102,7 @@ export function CommunitySpotlightSection() {
           </Card>
         </motion.div>
 
-        {/* Achievement Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="grid md:grid-cols-3 gap-6 mt-12 max-w-3xl mx-auto"
-        >
-          <Card className="glass p-6 text-center">
-            <div className="text-3xl font-bold text-primary mb-2">12</div>
-            <div className="text-sm text-muted-foreground">Championships This Year</div>
-          </Card>
-          <Card className="glass p-6 text-center">
-            <div className="text-3xl font-bold text-primary mb-2">95%</div>
-            <div className="text-sm text-muted-foreground">Player Satisfaction</div>
-          </Card>
-          <Card className="glass p-6 text-center">
-            <div className="text-3xl font-bold text-primary mb-2">8</div>
-            <div className="text-sm text-muted-foreground">National Qualifiers</div>
-          </Card>
-        </motion.div>
+
       </div>
     </section>
   );

@@ -91,11 +91,13 @@ export function Navigation({ className }: NavigationProps) {
       <div className="nav__inner hidden md:grid">
         {/* Brand Section */}
         <NavLink to="/" className="brand">
-          <img
-            className="brand__logo"
-            src={logo}
-            alt="Table Tennis Saskatchewan"
-          />
+          <div className="h-12 w-12 rounded-xl overflow-hidden shadow-medium bg-primary/20 flex items-center justify-center border border-primary/30">
+            <img
+              src={logo}
+              alt="Table Tennis Saskatchewan"
+              className="h-full w-full object-contain"
+            />
+          </div>
           <div className="brand__text">
             <div className="brand__title">Table Tennis Saskatchewan</div>
             <div className="brand__sub">Official Association</div>
@@ -279,7 +281,7 @@ export function Navigation({ className }: NavigationProps) {
           <NavLink to="/auth/sign-in" className="btn btn--ghost">
             Sign In
           </NavLink>
-          <NavLink to="/membership" className="btn btn--primary">
+          <NavLink to="/get-started" className="btn btn--primary">
             Get Started
           </NavLink>
         </div>
@@ -290,7 +292,9 @@ export function Navigation({ className }: NavigationProps) {
         <div className="flex h-14 items-center justify-between px-3">
           <div className="flex items-center mobile-header-container">
             <NavLink to="/" className="flex items-center gap-2" aria-label="Home">
-              <img src={logo} alt="Table Tennis Saskatchewan" className="h-9 w-9 rounded-md object-contain" />
+              <div className="h-9 w-9 rounded-lg overflow-hidden shadow-medium bg-primary/20 flex items-center justify-center border border-primary/30">
+                <img src={logo} alt="Table Tennis Saskatchewan" className="h-full w-full object-contain" />
+              </div>
               <span className="text-base font-bold tracking-tight text-sm mobile-header-text">Table Tennis Saskatchewan</span>
             </NavLink>
           </div>
@@ -303,10 +307,10 @@ export function Navigation({ className }: NavigationProps) {
               Log In
             </NavLink>
             <NavLink
-              to="/membership"
+              to="/get-started"
               className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-3 text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors"
             >
-              Join
+              Get Started
             </NavLink>
             <button
               aria-label="Open menu"

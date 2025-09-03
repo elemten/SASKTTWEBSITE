@@ -7,15 +7,6 @@ import { isLowEndMobile } from "@/lib/performance-utils";
 
 const programs = [
   {
-    icon: Users,
-    title: "Youth Programs",
-    description: "Age-appropriate training for young players aged 6-17, focusing on fundamentals and fun",
-    features: ["Weekly group lessons", "Equipment provided", "Qualified coaches", "Tournament prep"],
-    image: "/api/placeholder/400/250",
-    href: "/programs/youth",
-  },
-
-  {
     icon: Zap,
     title: "SPED Training",
     description: "Specialized coaching programs designed to elevate competitive players",
@@ -85,7 +76,7 @@ export function ProgramsSection() {
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto"
         >
           {programs.map((program, index) => (
             <motion.div

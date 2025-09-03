@@ -7,24 +7,35 @@ import { Calendar, MapPin, Clock, Users } from "lucide-react";
 
 const events = [
   {
-    title: "Youth Championship Tournament",
+    title: "Group 1 Training",
     date: "2024-03-15",
-    time: "9:00 AM - 6:00 PM", 
-    location: "Regina Sports Centre",
-    category: "Tournament",
-    participants: "32 registered",
-    description: "Annual youth championship for ages 12-17. All skill levels welcome.",
-    status: "Open Registration",
+    time: "6:00 PM - 7:30 PM", 
+    location: "Zion Lutheran Church, 322 - 4th Ave South",
+    category: "Training",
+    participants: "Open spots available",
+    description: "Training for athletes with TTCAN rating under 300, focusing on fundamentals. Mon/Wed/Fri sessions.",
+    status: "Registration Required",
   },
 
   {
-    title: "SPED Training Camp",
-    date: "2024-03-25",
-    time: "10:00 AM - 4:00 PM",
-    location: "Provincial Training Centre",
+    title: "Group 2 Training",
+    date: "2024-03-16",
+    time: "6:00 PM - 8:30 PM",
+    location: "Zion Lutheran Church, 322 - 4th Ave South",
     category: "Training",
-    participants: "12 spots available",
-    description: "Intensive training camp with provincial coaches. Advanced players only.",
+    participants: "Open spots available",
+    description: "Training for athletes with TTCAN rating 300+, focusing on advanced techniques. Mon/Wed/Fri + Saturday sessions.",
+    status: "Registration Required",
+  },
+
+  {
+    title: "Para Program",
+    date: "2024-03-17",
+    time: "9:00 AM - 10:00 AM",
+    location: "Zion Lutheran Church, 322 - 4th Ave South",
+    category: "Training",
+    participants: "Open spots available",
+    description: "Saturday morning Para Program training sessions designed for athletes with disabilities.",
     status: "Registration Required",
   },
 ];
