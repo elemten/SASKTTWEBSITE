@@ -82,7 +82,7 @@ export default function Membership() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="max-w-4xl mx-auto"
           >
-            <Card className="p-4 sm:p-6 md:p-8 lg:p-12 border-2 border-green-200 shadow-xl relative overflow-hidden">
+            <Card className="pt-12 sm:pt-14 md:pt-16 lg:pt-18 px-4 sm:px-6 md:px-8 lg:px-12 pb-4 sm:pb-6 md:pb-8 lg:pb-12 border-2 border-green-200 shadow-xl relative overflow-visible">
               {/* Popular badge */}
               <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
                 <Badge className="bg-green-600 text-white px-4 md:px-6 py-2 md:py-3 text-xs md:text-sm font-semibold shadow-lg whitespace-nowrap">
@@ -91,7 +91,7 @@ export default function Membership() {
                 </Badge>
               </div>
 
-              <div className="text-center mb-6 md:mb-8 mt-4 md:mt-6">
+              <div className="text-center mb-6 md:mb-8">
                 <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4 text-gray-900 leading-tight">
                   Table Tennis Saskatchewan Member
                 </h2>
