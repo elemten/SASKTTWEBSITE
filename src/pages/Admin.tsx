@@ -213,7 +213,7 @@ const Admin = () => {
             >
               <Suspense fallback={<LoadingSpinner />}>
                 {renderContentSwitch()}
-              </motion.div>
+              </Suspense>
             </motion.div>
           </main>
         </div>
