@@ -27,6 +27,10 @@ export default defineConfig(({ mode, command }) => ({
     },
     dedupe: ["react", "react-dom"],
   },
+  optimizeDeps: {
+    include: ["react", "react-dom", "react/jsx-runtime"],
+    exclude: [],
+  },
   build: {
     target: "es2017",
     minify: "esbuild",
@@ -39,8 +43,11 @@ export default defineConfig(({ mode, command }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Core React libraries
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+          // Core React libraries - ensure proper bundling
+          if (id.includes('node_modules/react/') && !id.includes('node_modules/react-')) {
+            return 'react-vendor';
+          }
+          if (id.includes('node_modules/react-dom/')) {
             return 'react-vendor';
           }
           // UI libraries (Radix, shadcn)
