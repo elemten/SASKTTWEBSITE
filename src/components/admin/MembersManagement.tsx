@@ -29,7 +29,7 @@ const mockMembers = [
   {
     id: "M001",
     name: "John Smith",
-    phone: "(306) 555-0123",
+            phone: "306-880-3660",
     email: "john.smith@email.com",
     club: "Regina Table Tennis Club",
     status: "Active",
@@ -41,7 +41,7 @@ const mockMembers = [
   {
     id: "M002",
     name: "Sarah Johnson",
-    phone: "(306) 555-0456",
+            phone: "306-880-3660",
     email: "sarah.j@email.com",
     club: "Saskatoon Sports Club",
     status: "Expired",
@@ -53,7 +53,7 @@ const mockMembers = [
   {
     id: "M003",
     name: "Mike Chen",
-    phone: "(306) 555-0789",
+            phone: "306-880-3660",
     email: "mike.chen@email.com",
     club: "Prince Albert TT",
     status: "Active",

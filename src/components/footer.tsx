@@ -49,9 +49,24 @@ const footerSections = [
 ];
 
 const socialLinks = [
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Instagram, href: "#", label: "Instagram" },
+  { 
+    icon: Facebook, 
+    href: "https://www.facebook.com/tabletennissask/", 
+    label: "Facebook",
+    color: "hover:bg-blue-600 hover:text-white"
+  },
+  { 
+    icon: Instagram, 
+    href: "https://www.instagram.com/tabletennissaskatchewan/?hl=en", 
+    label: "Instagram",
+    color: "hover:bg-pink-600 hover:text-white"
+  },
+  { 
+    icon: Mail, 
+    href: "mailto:info@ttsask.ca", 
+    label: "Email",
+    color: "hover:bg-green-600 hover:text-white"
+  },
 ];
 
 export function Footer() {
@@ -102,11 +117,21 @@ export function Footer() {
             >
               <div className="flex items-center space-x-3 text-sm text-gray-300">
                 <Mail className="h-4 w-4 text-primary" />
-                <span>info@tabletennissask.ca</span>
+                <a 
+                  href="mailto:info@ttsask.ca" 
+                  className="hover:text-primary transition-colors duration-200"
+                >
+                  info@ttsask.ca
+                </a>
               </div>
               <div className="flex items-center space-x-3 text-sm text-gray-300">
                 <Phone className="h-4 w-4 text-primary" />
-                <span>(306) 555-PING</span>
+                <a 
+                  href="tel:306-880-3660" 
+                  className="hover:text-primary transition-colors duration-200"
+                >
+                  306-880-3660
+                </a>
               </div>
               <div className="flex items-center space-x-3 text-sm text-gray-300">
                 <MapPin className="h-4 w-4 text-primary" />
@@ -175,10 +200,10 @@ export function Footer() {
                 href={social.href}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-xl bg-gray-800 hover:bg-primary hover:text-primary-foreground transition-colors shadow-soft border border-gray-700 text-gray-300"
+                className={`p-3 rounded-xl bg-gray-800 hover:bg-primary hover:text-white transition-all duration-300 shadow-soft border border-gray-700 text-gray-300 ${social.color}`}
                 aria-label={social.label}
               >
-                <social.icon className="h-4 w-4" />
+                <social.icon className="h-5 w-5" />
               </motion.a>
             ))}
           </div>
