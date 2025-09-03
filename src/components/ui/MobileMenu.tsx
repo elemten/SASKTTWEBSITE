@@ -75,6 +75,7 @@ export default function MobileMenu({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const startX = useRef<number | null>(null);
   const [openAccordions, setOpenAccordions] = useState<Set<number>>(new Set());
+  const scrollPositionRef = useRef<number>(0);
 
   // Toggle accordion function
   const toggleAccordion = (index: number) => {
@@ -104,15 +105,29 @@ export default function MobileMenu({
     }
   }, [open, onOpenChange]);
 
-  // Body scroll lock + focus trap
+  // Body scroll lock + focus trap + scroll management
   useEffect(() => {
     const original = document.body.style.overflow;
+    
     if (open) {
+      // Save current scroll position
+      scrollPositionRef.current = window.scrollY;
+      
+      // Scroll to top and lock body
+      window.scrollTo(0, 0);
       document.body.style.overflow = "hidden";
+      
       setTimeout(() => firstFocusable.current?.focus(), 0);
     } else {
+      // Restore body scroll
       document.body.style.overflow = original;
+      
+      // Restore scroll position after a brief delay to ensure smooth transition
+      setTimeout(() => {
+        window.scrollTo(0, scrollPositionRef.current);
+      }, 100);
     }
+    
     return () => {
       document.body.style.overflow = original;
     };
@@ -149,7 +164,7 @@ export default function MobileMenu({
           visibility: open ? 'visible' : 'hidden',
           pointerEvents: open ? 'auto' : 'none'
         }}
-        className={`fixed inset-0 z-[1000] bg-black/40 transition-opacity md:hidden ${
+        className={`fixed inset-0 z-[1000] bg-black/40 transition-opacity md:hidden h-[100vh] w-[100vw] ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none mobile-overlay-hidden"
         }`}
         onClick={() => onOpenChange(false)}
@@ -167,7 +182,7 @@ export default function MobileMenu({
           opacity: open ? 1 : 0,
           pointerEvents: open ? 'auto' : 'none'
         }}
-        className={`safe-top fixed right-0 top-0 z-[1001] h-[100dvh] w-[86vw] max-w-[380px] bg-white shadow-xl outline-none transition-transform md:hidden mobile-menu-container overflow-hidden flex flex-col ${
+        className={`fixed right-0 top-0 z-[1001] h-[100vh] w-[86vw] max-w-[380px] bg-white shadow-xl outline-none transition-transform md:hidden mobile-menu-container overflow-hidden flex flex-col ${
           open ? "translate-x-0" : "translate-x-full mobile-menu-hidden"
         }`}
         onKeyDown={handleKeyDown}
