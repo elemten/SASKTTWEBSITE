@@ -208,11 +208,12 @@ const App = () => {
                 {/* Coming Soon page for auth features */}
                 <Route path="/coming-soon" element={<ComingSoon />} />
 
-                {/* Auth routes - kept for future use but not accessible */}
-                <Route path="/auth/sign-in" element={<SignIn />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/auth/forbidden" element={<Forbidden />} />
-                <Route path="/auth/sign-out" element={<SignOut />} />
+                {/* Auth routes - ALL temporarily redirected to Coming Soon */}
+                {/* This ensures no one can access the old auth pages */}
+                <Route path="/auth/sign-in" element={<ComingSoon />} />
+                <Route path="/auth/callback" element={<ComingSoon />} />
+                <Route path="/auth/forbidden" element={<ComingSoon />} />
+                <Route path="/auth/sign-out" element={<ComingSoon />} />
 
                 <Route path="/admin" element={<Admin />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
