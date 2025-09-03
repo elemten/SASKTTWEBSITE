@@ -32,13 +32,13 @@ export default defineConfig(({ mode, command }) => ({
       "react", 
       "react-dom", 
       "react/jsx-runtime",
-      "react-dom/client",
-      "@radix-ui/react-use-layout-effect"
+      "react-dom/client"
     ],
     exclude: [],
     esbuildOptions: {
       target: "es2017"
-    }
+    },
+    force: true
   },
   build: {
     target: "es2017",
@@ -54,11 +54,15 @@ export default defineConfig(({ mode, command }) => ({
       output: {
         globals: {},
         manualChunks: (id) => {
-          // Core React libraries - ensure proper bundling
-          if (id.includes('node_modules/react/') && !id.includes('node_modules/react-')) {
+          // Core React libraries - strict isolation
+          if (id.includes('node_modules/react/index.js') || 
+              id.includes('node_modules/react/cjs/') ||
+              id.includes('node_modules/react/umd/')) {
             return 'react-vendor';
           }
-          if (id.includes('node_modules/react-dom/')) {
+          if (id.includes('node_modules/react-dom/') && 
+              !id.includes('node_modules/react-dom-') &&
+              !id.includes('node_modules/react-dnd')) {
             return 'react-vendor';
           }
           // UI libraries (Radix, shadcn)
