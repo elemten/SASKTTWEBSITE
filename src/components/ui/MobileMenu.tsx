@@ -11,7 +11,7 @@ const ITEMS: NavItem[] = [
     label: "About Us",
     children: [
       { label: "History & Mission", href: "/about/history-mission" },
-      { label: "Team Members", href: "/about/staff-board" },
+      { label: "Staff & Board", href: "/about/staff-board" },
       { label: "Governance", href: "/about/governance" },
       { label: "Our Story", href: "/about" },
     ],

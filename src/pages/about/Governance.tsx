@@ -22,7 +22,7 @@ const governanceDocuments = [
     icon: Scale,
     type: "pdf",
     url: "#", // Replace with actual PDF URL
-    color: "text-blue-600"
+    color: "text-green-600"
   },
   {
     title: "Policies & Procedures",
@@ -38,7 +38,7 @@ const governanceDocuments = [
     icon: Shield,
     type: "pdf",
     url: "#", // Replace with actual PDF URL
-    color: "text-red-600"
+    color: "text-green-700"
   },
   {
     title: "Table Tennis Canada",
@@ -46,7 +46,7 @@ const governanceDocuments = [
     icon: Building,
     type: "external",
     url: "https://www.tabletennis.ca/", // Replace with actual URL
-    color: "text-purple-600"
+    color: "text-green-600"
   },
   {
     title: "International Table Tennis Federation",
@@ -54,7 +54,7 @@ const governanceDocuments = [
     icon: Globe,
     type: "external",
     url: "https://www.ittf.com/", // Replace with actual URL
-    color: "text-orange-600"
+    color: "text-green-700"
   },
   {
     title: "ITTF Statutes",
@@ -62,7 +62,7 @@ const governanceDocuments = [
     icon: BookOpen,
     type: "pdf",
     url: "#", // Replace with actual PDF URL
-    color: "text-indigo-600"
+    color: "text-green-600"
   },
   {
     title: "Report a Complaint",
@@ -70,7 +70,7 @@ const governanceDocuments = [
     icon: AlertTriangle,
     type: "form",
     url: "/contact", // Internal link to contact form
-    color: "text-yellow-600"
+    color: "text-green-700"
   }
 ];
 

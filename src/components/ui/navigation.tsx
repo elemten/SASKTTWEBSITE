@@ -17,7 +17,7 @@ const navigationItems = [
     label: "About Us",
     children: [
       { href: "/about/history-mission", label: "History & Mission" },
-      { href: "/about/staff-board", label: "Team Members" },
+      { href: "/about/staff-board", label: "Staff & Board" },
       { href: "/about/governance", label: "Governance" },
       { href: "/about", label: "Our Story" },
     ]
@@ -142,34 +142,11 @@ export function Navigation({ className }: NavigationProps) {
                   History &amp; Mission
                 </NavLink>
                 <NavLink to="/about/staff-board" className="dropdown__item">
-                  Team Members
+                  Staff &amp; Board
                 </NavLink>
                 <NavLink to="/about/governance" className="dropdown__item">
-                  Governance Overview
+                  Governance
                 </NavLink>
-                <div className="dropdown__divider"></div>
-                <NavLink to="/governance/bylaws" className="dropdown__item">
-                  Bylaws
-                </NavLink>
-                <NavLink to="/governance/policies-procedures" className="dropdown__item">
-                  Policies &amp; Procedures
-                </NavLink>
-                <NavLink to="/governance/safe-sport-policy" className="dropdown__item">
-                  Safe Sport Policy
-                </NavLink>
-                <NavLink to="/governance/table-tennis-canada" className="dropdown__item">
-                  Table Tennis Canada
-                </NavLink>
-                <NavLink to="/governance/ittf" className="dropdown__item">
-                  ITTF
-                </NavLink>
-                <NavLink to="/governance/ittf-statutes" className="dropdown__item">
-                  ITTF Statutes
-                </NavLink>
-                <NavLink to="/governance/report-complaint" className="dropdown__item">
-                  Report a Complaint
-                </NavLink>
-                <div className="dropdown__divider"></div>
                 <NavLink to="/about" className="dropdown__item">
                   Our Story
                 </NavLink>
