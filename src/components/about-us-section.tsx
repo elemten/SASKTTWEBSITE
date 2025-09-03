@@ -170,7 +170,7 @@ export function AboutUsSection() {
                 </motion.div>
                 
                 {/* CTAs */}
-                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <div className="flex justify-center items-center">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -181,31 +181,12 @@ export function AboutUsSection() {
                     <Button 
                       variant="hero" 
                       size="lg"
-                      className="group font-sora min-w-[180px]"
+                      className="group font-sora min-w-[280px] text-lg py-6 px-8"
                       asChild
                     >
                       <Link to="/membership">
-                        Explore Programs
-                        <Trophy className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                    </Button>
-                  </motion.div>
-                  
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ duration: 0.4, delay: 0.7 }}
-                    whileHover={{ y: -2, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button 
-                      variant="outline" 
-                      size="lg"
-                      className="font-sora min-w-[180px] border-2 border-primary/30 hover:border-primary hover:bg-primary hover:text-white transition-all duration-300"
-                      asChild
-                    >
-                      <Link to="/about">
-                        About TTSask
+                        All Programs
+                        <Trophy className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-1" />
                       </Link>
                     </Button>
                   </motion.div>

@@ -17,7 +17,20 @@ import {
   ExternalLink
 } from "lucide-react";
 
-const trainingGroups = [
+const trainingGroups: Array<{
+  id: 'group1' | 'group2' | 'para';
+  title: string;
+  subtitle: string;
+  icon: any;
+  color: string;
+  bgColor: string;
+  schedule: string[];
+  pricing: {
+    annual: number;
+    monthly: number;
+  };
+  features: string[];
+}> = [
   {
     id: "group1",
     title: "GROUP 1",
@@ -89,9 +102,26 @@ const Training = () => {
     window.location.href = "/membership";
   };
 
-  const handlePaymentClick = (groupId: string, type: 'yearly' | 'monthly') => {
-    // Placeholder for Stripe payment links - will be replaced with actual URLs
-    console.log(`Payment for ${groupId} - ${type} - Stripe link to be added`);
+  const handlePaymentClick = (groupId: 'group1' | 'group2' | 'para', type: 'yearly' | 'monthly') => {
+    const stripeLinks = {
+      group1: {
+        yearly: "https://buy.stripe.com/3cI00k0ESfiM3i22Taf3a02",
+        monthly: "https://buy.stripe.com/9B614ocnA4E87yialCf3a00"
+      },
+      group2: {
+        yearly: "https://buy.stripe.com/eVq8wQgDQ4E88Cm9hyf3a03",
+        monthly: "https://buy.stripe.com/3cI5kE4V8b2w7yigK0f3a01"
+      },
+      para: {
+        yearly: "https://buy.stripe.com/00wbJ2gDQ3A405QctKf3a05",
+        monthly: "https://buy.stripe.com/3cI8wQgDQgmQ9GqfFWf3a06"
+      }
+    };
+    
+    const link = stripeLinks[groupId][type];
+    if (link) {
+      window.open(link, '_blank');
+    }
   };
 
   return (
