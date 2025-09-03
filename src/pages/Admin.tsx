@@ -1,11 +1,12 @@
-import { useState, Suspense, lazy } from "react";
+import { useState, Suspense, lazy, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ADMIN_NAV, AdminSection } from "@/lib/admin-nav";
-import { AuthGuard } from "@/components/auth/AuthGuard";
+// AuthGuard removed for now - will be re-enabled when authentication is implemented
 import { MembershipFallback, GenericFallback } from "@/components/admin/FallbackComponents";
 
 // Lazy load heavy admin components with error handling
@@ -93,6 +94,16 @@ const AdminsLogs = lazy(() =>
 
 
 const Admin = () => {
+  const navigate = useNavigate();
+  
+  // For now, redirect to coming soon page since authentication is not implemented
+  // This will be removed when authentication is added back
+  useEffect(() => {
+    navigate('/coming-soon');
+  }, [navigate]);
+  
+  return null;
+
   const [activeSection, setActiveSection] = useState<AdminSection>("dashboard");
 
   const renderContentSwitch = () => {
@@ -173,43 +184,41 @@ const Admin = () => {
   };
 
   return (
-    <AuthGuard>
-      <SidebarProvider>
-        <div className="min-h-screen bg-gradient-subtle grid grid-cols-[280px_1fr] lg:grid-cols-[260px_1fr] md:grid-cols-[280px_1fr]">
-          {/* Sidebar - Fixed/Sticky */}
-          <div className="sticky top-0 h-screen overflow-y-auto z-30 border-r border-border/50">
-            <AdminSidebar
-              activeSection={activeSection}
-              onSectionChange={setActiveSection}
-            />
-          </div>
-
-          {/* Main Content Area */}
-          <div className="flex flex-col min-h-screen">
-            {/* Header - Fixed at top with proper z-index */}
-            <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50">
-              <AdminTopBar />
-            </div>
-
-            {/* Main Content */}
-            <main className="flex-1 p-8 overflow-y-auto">
-              <motion.div
-                key={activeSection}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="max-w-7xl mx-auto"
-              >
-                <Suspense fallback={<LoadingSpinner />}>
-                  {renderContentSwitch()}
-                </Suspense>
-              </motion.div>
-            </main>
-          </div>
+    <SidebarProvider>
+      <div className="min-h-screen bg-gradient-subtle grid grid-cols-[280px_1fr] lg:grid-cols-[260px_1fr] md:grid-cols-[280px_1fr]">
+        {/* Sidebar - Fixed/Sticky */}
+        <div className="sticky top-0 h-screen overflow-y-auto z-30 border-r border-border/50">
+          <AdminSidebar
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+          />
         </div>
-      </SidebarProvider>
-    </AuthGuard>
+
+        {/* Main Content Area */}
+        <div className="flex flex-col min-h-screen">
+          {/* Header - Fixed at top with proper z-index */}
+          <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50">
+            <AdminTopBar />
+          </div>
+
+          {/* Main Content */}
+          <main className="flex-1 p-8 overflow-y-auto">
+            <motion.div
+              key={activeSection}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-7xl mx-auto"
+            >
+              <Suspense fallback={<LoadingSpinner />}>
+                {renderContentSwitch()}
+              </motion.div>
+            </motion.div>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 

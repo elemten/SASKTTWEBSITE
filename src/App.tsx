@@ -17,6 +17,7 @@ const About = lazy(() => import("./pages/About"));
 const Admin = lazy(() => import("./pages/Admin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 
 // Secondary pages
 const Clubs = lazy(() => import("./pages/Clubs"));
@@ -204,7 +205,10 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQ />} />
 
-                {/* Auth routes */}
+                {/* Coming Soon page for auth features */}
+                <Route path="/coming-soon" element={<ComingSoon />} />
+
+                {/* Auth routes - kept for future use but not accessible */}
                 <Route path="/auth/sign-in" element={<SignIn />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/auth/forbidden" element={<Forbidden />} />

@@ -278,10 +278,10 @@ export function Navigation({ className }: NavigationProps) {
 
         {/* CTA Buttons */}
         <div className="cta">
-          <NavLink to="/auth/sign-in" className="btn btn--ghost">
+          <NavLink to="/coming-soon" className="btn btn--ghost">
             Sign In
           </NavLink>
-          <NavLink to="/get-started" className="btn btn--primary">
+          <NavLink to="/coming-soon" className="btn btn--primary">
             Get Started
           </NavLink>
         </div>
@@ -301,13 +301,13 @@ export function Navigation({ className }: NavigationProps) {
 
           <div className="flex items-center gap-1 sm:gap-2">
             <NavLink
-              to="/auth/sign-in"
+              to="/coming-soon"
               className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-2 sm:px-3 text-xs sm:text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors whitespace-nowrap"
             >
               Log In
             </NavLink>
             <NavLink
-              to="/get-started"
+              to="/coming-soon"
               className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-2 sm:px-3 text-xs sm:text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors whitespace-nowrap"
             >
               Get Started
