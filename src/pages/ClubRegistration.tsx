@@ -186,7 +186,7 @@ export default function ClubRegistration() {
                 <Button
                   variant="hero"
                   size="xl"
-                  onClick={() => window.location.href = '/contact'}
+                  onClick={() => window.location.assign('/contact')}
                   aria-label="Contact our team for registration assistance"
                 >
                   <Mail className="mr-2 h-5 w-5" />

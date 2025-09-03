@@ -83,7 +83,7 @@ export function FloatingCTA() {
                 size="lg"
                 variant="hero"
                 className="flex-1 group shadow-medium"
-                onClick={() => window.location.href = "/membership"}
+                onClick={() => window.location.assign("/membership")}
               >
                 <UserPlus className="h-5 w-5 mr-2" />
                 Join Now

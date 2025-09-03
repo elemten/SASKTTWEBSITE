@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -721,7 +722,9 @@ export function HeroSection() {
                   variant="hero"
                   size="lg"
                     className="w-full py-4 font-semibold shadow-lg hover:shadow-xl"
+                    asChild
                 >
+                  <Link to="/about">
                   Learn More
                     <motion.div
                       className="ml-2"
@@ -730,6 +733,7 @@ export function HeroSection() {
                     >
                       <ArrowRight className="h-5 w-5" />
                     </motion.div>
+                  </Link>
                 </Button>
                 </motion.div>
               </div>
@@ -752,9 +756,12 @@ export function HeroSection() {
                 variant="hero"
                 size="xl"
                 className="px-12 py-6 text-xl font-bold shadow-2xl hover:shadow-3xl"
+                asChild
               >
+                <Link to="/membership">
                 Explore All Programs
                 <ArrowRight className="ml-3 h-7 w-7" />
+                </Link>
               </Button>
             </motion.div>
           </motion.div>

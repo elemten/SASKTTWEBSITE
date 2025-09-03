@@ -183,7 +183,7 @@ export function AboutUsSection() {
                       className="group shadow-soft hover:shadow-medium hover:bg-green-600 transition-all duration-250 ease-in-out font-sora"
                       asChild
                     >
-                      <Link to="/programs">
+                      <Link to="/membership">
                         Explore Programs
                         <Trophy className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Link>
