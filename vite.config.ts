@@ -25,9 +25,9 @@ export default defineConfig(({ mode, command }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: ["react", "react-dom"],
+        dedupe: ["react", "react-dom"],
   },
-   optimizeDeps: {
+  optimizeDeps: {
     include: [
       "react", 
       "react-dom", 
