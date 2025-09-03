@@ -28,8 +28,17 @@ export default defineConfig(({ mode, command }) => ({
     dedupe: ["react", "react-dom"],
   },
   optimizeDeps: {
-    include: ["react", "react-dom", "react/jsx-runtime"],
+    include: [
+      "react", 
+      "react-dom", 
+      "react/jsx-runtime",
+      "react-dom/client",
+      "@radix-ui/react-use-layout-effect"
+    ],
     exclude: [],
+    esbuildOptions: {
+      target: "es2017"
+    }
   },
   build: {
     target: "es2017",
@@ -41,7 +50,9 @@ export default defineConfig(({ mode, command }) => ({
       transformMixedEsModules: true,
     },
     rollupOptions: {
+      external: [],
       output: {
+        globals: {},
         manualChunks: (id) => {
           // Core React libraries - ensure proper bundling
           if (id.includes('node_modules/react/') && !id.includes('node_modules/react-')) {
