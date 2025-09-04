@@ -200,47 +200,45 @@ const SPEDBookingForm = () => {
       const rect = button.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
+      const scrollY = window.scrollY || window.pageYOffset;
       
-      console.log('Button position:', rect);
-      console.log('Viewport size:', viewportWidth, viewportHeight);
-      
-      // Calculate position relative to button
+      // Calculate position relative to button with scroll offset
       let left = rect.left;
-      let top = rect.bottom + 10; // Add more space below button
+      let top = rect.bottom + scrollY + 10; // Add scroll position to top
       
       // Mobile-specific positioning
       if (viewportWidth < 768) {
         // On mobile, position calendar right below the button
-        // Keep it aligned with the button's left edge
-        left = Math.max(5, rect.left);
+        left = Math.max(10, rect.left);
         
         // If button is too far right, adjust to fit screen
         if (left + 300 > viewportWidth) {
-          left = viewportWidth - 305;
+          left = viewportWidth - 310;
         }
         
-        // Position below button, but don't go off screen
-        top = Math.min(rect.bottom + 10, viewportHeight - 360);
+        // Position below button with scroll offset
+        top = rect.bottom + scrollY + 10;
         
-        // If there's not enough space below, position above the button
-        if (top + 360 > viewportHeight) {
-          top = Math.max(5, rect.top - 360);
+        // If there's not enough space below in viewport, position above
+        if (rect.bottom + 360 > viewportHeight) {
+          top = rect.top + scrollY - 360;
         }
         
-        console.log('Mobile calendar position:', { top, left });
+        // Ensure calendar doesn't go above the page
+        if (top < scrollY) {
+          top = scrollY + 10;
+        }
       } else {
         // Desktop positioning
         if (left + 300 > viewportWidth) {
           left = viewportWidth - 310;
         }
-        console.log('Desktop calendar position:', { top, left });
       }
       
       setCalendarPosition({ top, left });
     } else {
-      console.error('Date picker button not found!');
-      // Fallback position if button not found
-      setCalendarPosition({ top: 100, left: 50 });
+      // Fallback position
+      setCalendarPosition({ top: 200, left: 50 });
     }
     setIsCalendarOpen(true);
   };
@@ -411,6 +409,7 @@ const SPEDBookingForm = () => {
                   className="w-full justify-start text-left font-normal"
                   type="button"
                   id="date-picker-button"
+                  data-testid="date-picker-button"
                   onClick={handleCalendarOpen}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -425,7 +424,7 @@ const SPEDBookingForm = () => {
                       onClick={() => setIsCalendarOpen(false)}
                     />
                     <div 
-                      className="calendar-container fixed z-[100] bg-white border border-gray-200 rounded-md shadow-lg p-0"
+                      className="calendar-container absolute z-[100] bg-white border border-gray-200 rounded-md shadow-lg p-0"
                       style={{
                         top: `${calendarPosition.top}px`,
                         left: `${calendarPosition.left}px`,
@@ -433,7 +432,7 @@ const SPEDBookingForm = () => {
                         maxHeight: '350px',
                         overflow: 'hidden',
                         borderRadius: '8px',
-                        position: 'fixed',
+                        position: 'absolute',
                         transform: 'none'
                       }}
                     >
