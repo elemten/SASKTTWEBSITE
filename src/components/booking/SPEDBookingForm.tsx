@@ -64,7 +64,6 @@ const SPEDBookingForm = () => {
 
   // Calendar and time slot dropdown states
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [calendarPosition, setCalendarPosition] = useState({ top: 200, left: 50 });
   const [isTimeSlotOpen, setIsTimeSlotOpen] = useState(false);
   const [timeSlotPosition, setTimeSlotPosition] = useState({ top: 0, left: 0 });
 
@@ -194,11 +193,6 @@ const SPEDBookingForm = () => {
     return slots;
   };
 
-  const handleCalendarOpen = () => {
-    // Simple, reliable positioning
-    setCalendarPosition({ top: 100, left: 50 });
-    setIsCalendarOpen(true);
-  };
 
   const handleTimeSlotOpen = () => {
     const button = document.getElementById('time-slot-button');
@@ -358,16 +352,16 @@ const SPEDBookingForm = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Date Selection */}
-            <div className="relative">
+            <div className="space-y-2">
               <Label>Select Date *</Label>
-              <div>
+              <div className="relative">
                 <Button
                   variant="outline"
                   className="w-full justify-start text-left font-normal"
                   type="button"
                   id="date-picker-button"
                   data-testid="date-picker-button"
-                  onClick={handleCalendarOpen}
+                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {formData.booking_date ? format(formData.booking_date, 'PPP') : 'Pick a date'}
@@ -380,14 +374,14 @@ const SPEDBookingForm = () => {
                       className="fixed inset-0 z-[99] bg-black bg-opacity-20"
                       onClick={() => setIsCalendarOpen(false)}
                     />
-                    {/* Calendar container - visible and simple */}
+                    {/* Calendar container - positioned absolutely below button */}
                     <div 
-                      className="fixed z-[100] bg-white border border-gray-300 rounded-lg shadow-xl p-4"
+                      className="calendar-container absolute z-[100] bg-white border border-gray-300 rounded-lg shadow-xl p-3 mt-1"
                       style={{
-                        top: `${calendarPosition.top}px`,
-                        left: `${calendarPosition.left}px`,
-                        width: '320px',
-                        maxHeight: '400px'
+                        top: 'calc(100% + 4px)',
+                        left: '0',
+                        right: '0',
+                        maxWidth: '320px'
                       }}
                     >
                       <Calendar
@@ -396,7 +390,10 @@ const SPEDBookingForm = () => {
                         onSelect={(date) => {
                           if (date) {
                             handleInputChange('booking_date', date);
-                            setIsCalendarOpen(false);
+                            // Brief delay to ensure state updates
+                            setTimeout(() => {
+                              setIsCalendarOpen(false);
+                            }, 150);
                           }
                         }}
                         disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
