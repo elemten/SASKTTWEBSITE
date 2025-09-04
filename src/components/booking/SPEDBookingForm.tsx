@@ -3,11 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Clock, MapPin, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 import { supabase } from '@/lib/supabase';
@@ -25,7 +23,6 @@ interface BookingFormData {
   school_postal_code: string;
   booking_date: Date | null;
   booking_time: string;
-  number_of_sessions: number;
   number_of_students: number;
   grade_level?: string;
   preferred_coach?: string;
@@ -52,7 +49,6 @@ const SPEDBookingForm: React.FC = () => {
     school_postal_code: '',
     booking_date: null,
     booking_time: '',
-    number_of_sessions: 1,
     number_of_students: 0,
     grade_level: '',
     preferred_coach: '',
@@ -69,11 +65,10 @@ const SPEDBookingForm: React.FC = () => {
   const [isTimeSlotOpen, setIsTimeSlotOpen] = useState(false);
   const [timeSlotPosition, setTimeSlotPosition] = useState({ top: 0, left: 0 });
 
-  // Calculate total cost when sessions change
+  // Calculate total cost (fixed at $95 for single session)
   useEffect(() => {
-    const cost = formData.number_of_sessions * 95; // $95 per hour
-    setTotalCost(cost);
-  }, [formData.number_of_sessions]);
+    setTotalCost(95); // $95 per session
+  }, []);
 
   // Fetch available time slots when date is selected
   useEffect(() => {
@@ -203,13 +198,26 @@ const SPEDBookingForm: React.FC = () => {
 
       // Create booking data
       const bookingData = {
-        ...formData,
+        teacher_first_name: formData.teacher_first_name,
+        teacher_last_name: formData.teacher_last_name,
+        teacher_email: formData.teacher_email,
+        teacher_phone: formData.teacher_phone,
+        school_name: formData.school_name,
+        school_address_line1: formData.school_address_line1,
+        school_address_line2: formData.school_address_line2,
+        school_city: formData.school_city,
+        school_province: formData.school_province,
+        school_postal_code: formData.school_postal_code,
         booking_date: formData.booking_date.toISOString().split('T')[0],
         booking_time_start: formData.booking_time + ':00',
         booking_time_end: (parseInt(formData.booking_time.split(':')[0]) + 1).toString().padStart(2, '0') + ':00:00',
+        number_of_students: formData.number_of_students,
+        grade_level: formData.grade_level,
+        preferred_coach: formData.preferred_coach,
+        special_requirements: formData.special_requirements,
         rate_per_hour: 95.00,
         total_cost: totalCost,
-        status: 'confirmed'
+        status: 'pending'
       };
 
       // Submit to Supabase
@@ -265,7 +273,6 @@ const SPEDBookingForm: React.FC = () => {
         school_postal_code: '',
         booking_date: null,
         booking_time: '',
-        number_of_sessions: 1,
         number_of_students: 0,
         grade_level: '',
         preferred_coach: '',
@@ -540,21 +547,6 @@ const SPEDBookingForm: React.FC = () => {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="number_of_sessions">Number of Sessions *</Label>
-                <Select value={formData.number_of_sessions.toString()} onValueChange={(value) => handleInputChange('number_of_sessions', parseInt(value))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 Session</SelectItem>
-                    <SelectItem value="2">2 Sessions</SelectItem>
-                    <SelectItem value="3">3 Sessions</SelectItem>
-                    <SelectItem value="4">4 Sessions</SelectItem>
-                    <SelectItem value="5">5 Sessions</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
               <div>
                 <Label htmlFor="number_of_students">Number of Students *</Label>
                 <Input

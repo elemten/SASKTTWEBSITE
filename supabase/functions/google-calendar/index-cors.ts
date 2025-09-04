@@ -6,13 +6,6 @@ const CALENDAR_ID = Deno.env.get('GOOGLE_CALENDAR_ID') ?? 'c_04d6de5f15712c0334d
 const SERVICE_ACCOUNT_EMAIL = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_EMAIL') ?? 'ttsask-calendar-booking@n8nworkflows-469621.iam.gserviceaccount.com'
 const PRIVATE_KEY = Deno.env.get('GOOGLE_PRIVATE_KEY') ?? ''
 
-// CORS headers for all responses
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-}
-
 interface BookingRequest {
   id: string
   teacher_first_name: string
@@ -37,90 +30,93 @@ interface BookingRequest {
 
 interface TimeSlot {
   time: string
-  duration: string
+  display: string
   available: boolean
 }
 
-// Generate JWT token for Google Calendar API
-async function generateJWT(): Promise<string> {
-  // For now, return a placeholder - in production you'd implement proper JWT signing
-  return 'PLACEHOLDER_JWT_TOKEN'
+// CORS headers for all responses
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
-// Get available time slots from Google Calendar
+// Generate JWT for Google Calendar API (placeholder implementation)
+async function generateJWT(): Promise<string> {
+  // This is a placeholder - in a real implementation, you would:
+  // 1. Create a JWT with the service account credentials
+  // 2. Include proper claims and expiration
+  // 3. Sign it with the private key
+  
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT'
+  }
+  
+  const now = Math.floor(Date.now() / 1000)
+  const payload = {
+    iss: SERVICE_ACCOUNT_EMAIL,
+    scope: 'https://www.googleapis.com/auth/calendar',
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now,
+    exp: now + 3600 // 1 hour
+  }
+  
+  // For now, return a placeholder token
+  // In production, you would properly sign this JWT
+  return 'placeholder-jwt-token'
+}
+
+// Get available time slots for a specific date
 async function getAvailableSlots(date: string): Promise<TimeSlot[]> {
   try {
-    // For now, return mock data - in production this would query Google Calendar API
-    const mockSlots = [
-      { time: '09:00-10:30', duration: '1.5 hours', available: true },
-      { time: '11:00-12:30', duration: '1.5 hours', available: true },
-      { time: '13:00-14:30', duration: '1.5 hours', available: false }, // Booked
-      { time: '15:00-16:30', duration: '1.5 hours', available: true },
-      { time: '17:00-18:30', duration: '1.5 hours', available: true }
+    // For now, return mock data
+    // In production, you would:
+    // 1. Generate JWT
+    // 2. Get access token from Google
+    // 3. Query Google Calendar API for existing events
+    // 4. Calculate available slots based on existing bookings
+    
+    const mockSlots: TimeSlot[] = [
+      { time: '09:00', display: '9:00 AM - 10:00 AM', available: true },
+      { time: '10:00', display: '10:00 AM - 11:00 AM', available: true },
+      { time: '11:00', display: '11:00 AM - 12:00 PM', available: false },
+      { time: '13:00', display: '1:00 PM - 2:00 PM', available: true },
+      { time: '14:00', display: '2:00 PM - 3:00 PM', available: true }
     ]
     
-    // Filter only available slots
-    return mockSlots.filter(slot => slot.available)
-    
+    return mockSlots
   } catch (error) {
-    console.error('Error getting available slots:', error)
+    console.error('Error fetching available slots:', error)
     return []
   }
 }
 
-// Create Google Calendar event
+// Create a calendar event
 async function createCalendarEvent(booking: BookingRequest): Promise<{ success: boolean; eventId?: string; eventLink?: string; error?: string }> {
   try {
-    const eventStart = `${booking.booking_date}T${booking.booking_time_start}-06:00`
-    const eventEnd = `${booking.booking_date}T${booking.booking_time_end}-06:00`
+    // For now, simulate event creation
+    // In production, you would:
+    // 1. Generate JWT
+    // 2. Get access token from Google
+    // 3. Create event in Google Calendar
+    // 4. Return event ID and link
     
-    const event = {
-      summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
-      description: `SPED Class Booking
-
-Teacher: ${booking.teacher_first_name} ${booking.teacher_last_name}
-School: ${booking.school_name}
-Email: ${booking.teacher_email}
-Phone: ${booking.teacher_phone}
-Students: ${booking.number_of_students}
-Grade: ${booking.grade_level || 'Not specified'}
-Sessions: ${booking.number_of_sessions}
-Preferred Coach: ${booking.preferred_coach || 'Not specified'}
-Special Requirements: ${booking.special_requirements || 'None'}
-Total Cost: $${booking.total_cost}
-
-Booking ID: ${booking.id}`,
-      start: {
-        dateTime: eventStart,
-        timeZone: 'America/Regina'
-      },
-      end: {
-        dateTime: eventEnd,
-        timeZone: 'America/Regina'
-      },
-      location: 'Zion Lutheran Church, 323 4th Avenue South, Saskatoon, SK',
-      attendees: [
-        { email: booking.teacher_email },
-        { email: Deno.env.get('ADMIN_EMAIL') ?? 'huzaifa.ishaq.395@gmail.com' }
-      ],
-      reminders: {
-        useDefault: false,
-        overrides: [
-          { method: 'email', minutes: 1440 }, // 1 day before
-          { method: 'popup', minutes: 30 }   // 30 minutes before
-        ]
-      }
-    }
+    const eventId = `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    const eventLink = `https://calendar.google.com/calendar/event?eid=${eventId}`
     
-    // For now, simulate success - in production you'd make the actual API call
-    console.log('Calendar event would be created:', event)
+    console.log('Simulated calendar event creation:', {
+      title: `SPED Session - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
+      start: `${booking.booking_date}T${booking.booking_time_start}:00`,
+      end: `${booking.booking_date}T${booking.booking_time_end}:00`,
+      description: `SPED Table Tennis Session\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level || 'Not specified'}\nSpecial Requirements: ${booking.special_requirements || 'None'}`
+    })
     
     return {
       success: true,
-      eventId: `event_${Date.now()}`,
-      eventLink: `https://calendar.google.com/calendar/event?eid=${Date.now()}`
+      eventId,
+      eventLink
     }
-    
   } catch (error) {
     console.error('Error creating calendar event:', error)
     return {
@@ -135,11 +131,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
+      headers: corsHeaders,
     })
   }
 
@@ -164,7 +156,13 @@ serve(async (req) => {
       const slots = await getAvailableSlots(date)
       return new Response(
         JSON.stringify({ success: true, slots }),
-        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        { 
+          status: 200, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders
+          } 
+        }
       )
       
     } else if (action === 'bookSlot') {
@@ -172,7 +170,13 @@ serve(async (req) => {
       if (!booking) {
         return new Response(
           JSON.stringify({ error: 'Booking data is required' }),
-          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { 
+            status: 400, 
+            headers: { 
+              'Content-Type': 'application/json',
+              ...corsHeaders
+            } 
+          }
         )
       }
       
@@ -204,10 +208,15 @@ serve(async (req) => {
           JSON.stringify({ 
             success: true, 
             eventId: result.eventId,
-            eventLink: result.eventLink,
             message: 'Calendar event created successfully'
           }),
-          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { 
+            status: 200, 
+            headers: { 
+              'Content-Type': 'application/json',
+              ...corsHeaders
+            } 
+          }
         )
       } else {
         return new Response(
@@ -215,14 +224,26 @@ serve(async (req) => {
             success: false, 
             error: result.error 
           }),
-          { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { 
+            status: 500, 
+            headers: { 
+              'Content-Type': 'application/json',
+              ...corsHeaders
+            } 
+          }
         )
       }
       
     } else {
       return new Response(
         JSON.stringify({ error: 'Invalid action. Use "getSlots" or "bookSlot"' }),
-        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        { 
+          status: 400, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders
+          } 
+        }
       )
     }
     
@@ -233,7 +254,13 @@ serve(async (req) => {
         success: false, 
         error: 'Internal server error' 
       }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { 
+        status: 500, 
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders
+        } 
+      }
     )
   }
 })
