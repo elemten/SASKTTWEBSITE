@@ -64,6 +64,7 @@ const SPEDBookingForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [totalCost, setTotalCost] = useState(0);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // Calculate total cost when sessions change
   useEffect(() => {
@@ -390,20 +391,30 @@ const SPEDBookingForm: React.FC = () => {
               <h3 className="text-lg font-semibold">Booking Details</h3>
               
               {/* Date Selection */}
-              <div>
+              <div className="relative">
                 <Label>Select Date *</Label>
-                <Popover>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       className="w-full justify-start text-left font-normal"
                       type="button"
+                      id="date-picker-trigger"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {formData.booking_date ? format(formData.booking_date, 'PPP') : 'Pick a date'}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={4} avoidCollisions={true} sticky="always">
+                  <PopoverContent 
+                    className="w-auto p-0 z-50" 
+                    align="start" 
+                    side="bottom" 
+                    sideOffset={4}
+                    alignOffset={0}
+                    avoidCollisions={false}
+                    sticky="always"
+                    style={{ position: 'absolute' }}
+                  >
                     <Calendar
                       mode="single"
                       selected={formData.booking_date || undefined}
@@ -411,6 +422,7 @@ const SPEDBookingForm: React.FC = () => {
                         console.log('Date selected:', date);
                         if (date) {
                           handleInputChange('booking_date', date);
+                          setIsCalendarOpen(false);
                         }
                       }}
                       disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
