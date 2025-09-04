@@ -19,6 +19,13 @@ const createMockClient = () => ({
     signInWithOAuth: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
     signOut: () => Promise.resolve({ error: null }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+  },
+  functions: {
+    invoke: (functionName: string, options?: any) => 
+      Promise.resolve({ 
+        data: { slots: [], success: false }, 
+        error: { message: 'Supabase not configured' } 
+      })
   }
 })
 

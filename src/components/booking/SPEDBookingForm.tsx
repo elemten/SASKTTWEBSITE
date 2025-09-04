@@ -79,6 +79,7 @@ const SPEDBookingForm: React.FC = () => {
   }, [formData.booking_date]);
 
   const fetchAvailableTimeSlots = async (date: Date) => {
+    console.log('Fetching time slots for date:', format(date, 'yyyy-MM-dd'));
     setIsLoadingSlots(true);
     try {
       // Call Supabase Edge Function for Google Calendar integration
@@ -89,16 +90,23 @@ const SPEDBookingForm: React.FC = () => {
         }
       });
 
+      console.log('Edge function response:', { data, error });
+
       if (error) {
         console.error('Error fetching time slots:', error);
-        setAvailableTimeSlots(getDefaultTimeSlots(date));
+        const defaultSlots = getDefaultTimeSlots(date);
+        console.log('Using default slots:', defaultSlots);
+        setAvailableTimeSlots(defaultSlots);
       } else {
+        console.log('Setting time slots from API:', data.slots);
         setAvailableTimeSlots(data.slots || []);
       }
     } catch (error) {
       console.error('Error fetching time slots:', error);
       // Fallback to predefined slots
-      setAvailableTimeSlots(getDefaultTimeSlots(date));
+      const defaultSlots = getDefaultTimeSlots(date);
+      console.log('Using default slots (catch):', defaultSlots);
+      setAvailableTimeSlots(defaultSlots);
     } finally {
       setIsLoadingSlots(false);
     }
@@ -227,7 +235,7 @@ const SPEDBookingForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8" data-booking-form style={{ scrollBehavior: 'smooth' }}>
       {/* Location and Rate Information */}
       <Card className="bg-green-50 border-green-200">
         <CardContent className="pt-6">
@@ -389,18 +397,23 @@ const SPEDBookingForm: React.FC = () => {
                     <Button
                       variant="outline"
                       className="w-full justify-start text-left font-normal"
+                      type="button"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {formData.booking_date ? format(formData.booking_date, 'PPP') : 'Pick a date'}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={4} avoidCollisions={true} sticky="always">
                     <Calendar
                       mode="single"
                       selected={formData.booking_date || undefined}
-                      onSelect={(date) => handleInputChange('booking_date', date)}
+                      onSelect={(date) => {
+                        console.log('Date selected:', date);
+                        if (date) {
+                          handleInputChange('booking_date', date);
+                        }
+                      }}
                       disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
-                      initialFocus
                     />
                   </PopoverContent>
                 </Popover>
@@ -408,33 +421,46 @@ const SPEDBookingForm: React.FC = () => {
 
               {/* Time Slot Selection */}
               {formData.booking_date && (
-                <div>
-                  <Label>Available Time Slots *</Label>
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <Label className="text-green-800 font-semibold">Available Time Slots *</Label>
                   {isLoadingSlots ? (
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 animate-spin" />
-                      <span>Loading available slots...</span>
+                    <div className="flex items-center space-x-2 mt-2">
+                      <Clock className="h-4 w-4 animate-spin text-green-600" />
+                      <span className="text-green-700">Loading available slots...</span>
+                    </div>
+                  ) : availableTimeSlots.length > 0 ? (
+                    <div className="mt-2">
+                      <Select value={formData.booking_time} onValueChange={(value) => {
+                        console.log('Time slot selected:', value);
+                        handleInputChange('booking_time', value);
+                      }}>
+                        <SelectTrigger className="bg-white">
+                          <SelectValue placeholder="Select a time slot" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableTimeSlots.map((slot) => (
+                            <SelectItem 
+                              key={slot.time} 
+                              value={slot.time}
+                              disabled={!slot.available}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <span>{slot.display}</span>
+                                {!slot.available && <Badge variant="secondary">Booked</Badge>}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-sm text-green-600 mt-2">
+                        Found {availableTimeSlots.length} available time slots
+                      </p>
                     </div>
                   ) : (
-                    <Select value={formData.booking_time} onValueChange={(value) => handleInputChange('booking_time', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a time slot" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableTimeSlots.map((slot) => (
-                          <SelectItem 
-                            key={slot.time} 
-                            value={slot.time}
-                            disabled={!slot.available}
-                          >
-                            <div className="flex items-center space-x-2">
-                              <span>{slot.display}</span>
-                              {!slot.available && <Badge variant="secondary">Booked</Badge>}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                      <p className="text-yellow-800">No available time slots found for this date.</p>
+                      <p className="text-sm text-yellow-700">Please try selecting a different date.</p>
+                    </div>
                   )}
                 </div>
               )}

@@ -9,7 +9,11 @@ GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAAS
 ADMIN_EMAIL=huzaifa.ishaq.395@gmail.com
 COACH_EMAIL=huzaifa.ishaq.395@gmail.com
 
-# Supabase Configuration
+# Supabase Configuration (Client-side - for React app)
 VITE_SUPABASE_URL=https://yzwdmqapoguzcpclpbwo.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6d2RtcWFwb2d1emNwY2xwYndvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNzE3MjQsImV4cCI6MjA3MTg0NzcyNH0.19M99UVERejHdnmG7eiHvONYnQoe22EF6JqA39fjYzw
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6d2RtcWFwb2d1emNwY2xwYndvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjI3MTcyNCwiZXhwIjoyMDcxODQ3NzI0fQ.21ZQAgcRdOhZ2FfI1h8h13b1IKk8dkHx1bkdIl7bCqI
+
+# Supabase Configuration (Server-side - for Edge Functions)
+# Note: These are set in Supabase Dashboard, not in .env file
+# DATABASE_URL=https://yzwdmqapoguzcpclpbwo.supabase.co
+# SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6d2RtcWFwb2d1emNwY2xwYndvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjI3MTcyNCwiZXhwIjoyMDcxODQ3NzI0fQ.21ZQAgcRdOhZ2FfI1h8h13b1IKk8dkHx1bkdIl7bCqI
