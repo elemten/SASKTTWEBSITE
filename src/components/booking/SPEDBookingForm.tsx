@@ -70,6 +70,41 @@ const SPEDBookingForm: React.FC = () => {
     setTotalCost(95); // $95 per session
   }, []);
 
+  // Calculate end time based on selected time slot
+  const calculateEndTime = (startTime: string): string => {
+    const time = startTime.split(':');
+    const hours = parseInt(time[0]);
+    const minutes = parseInt(time[1]);
+    
+    // Determine duration based on time slot
+    let durationHours = 1; // Default 1 hour
+    
+    if (startTime === '11:00' && minutes === 0) {
+      // Check if it's a 1.5 hour slot (11:00-12:30) or 2.75 hour slot (11:00-1:45) or 5 hour slot (11:00-4:00)
+      const selectedSlot = availableTimeSlots.find(slot => slot.time === startTime);
+      if (selectedSlot?.display.includes('1.5 hours')) {
+        durationHours = 1.5;
+      } else if (selectedSlot?.display.includes('2.75 hours')) {
+        durationHours = 2.75;
+      } else if (selectedSlot?.display.includes('5 hours')) {
+        durationHours = 5;
+      }
+    } else if (startTime === '12:30') {
+      durationHours = 1.5; // 12:30-2:00
+    } else if (startTime === '14:00') {
+      durationHours = 1.5; // 2:00-3:30
+    } else if (startTime === '15:30') {
+      durationHours = 1.5; // 3:30-5:00
+    }
+    
+    // Calculate end time
+    const totalMinutes = hours * 60 + minutes + (durationHours * 60);
+    const endHours = Math.floor(totalMinutes / 60);
+    const endMinutes = totalMinutes % 60;
+    
+    return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00`;
+  };
+
   // Fetch available time slots when date is selected
   useEffect(() => {
     if (formData.booking_date) {
@@ -218,7 +253,7 @@ const SPEDBookingForm: React.FC = () => {
         school_postal_code: formData.school_postal_code,
         booking_date: formData.booking_date.toISOString().split('T')[0],
         booking_time_start: formData.booking_time + ':00',
-        booking_time_end: (parseInt(formData.booking_time.split(':')[0]) + 1).toString().padStart(2, '0') + ':00:00',
+        booking_time_end: calculateEndTime(formData.booking_time),
         number_of_students: formData.number_of_students,
         grade_level: formData.grade_level,
         preferred_coach: formData.preferred_coach,

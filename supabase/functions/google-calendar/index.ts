@@ -140,14 +140,77 @@ async function getAccessToken(): Promise<string> {
   }
 }
 
+// Helper function to calculate slot end time
+function calculateSlotEndTime(date: string, startTime: string, display: string): string {
+  const [hours, minutes] = startTime.split(':').map(Number)
+  
+  let durationHours = 1 // Default 1 hour
+  
+  if (display.includes('1.5 hours')) {
+    durationHours = 1.5
+  } else if (display.includes('2.75 hours')) {
+    durationHours = 2.75
+  } else if (display.includes('5 hours')) {
+    durationHours = 5
+  }
+  
+  const totalMinutes = hours * 60 + minutes + (durationHours * 60)
+  const endHours = Math.floor(totalMinutes / 60)
+  const endMinutes = totalMinutes % 60
+  
+  return `${date}T${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00-06:00`
+}
+
 // Get available time slots from Google Calendar
 async function getAvailableSlots(date: string): Promise<TimeSlot[]> {
   try {
     console.log('Fetching real Google Calendar data for date:', date)
     
-    // For now, return default slots since JWT is not working
-    console.log('Using default slots due to JWT issues...')
-    return getDefaultTimeSlots(new Date(date))
+    // Get access token
+    const accessToken = await getAccessToken()
+    console.log('Got access token for calendar query')
+    
+    // Query Google Calendar for existing events
+    const startOfDay = `${date}T00:00:00-06:00`
+    const endOfDay = `${date}T23:59:59-06:00`
+    
+    const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?timeMin=${startOfDay}&timeMax=${endOfDay}&singleEvents=true&orderBy=startTime`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Calendar API error: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    console.log('Fetched calendar events:', data.items?.length || 0)
+    
+    // Get default slots and mark unavailable ones
+    const defaultSlots = getDefaultTimeSlots(new Date(date))
+    const bookedSlots = data.items || []
+    
+    // Mark slots as unavailable if they conflict with existing events
+    const availableSlots = defaultSlots.map(slot => {
+      const slotStart = `${date}T${slot.time}:00-06:00`
+      const slotEnd = calculateSlotEndTime(date, slot.time, slot.display)
+      
+      const isBooked = bookedSlots.some((event: any) => {
+        const eventStart = event.start.dateTime || event.start.date
+        const eventEnd = event.end.dateTime || event.end.date
+        return (slotStart < eventEnd && slotEnd > eventStart)
+      })
+      
+      return {
+        ...slot,
+        available: !isBooked
+      }
+    })
+    
+    console.log('Available slots after checking calendar:', availableSlots.filter(s => s.available).length)
+    return availableSlots
     
   } catch (error) {
     console.error('Error getting available slots from Google Calendar:', error)
