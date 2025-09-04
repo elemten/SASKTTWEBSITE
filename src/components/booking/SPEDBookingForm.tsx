@@ -148,7 +148,7 @@ const SPEDBookingForm = () => {
         import.meta.env.VITE_SUPABASE_ANON_KEY
       );
 
-      const { data, error } = await supabase.functions.invoke('google-calendar', {
+      const { data, error } = await supabase.functions.invoke('google-calendar-function', {
         body: {
           action: 'getSlots',
           date: date.toISOString().split('T')[0]
@@ -258,7 +258,7 @@ const SPEDBookingForm = () => {
         import.meta.env.VITE_SUPABASE_ANON_KEY
       );
 
-      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar', {
+      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar-function', {
         body: {
           action: 'bookSlot',
           booking: bookingData
