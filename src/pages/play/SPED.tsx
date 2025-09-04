@@ -340,33 +340,41 @@ const SPED = () => {
         </div>
       </section>
 
-      {/* Floating Bubble - Always Sticky */}
+      {/* Floating Bubble - Super Obvious */}
       <div
-        className="fixed bottom-4 right-4 z-[9999]"
         style={{ 
           position: 'fixed',
-          bottom: '16px',
-          right: '16px',
-          zIndex: 9999
+          bottom: '20px',
+          right: '20px',
+          zIndex: 99999,
+          width: '80px',
+          height: '80px'
         }}
       >
         <button
           onClick={scrollToBookingForm}
-          className="bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-xl border-2 border-white transition-all duration-300 hover:scale-110 active:scale-95"
-          aria-label="Scroll to booking form"
           style={{
-            boxShadow: '0 8px 32px rgba(34, 197, 94, 0.8)',
-            minWidth: '70px',
-            minHeight: '70px',
-            fontSize: '12px',
+            width: '80px',
+            height: '80px',
             backgroundColor: '#16a34a',
-            border: '3px solid white',
+            border: '4px solid white',
+            borderRadius: '50%',
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            boxShadow: '0 10px 40px rgba(34, 197, 94, 0.9)',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
             opacity: 1,
-            visibility: 'visible'
+            visibility: 'visible',
+            transform: 'none'
           }}
         >
-          <ArrowDown className="h-6 w-6 mx-auto" />
-          <div className="text-xs mt-1 font-bold text-center">BOOK</div>
+          <ArrowDown style={{ width: '24px', height: '24px', marginBottom: '2px' }} />
+          <div style={{ fontSize: '10px', fontWeight: 'bold' }}>BOOK</div>
         </button>
       </div>
 
