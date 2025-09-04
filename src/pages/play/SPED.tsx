@@ -6,11 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Heart, 
   Users, 
-  Target, 
   Trophy, 
   Clock, 
   MapPin, 
-  Star, 
   Shield, 
   Activity,
   Brain,
@@ -18,11 +16,33 @@ import {
   GraduationCap,
   Calendar,
   CheckCircle,
-  ArrowRight
+  ArrowDown
 } from "lucide-react";
 import SPEDBookingForm from "@/components/booking/SPEDBookingForm";
+import { useState, useEffect } from "react";
 
 const SPED = () => {
+  const [showFloatingBubble, setShowFloatingBubble] = useState(false);
+
+  // Show floating bubble after small scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setShowFloatingBubble(scrollTop > 100); // Show after 100px scroll
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll to booking form
+  const scrollToBookingForm = () => {
+    const bookingSection = document.getElementById('booking-section');
+    if (bookingSection) {
+      bookingSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const benefits = [
     {
       icon: Activity,
@@ -262,7 +282,7 @@ const SPED = () => {
       </section>
 
       {/* Booking Section */}
-      <section className="py-16 md:py-20 bg-white">
+      <section id="booking-section" className="py-16 md:py-20 bg-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-4xl mx-auto">
             <motion.div
@@ -325,6 +345,24 @@ const SPED = () => {
           </div>
         </div>
       </section>
+
+      {/* Floating Bubble - Mobile Only */}
+      {showFloatingBubble && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0 }}
+          className="fixed bottom-6 right-6 z-50 md:hidden"
+        >
+          <button
+            onClick={scrollToBookingForm}
+            className="bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110"
+            aria-label="Scroll to booking form"
+          >
+            <ArrowDown className="h-6 w-6" />
+          </button>
+        </motion.div>
+      )}
 
       <Footer />
     </div>
