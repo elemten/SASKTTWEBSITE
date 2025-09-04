@@ -135,21 +135,21 @@ const SPEDBookingForm: React.FC = () => {
 
     // Monday: 11am-12pm (1 hour)
     if (dayOfWeek === 1) {
-      slots.push({ time: '11:00-12:00', display: '11:00 AM - 12:00 PM (1 hour)', available: true });
+      slots.push({ time: '11:00', display: '11:00 AM - 12:00 PM (1 hour)', available: true });
     }
     // Tuesday-Thursday: 11am-1:45pm (2.75 hours) - multiple slots
     else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
-      slots.push({ time: '11:00-12:30', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true });
-      slots.push({ time: '12:30-14:00', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true });
-      slots.push({ time: '11:00-13:45', display: '11:00 AM - 1:45 PM (2.75 hours)', available: true });
+      slots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true });
+      slots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true });
+      slots.push({ time: '11:00', display: '11:00 AM - 1:45 PM (2.75 hours)', available: true });
     }
     // Friday: 11am-4pm (5 hours) - multiple slots
     else if (dayOfWeek === 5) {
-      slots.push({ time: '11:00-12:30', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true });
-      slots.push({ time: '12:30-14:00', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true });
-      slots.push({ time: '14:00-15:30', display: '2:00 PM - 3:30 PM (1.5 hours)', available: true });
-      slots.push({ time: '15:30-17:00', display: '3:30 PM - 5:00 PM (1.5 hours)', available: true });
-      slots.push({ time: '11:00-16:00', display: '11:00 AM - 4:00 PM (5 hours)', available: true });
+      slots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true });
+      slots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true });
+      slots.push({ time: '14:00', display: '2:00 PM - 3:30 PM (1.5 hours)', available: true });
+      slots.push({ time: '15:30', display: '3:30 PM - 5:00 PM (1.5 hours)', available: true });
+      slots.push({ time: '11:00', display: '11:00 AM - 4:00 PM (5 hours)', available: true });
     }
 
     return slots;

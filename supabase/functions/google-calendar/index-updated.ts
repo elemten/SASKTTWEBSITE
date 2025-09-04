@@ -51,12 +51,12 @@ async function generateJWT(): Promise<string> {
 async function getAvailableSlots(date: string): Promise<TimeSlot[]> {
   try {
     // For now, return mock data - in production this would query Google Calendar API
-    const mockSlots = [
-      { time: '09:00-10:30', duration: '1.5 hours', available: true },
-      { time: '11:00-12:30', duration: '1.5 hours', available: true },
-      { time: '13:00-14:30', duration: '1.5 hours', available: false }, // Booked
-      { time: '15:00-16:30', duration: '1.5 hours', available: true },
-      { time: '17:00-18:30', duration: '1.5 hours', available: true }
+    const mockSlots: TimeSlot[] = [
+      { time: '09:00', display: '9:00 AM - 10:30 AM (1.5 hours)', available: true },
+      { time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true },
+      { time: '13:00', display: '1:00 PM - 2:30 PM (1.5 hours)', available: false }, // Booked
+      { time: '15:00', display: '3:00 PM - 4:30 PM (1.5 hours)', available: true },
+      { time: '17:00', display: '5:00 PM - 6:30 PM (1.5 hours)', available: true }
     ]
     
     // Filter only available slots
