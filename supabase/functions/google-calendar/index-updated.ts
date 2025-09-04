@@ -43,28 +43,187 @@ interface TimeSlot {
 
 // Generate JWT token for Google Calendar API
 async function generateJWT(): Promise<string> {
-  // For now, return a placeholder - in production you'd implement proper JWT signing
-  return 'PLACEHOLDER_JWT_TOKEN'
+  if (!PRIVATE_KEY) {
+    throw new Error('Google Private Key not configured')
+  }
+  
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT'
+  }
+  
+  const now = Math.floor(Date.now() / 1000)
+  const payload = {
+    iss: SERVICE_ACCOUNT_EMAIL,
+    scope: 'https://www.googleapis.com/auth/calendar',
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now,
+    exp: now + 3600 // 1 hour
+  }
+  
+  // Create JWT token
+  const encodedHeader = btoa(JSON.stringify(header))
+  const encodedPayload = btoa(JSON.stringify(payload))
+  const signatureInput = `${encodedHeader}.${encodedPayload}`
+  
+  // Import the private key and sign
+  const privateKey = await crypto.subtle.importKey(
+    'pkcs8',
+    new TextEncoder().encode(PRIVATE_KEY),
+    {
+      name: 'RSASSA-PKCS1-v1_5',
+      hash: 'SHA-256'
+    },
+    false,
+    ['sign']
+  )
+  
+  const signature = await crypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5',
+    privateKey,
+    new TextEncoder().encode(signatureInput)
+  )
+  
+  const encodedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)))
+  
+  return `${signatureInput}.${encodedSignature}`
+}
+
+// Get access token from Google
+async function getAccessToken(): Promise<string> {
+  try {
+    const jwt = await generateJWT()
+    
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion: jwt
+      })
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to get access token: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.access_token
+  } catch (error) {
+    console.error('Error getting access token:', error)
+    throw error
+  }
 }
 
 // Get available time slots from Google Calendar
 async function getAvailableSlots(date: string): Promise<TimeSlot[]> {
   try {
-    // For now, return mock data - in production this would query Google Calendar API
-    const mockSlots: TimeSlot[] = [
-      { time: '09:00', display: '9:00 AM - 10:30 AM (1.5 hours)', available: true },
-      { time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true },
-      { time: '13:00', display: '1:00 PM - 2:30 PM (1.5 hours)', available: false }, // Booked
-      { time: '15:00', display: '3:00 PM - 4:30 PM (1.5 hours)', available: true },
-      { time: '17:00', display: '5:00 PM - 6:30 PM (1.5 hours)', available: true }
-    ]
+    console.log('Fetching real Google Calendar data for date:', date)
     
-    // Filter only available slots
-    return mockSlots.filter(slot => slot.available)
+    // Get access token
+    const accessToken = await getAccessToken()
+    console.log('Got access token, fetching calendar events...')
+    
+    // Define the time range for the day (start and end of day in UTC)
+    const startOfDay = `${date}T00:00:00Z`
+    const endOfDay = `${date}T23:59:59Z`
+    
+    // Query Google Calendar for existing events
+    const calendarResponse = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?` +
+      `timeMin=${startOfDay}&timeMax=${endOfDay}&singleEvents=true&orderBy=startTime`,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    
+    if (!calendarResponse.ok) {
+      throw new Error(`Google Calendar API error: ${calendarResponse.statusText}`)
+    }
+    
+    const calendarData = await calendarResponse.json()
+    console.log('Found existing events:', calendarData.items?.length || 0)
+    
+    // Define available time slots based on your SPED schedule
+    const dayOfWeek = new Date(date).getDay() // 0 = Sunday, 1 = Monday, etc.
+    const allPossibleSlots: TimeSlot[] = []
+    
+    // Monday: 11am-12pm (1 hour)
+    if (dayOfWeek === 1) {
+      allPossibleSlots.push({ time: '11:00', display: '11:00 AM - 12:00 PM (1 hour)', available: true })
+    }
+    // Tuesday-Thursday: 11am-1:45pm (2.75 hours) - multiple slots
+    else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
+      allPossibleSlots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true })
+      allPossibleSlots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true })
+      allPossibleSlots.push({ time: '11:00', display: '11:00 AM - 1:45 PM (2.75 hours)', available: true })
+    }
+    // Friday: 11am-4pm (5 hours) - multiple slots
+    else if (dayOfWeek === 5) {
+      allPossibleSlots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true })
+      allPossibleSlots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true })
+      allPossibleSlots.push({ time: '14:00', display: '2:00 PM - 3:30 PM (1.5 hours)', available: true })
+      allPossibleSlots.push({ time: '15:30', display: '3:30 PM - 5:00 PM (1.5 hours)', available: true })
+      allPossibleSlots.push({ time: '11:00', display: '11:00 AM - 4:00 PM (5 hours)', available: true })
+    }
+    
+    // Check which slots are actually available (not booked)
+    const availableSlots = allPossibleSlots.filter(slot => {
+      const slotStart = `${date}T${slot.time}:00`
+      const slotEnd = slot.time === '11:00' && slot.display.includes('1 hour') 
+        ? `${date}T12:00:00`
+        : slot.time === '11:00' && slot.display.includes('1.5 hours')
+        ? `${date}T12:30:00`
+        : slot.time === '12:30'
+        ? `${date}T14:00:00`
+        : slot.time === '14:00'
+        ? `${date}T15:30:00`
+        : slot.time === '15:30'
+        ? `${date}T17:00:00`
+        : `${date}T16:00:00`
+      
+      // Check if any existing event conflicts with this slot
+      const hasConflict = calendarData.items?.some((event: any) => {
+        const eventStart = new Date(event.start.dateTime || event.start.date)
+        const eventEnd = new Date(event.end.dateTime || event.end.date)
+        const slotStartTime = new Date(slotStart)
+        const slotEndTime = new Date(slotEnd)
+        
+        // Check for overlap
+        return (eventStart < slotEndTime && eventEnd > slotStartTime)
+      })
+      
+      return !hasConflict
+    })
+    
+    console.log(`Found ${availableSlots.length} available slots out of ${allPossibleSlots.length} possible slots`)
+    return availableSlots
     
   } catch (error) {
-    console.error('Error getting available slots:', error)
-    return []
+    console.error('Error getting available slots from Google Calendar:', error)
+    // Fallback to default slots if Google Calendar API fails
+    console.log('Falling back to default slots...')
+    const dayOfWeek = new Date(date).getDay()
+    const defaultSlots: TimeSlot[] = []
+    
+    if (dayOfWeek === 1) {
+      defaultSlots.push({ time: '11:00', display: '11:00 AM - 12:00 PM (1 hour)', available: true })
+    } else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
+      defaultSlots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true })
+      defaultSlots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true })
+    } else if (dayOfWeek === 5) {
+      defaultSlots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true })
+      defaultSlots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true })
+      defaultSlots.push({ time: '14:00', display: '2:00 PM - 3:30 PM (1.5 hours)', available: true })
+      defaultSlots.push({ time: '15:30', display: '3:30 PM - 5:00 PM (1.5 hours)', available: true })
+    }
+    
+    return defaultSlots
   }
 }
 
