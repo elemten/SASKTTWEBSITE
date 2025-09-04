@@ -550,9 +550,9 @@ const SPEDBookingForm: React.FC = () => {
                         }}
                       >
                         <div className="max-h-60 overflow-y-auto">
-                          {availableTimeSlots.map((slot) => (
+                          {availableTimeSlots.map((slot, index) => (
                             <button
-                              key={slot.time}
+                              key={`${slot.time}-${index}`}
                               className={`w-full text-left px-4 py-2 hover:bg-gray-100 border-b border-gray-100 last:border-b-0 ${
                                 !slot.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                               }`}

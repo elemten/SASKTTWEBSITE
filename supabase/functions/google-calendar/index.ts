@@ -1,4 +1,7 @@
+// Deno imports - these work in Supabase Edge Functions environment
+// @ts-ignore - TypeScript doesn't understand Deno imports locally
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+// @ts-ignore - TypeScript doesn't understand Deno imports locally  
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 // Google Calendar configuration - using environment variables for security
@@ -41,7 +44,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-client-info, apikey',
 }
 
-// Simple JWT generation using a working approach
+// JWT generation with Domain-Wide Delegation
 async function generateJWT(): Promise<string> {
   if (!PRIVATE_KEY) {
     throw new Error('Google Private Key not configured')
@@ -53,18 +56,48 @@ async function generateJWT(): Promise<string> {
     scope: 'https://www.googleapis.com/auth/calendar',
     aud: 'https://oauth2.googleapis.com/token',
     iat: now,
-    exp: now + 3600 // 1 hour
+    exp: now + 3600, // 1 hour
+    sub: 'info@ttsask.ca' // Required for Domain-Wide Delegation
   }
   
   try {
-    // Use a simple base64 encoding approach for testing
     const header = { alg: 'RS256', typ: 'JWT' }
     const encodedHeader = btoa(JSON.stringify(header))
     const encodedPayload = btoa(JSON.stringify(payload))
+    const signatureInput = `${encodedHeader}.${encodedPayload}`
     
-    // For now, return a simple JWT structure
-    // In production, this would need proper RSA signing
-    return `${encodedHeader}.${encodedPayload}.SIGNATURE_PLACEHOLDER`
+    // Clean the private key
+    const cleanPrivateKey = PRIVATE_KEY
+      .replace(/\\n/g, '\n')
+      .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+      .replace(/-----END PRIVATE KEY-----/g, '')
+      .replace(/\s/g, '')
+    
+    // Convert base64 to ArrayBuffer
+    const keyData = Uint8Array.from(atob(cleanPrivateKey), c => c.charCodeAt(0))
+    
+    // Import the private key
+    const privateKey = await crypto.subtle.importKey(
+      'pkcs8',
+      keyData,
+      {
+        name: 'RSASSA-PKCS1-v1_5',
+        hash: 'SHA-256'
+      },
+      false,
+      ['sign']
+    )
+    
+    // Sign the JWT
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      privateKey,
+      new TextEncoder().encode(signatureInput)
+    )
+    
+    const encodedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)))
+    
+    return `${signatureInput}.${encodedSignature}`
   } catch (error) {
     console.error('JWT generation error:', error)
     throw new Error(`Failed to generate JWT: ${error.message}`)
@@ -136,7 +169,7 @@ function getDefaultTimeSlots(date: Date): TimeSlot[] {
   else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
     slots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true })
     slots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true })
-    slots.push({ time: '11:00', display: '11:00 AM - 1:45 PM (2.75 hours)', available: true })
+    slots.push({ time: '11:00-2.75', display: '11:00 AM - 1:45 PM (2.75 hours)', available: true })
   }
   // Friday: 11am-4pm (5 hours) - multiple slots
   else if (dayOfWeek === 5) {
@@ -144,7 +177,7 @@ function getDefaultTimeSlots(date: Date): TimeSlot[] {
     slots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true })
     slots.push({ time: '14:00', display: '2:00 PM - 3:30 PM (1.5 hours)', available: true })
     slots.push({ time: '15:30', display: '3:30 PM - 5:00 PM (1.5 hours)', available: true })
-    slots.push({ time: '11:00', display: '11:00 AM - 4:00 PM (5 hours)', available: true })
+    slots.push({ time: '11:00-5', display: '11:00 AM - 4:00 PM (5 hours)', available: true })
   }
   
   return slots
@@ -155,36 +188,96 @@ async function createCalendarEvent(booking: BookingRequest): Promise<{ eventId: 
   try {
     console.log('Creating Google Calendar event for booking:', booking.id)
     
-    // For now, simulate event creation since JWT is not working
-    const eventId = `event_${Date.now()}`
-    const eventLink = `https://calendar.google.com/calendar/event?eid=${eventId}`
-    
-    console.log('Calendar event would be created:', {
-      summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
-      description: `SPED Class Booking\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nEmail: ${booking.teacher_email}\nPhone: ${booking.teacher_phone}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level}\nSessions: ${booking.number_of_students}\nPreferred Coach: ${booking.preferred_coach}\nSpecial Requirements: ${booking.special_requirements}\nTotal Cost: $${booking.total_cost}\n\nBooking ID: ${booking.id}`,
-      start: {
-        dateTime: `${booking.booking_date}T${booking.booking_time_start}`,
-        timeZone: 'America/Regina'
-      },
-      end: {
-        dateTime: `${booking.booking_date}T${booking.booking_time_end}`,
-        timeZone: 'America/Regina'
-      },
-      location: `${booking.school_name}, ${booking.school_address_line1}, ${booking.school_city}, ${booking.school_province}`,
-      attendees: [
-        { email: booking.teacher_email },
-        { email: 'admin@ttsask.ca' }
-      ],
-      reminders: {
-        useDefault: false,
-        overrides: [
-          { method: 'email', minutes: 1440 },
-          { method: 'popup', minutes: 30 }
-        ]
+    // Try to get access token and create real event
+    try {
+      const accessToken = await getAccessToken()
+      console.log('Got access token, creating real calendar event...')
+      
+      const eventData = {
+        summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
+        description: `SPED Class Booking\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nEmail: ${booking.teacher_email}\nPhone: ${booking.teacher_phone}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level}\nPreferred Coach: ${booking.preferred_coach}\nSpecial Requirements: ${booking.special_requirements}\nTotal Cost: $${booking.total_cost}\n\nBooking ID: ${booking.id}`,
+        start: {
+          dateTime: `${booking.booking_date}T${booking.booking_time_start}`,
+          timeZone: 'America/Regina'
+        },
+        end: {
+          dateTime: `${booking.booking_date}T${booking.booking_time_end}`,
+          timeZone: 'America/Regina'
+        },
+        location: `${booking.school_name}, ${booking.school_address_line1}, ${booking.school_city}, ${booking.school_province}`,
+        attendees: [
+          { email: booking.teacher_email },
+          { email: 'info@ttsask.ca' }
+        ],
+        reminders: {
+          useDefault: false,
+          overrides: [
+            { method: 'email', minutes: 1440 },
+            { method: 'popup', minutes: 30 }
+          ]
+        }
       }
-    })
+      
+      console.log('Creating real calendar event with data:', eventData)
+      
+      const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+      })
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Google Calendar API error:', errorText)
+        throw new Error(`Failed to create calendar event: ${response.statusText}`)
+      }
+      
+      const event = await response.json()
+      console.log('✅ Real calendar event created successfully:', event.id)
+      
+      return {
+        eventId: event.id,
+        eventLink: event.htmlLink || `https://calendar.google.com/calendar/event?eid=${event.id}`
+      }
+      
+    } catch (authError) {
+      console.error('Authentication failed, creating simulated event:', authError)
+      
+      // Fallback: create simulated event
+      const eventId = `simulated_${Date.now()}`
+      const eventLink = `https://calendar.google.com/calendar/event?eid=${eventId}`
+      
+      console.log('⚠️ Created simulated calendar event (not in real calendar):', {
+        summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
+        description: `SPED Class Booking\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nEmail: ${booking.teacher_email}\nPhone: ${booking.teacher_phone}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level}\nPreferred Coach: ${booking.preferred_coach}\nSpecial Requirements: ${booking.special_requirements}\nTotal Cost: $${booking.total_cost}\n\nBooking ID: ${booking.id}`,
+        start: {
+          dateTime: `${booking.booking_date}T${booking.booking_time_start}`,
+          timeZone: 'America/Regina'
+        },
+        end: {
+          dateTime: `${booking.booking_date}T${booking.booking_time_end}`,
+          timeZone: 'America/Regina'
+        },
+        location: `${booking.school_name}, ${booking.school_address_line1}, ${booking.school_city}, ${booking.school_province}`,
+        attendees: [
+          { email: booking.teacher_email },
+          { email: 'info@ttsask.ca' }
+        ],
+        reminders: {
+          useDefault: false,
+          overrides: [
+            { method: 'email', minutes: 1440 },
+            { method: 'popup', minutes: 30 }
+          ]
+        }
+      })
+      
+      return { eventId, eventLink }
+    }
     
-    return { eventId, eventLink }
   } catch (error) {
     console.error('Error creating calendar event:', error)
     throw error
