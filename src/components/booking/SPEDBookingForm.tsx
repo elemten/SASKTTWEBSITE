@@ -201,17 +201,18 @@ const SPEDBookingForm = () => {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       
-      // Mobile-friendly positioning
-      let left = rect.left + window.scrollX;
-      let top = rect.bottom + window.scrollY + 5;
+      // Always position relative to the button
+      let left = rect.left;
+      let top = rect.bottom + 5;
       
       // Adjust for mobile screens
       if (viewportWidth < 768) {
-        // Center on mobile
+        // On mobile, center horizontally but keep close to button
         left = Math.max(10, (viewportWidth - 320) / 2);
-        top = Math.min(rect.bottom + window.scrollY + 5, viewportHeight - 400);
+        // Keep calendar close to the button, not at top of screen
+        top = Math.min(rect.bottom + 5, viewportHeight - 400);
       } else {
-        // Desktop positioning
+        // Desktop positioning - keep relative to button
         if (left + 320 > viewportWidth) {
           left = viewportWidth - 330;
         }

@@ -22,13 +22,13 @@ import SPEDBookingForm from "@/components/booking/SPEDBookingForm";
 import { useState, useEffect } from "react";
 
 const SPED = () => {
-  const [showFloatingBubble, setShowFloatingBubble] = useState(false);
+  const [showFloatingBubble, setShowFloatingBubble] = useState(true); // Show immediately for testing
 
   // Show floating bubble after small scroll
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      setShowFloatingBubble(scrollTop > 50); // Show after 50px scroll for better visibility
+      setShowFloatingBubble(scrollTop > 20); // Show after just 20px scroll
     };
 
     // Check initial scroll position
@@ -36,6 +36,11 @@ const SPED = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Force show floating button for testing
+  useEffect(() => {
+    setShowFloatingBubble(true);
   }, []);
 
   // Scroll to booking form
@@ -355,20 +360,22 @@ const SPED = () => {
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
-          className="fixed bottom-4 right-4 z-50 md:hidden"
+          className="fixed bottom-4 right-4 z-50"
           style={{ position: 'fixed' }}
         >
           <button
             onClick={scrollToBookingForm}
-            className="bg-green-600 hover:bg-green-700 text-white rounded-full p-3 shadow-xl border-2 border-white transition-all duration-300 hover:scale-110 active:scale-95"
+            className="bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-xl border-2 border-white transition-all duration-300 hover:scale-110 active:scale-95"
             aria-label="Scroll to booking form"
             style={{
-              boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)',
-              minWidth: '56px',
-              minHeight: '56px'
+              boxShadow: '0 8px 32px rgba(34, 197, 94, 0.6)',
+              minWidth: '64px',
+              minHeight: '64px',
+              fontSize: '12px'
             }}
           >
-            <ArrowDown className="h-5 w-5" />
+            <ArrowDown className="h-6 w-6" />
+            <div className="text-xs mt-1 font-bold">BOOK</div>
           </button>
         </motion.div>
       )}
