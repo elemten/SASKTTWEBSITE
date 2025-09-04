@@ -108,15 +108,23 @@ const SPEDBookingForm: React.FC = () => {
       });
 
       console.log('Edge function response:', { data, error });
+      console.log('Response status:', data?.success);
+      console.log('Slots received:', data?.slots);
 
       if (error) {
-        console.error('Error fetching time slots:', error);
+        console.error('❌ Error fetching time slots:', error);
+        console.log('🔄 Falling back to default slots...');
         const defaultSlots = getDefaultTimeSlots(date);
-        console.log('Using default slots:', defaultSlots);
+        console.log('📋 Using default slots:', defaultSlots);
         setAvailableTimeSlots(defaultSlots);
+      } else if (data?.success && data?.slots) {
+        console.log('✅ Successfully received slots from API:', data.slots);
+        setAvailableTimeSlots(data.slots);
       } else {
-        console.log('Setting time slots from API:', data.slots);
-        setAvailableTimeSlots(data.slots || []);
+        console.log('⚠️ No slots received from API, using defaults');
+        const defaultSlots = getDefaultTimeSlots(date);
+        console.log('📋 Using default slots:', defaultSlots);
+        setAvailableTimeSlots(defaultSlots);
       }
     } catch (error) {
       console.error('Error fetching time slots:', error);
