@@ -39,6 +39,7 @@ const PlayLocations = lazy(() => import("./pages/play/Locations"));
 const PlayTraining = lazy(() => import("./pages/play/Training"));
 const PlayAdvancedPara = lazy(() => import("./pages/play/AdvancedPara"));
 const PlayClinics = lazy(() => import("./pages/play/Clinics"));
+const PlaySPED = lazy(() => import("./pages/play/SPED"));
 
 // Auth pages - REMOVED
 
@@ -190,6 +191,7 @@ const App = () => {
                 <Route path="/play/training" element={<PlayTraining />} />
                 <Route path="/play/advanced-para" element={<PlayAdvancedPara />} />
                 <Route path="/play/clinics" element={<PlayClinics />} />
+                <Route path="/play/sped" element={<PlaySPED />} />
                 {/* Other sections */}
                 <Route path="/clubs" element={<Clubs />} />
                 <Route path="/clubs/register" element={<ClubRegistration />} />

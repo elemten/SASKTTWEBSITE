@@ -39,6 +39,7 @@ const navigationItems = [
     children: [
       { href: "/play/training", label: "Training Programs" },
       { href: "/play/clinics", label: "Clinics" },
+      { href: "/play/sped", label: "SPED Program" },
       { href: "/play/advanced-para", label: "Advanced & Para" },
       { href: "/play/locations", label: "Where to Play" },
     ]
@@ -218,6 +219,9 @@ export function Navigation({ className }: NavigationProps) {
                 </NavLink>
                 <NavLink to="/play/clinics" className="dropdown__item">
                   Clinics
+                </NavLink>
+                <NavLink to="/play/sped" className="dropdown__item">
+                  SPED Program
                 </NavLink>
                 <NavLink to="/play/advanced-para" className="dropdown__item">
                   Advanced &amp; Para

@@ -31,6 +31,7 @@ const ITEMS: NavItem[] = [
     children: [
       { label: "Training Programs", href: "/play/training" },
       { label: "Clinics", href: "/play/clinics" },
+      { label: "SPED Program", href: "/play/sped" },
       { label: "Advanced & Para", href: "/play/advanced-para" },
       { label: "Where to Play", href: "/play/locations" },
     ],
