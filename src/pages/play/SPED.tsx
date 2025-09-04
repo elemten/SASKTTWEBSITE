@@ -24,21 +24,7 @@ import { useState, useEffect } from "react";
 const SPED = () => {
   const [showFloatingBubble, setShowFloatingBubble] = useState(true); // Show immediately for testing
 
-  // Show floating bubble after small scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setShowFloatingBubble(scrollTop > 20); // Show after just 20px scroll
-    };
-
-    // Check initial scroll position
-    handleScroll();
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Force show floating button for testing
+  // Always show floating button - no scroll detection needed
   useEffect(() => {
     setShowFloatingBubble(true);
   }, []);
@@ -354,31 +340,35 @@ const SPED = () => {
         </div>
       </section>
 
-      {/* Floating Bubble - Mobile Only */}
-      {showFloatingBubble && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0 }}
-          className="fixed bottom-4 right-4 z-50"
-          style={{ position: 'fixed' }}
+      {/* Floating Bubble - Always Sticky */}
+      <div
+        className="fixed bottom-4 right-4 z-[9999]"
+        style={{ 
+          position: 'fixed',
+          bottom: '16px',
+          right: '16px',
+          zIndex: 9999
+        }}
+      >
+        <button
+          onClick={scrollToBookingForm}
+          className="bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-xl border-2 border-white transition-all duration-300 hover:scale-110 active:scale-95"
+          aria-label="Scroll to booking form"
+          style={{
+            boxShadow: '0 8px 32px rgba(34, 197, 94, 0.8)',
+            minWidth: '70px',
+            minHeight: '70px',
+            fontSize: '12px',
+            backgroundColor: '#16a34a',
+            border: '3px solid white',
+            opacity: 1,
+            visibility: 'visible'
+          }}
         >
-          <button
-            onClick={scrollToBookingForm}
-            className="bg-green-600 hover:bg-green-700 text-white rounded-full p-4 shadow-xl border-2 border-white transition-all duration-300 hover:scale-110 active:scale-95"
-            aria-label="Scroll to booking form"
-            style={{
-              boxShadow: '0 8px 32px rgba(34, 197, 94, 0.6)',
-              minWidth: '64px',
-              minHeight: '64px',
-              fontSize: '12px'
-            }}
-          >
-            <ArrowDown className="h-6 w-6" />
-            <div className="text-xs mt-1 font-bold">BOOK</div>
-          </button>
-        </motion.div>
-      )}
+          <ArrowDown className="h-6 w-6 mx-auto" />
+          <div className="text-xs mt-1 font-bold text-center">BOOK</div>
+        </button>
+      </div>
 
       <Footer />
     </div>
