@@ -198,10 +198,26 @@ const SPEDBookingForm = () => {
     const button = document.getElementById('date-picker-button');
     if (button) {
       const rect = button.getBoundingClientRect();
-      setCalendarPosition({
-        top: rect.bottom + window.scrollY + 5,
-        left: rect.left + window.scrollX
-      });
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // Mobile-friendly positioning
+      let left = rect.left + window.scrollX;
+      let top = rect.bottom + window.scrollY + 5;
+      
+      // Adjust for mobile screens
+      if (viewportWidth < 768) {
+        // Center on mobile
+        left = Math.max(10, (viewportWidth - 320) / 2);
+        top = Math.min(rect.bottom + window.scrollY + 5, viewportHeight - 400);
+      } else {
+        // Desktop positioning
+        if (left + 320 > viewportWidth) {
+          left = viewportWidth - 330;
+        }
+      }
+      
+      setCalendarPosition({ top, left });
     }
     setIsCalendarOpen(true);
   };
@@ -379,25 +395,35 @@ const SPEDBookingForm = () => {
                 </Button>
                 
                 {isCalendarOpen && (
-                  <div 
-                    className="calendar-container fixed z-[100] bg-white border border-gray-200 rounded-md shadow-lg p-0"
-                    style={{
-                      top: `${calendarPosition.top}px`,
-                      left: `${calendarPosition.left}px`
-                    }}
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={formData.booking_date || undefined}
-                      onSelect={(date) => {
-                        if (date) {
-                          handleInputChange('booking_date', date);
-                          setIsCalendarOpen(false);
-                        }
-                      }}
-                      disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
+                  <>
+                    {/* Mobile overlay */}
+                    <div 
+                      className="fixed inset-0 z-[99] bg-black bg-opacity-20 md:hidden"
+                      onClick={() => setIsCalendarOpen(false)}
                     />
-                  </div>
+                    <div 
+                      className="calendar-container fixed z-[100] bg-white border border-gray-200 rounded-md shadow-lg p-0"
+                      style={{
+                        top: `${calendarPosition.top}px`,
+                        left: `${calendarPosition.left}px`,
+                        width: '320px',
+                        maxHeight: '400px',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      <Calendar
+                        mode="single"
+                        selected={formData.booking_date || undefined}
+                        onSelect={(date) => {
+                          if (date) {
+                            handleInputChange('booking_date', date);
+                            setIsCalendarOpen(false);
+                          }
+                        }}
+                        disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
+                      />
+                    </div>
+                  </>
                 )}
               </div>
             </div>
