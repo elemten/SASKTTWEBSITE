@@ -10,7 +10,7 @@ const PRIVATE_KEY = Deno.env.get('GOOGLE_PRIVATE_KEY') ?? ''
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-client-info, apikey',
 }
 
 interface BookingRequest {
@@ -138,7 +138,7 @@ serve(async (req) => {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-client-info, apikey',
       },
     })
   }
