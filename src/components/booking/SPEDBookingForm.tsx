@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -143,22 +143,22 @@ const SPEDBookingForm = () => {
   const fetchAvailableTimeSlots = async (date: Date) => {
     setIsLoadingSlots(true);
     try {
-      const response = await fetch('/api/supabase/functions/google-calendar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY
+      );
+
+      const { data, error } = await supabase.functions.invoke('google-calendar', {
+        body: {
           action: 'getSlots',
           date: date.toISOString().split('T')[0]
-        })
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch time slots');
+      if (error) {
+        throw new Error(`Supabase function error: ${error.message}`);
       }
 
-      const data = await response.json();
       if (data.success) {
         setAvailableTimeSlots(data.slots);
       } else {
@@ -253,31 +253,27 @@ const SPEDBookingForm = () => {
       };
 
       // Create calendar event first
-      const calendarResponse = await fetch('/api/supabase/functions/google-calendar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const supabase = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY
+      );
+
+      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar', {
+        body: {
           action: 'bookSlot',
           booking: bookingData
-        })
+        }
       });
 
-      if (!calendarResponse.ok) {
-        throw new Error('Failed to create calendar event');
+      if (calendarError) {
+        throw new Error(`Calendar function error: ${calendarError.message}`);
       }
 
-      const calendarData = await calendarResponse.json();
       if (!calendarData.success) {
         throw new Error(calendarData.error || 'Failed to create calendar event');
       }
 
       // Save to Supabase database
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY
-      );
 
       const { error } = await supabase
         .from('confirmed_bookings')

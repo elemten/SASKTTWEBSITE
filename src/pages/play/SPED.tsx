@@ -353,6 +353,7 @@ const SPED = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
           className="fixed bottom-6 right-6 z-50 md:hidden"
+          style={{ position: 'fixed' }}
         >
           <button
             onClick={scrollToBookingForm}
