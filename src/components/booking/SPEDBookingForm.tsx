@@ -65,7 +65,6 @@ const SPEDBookingForm = () => {
   // Calendar and time slot dropdown states
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isTimeSlotOpen, setIsTimeSlotOpen] = useState(false);
-  const [timeSlotPosition, setTimeSlotPosition] = useState({ top: 0, left: 0 });
 
   // Calculate total cost (fixed at $95 for single session)
   useEffect(() => {
@@ -194,17 +193,6 @@ const SPEDBookingForm = () => {
   };
 
 
-  const handleTimeSlotOpen = () => {
-    const button = document.getElementById('time-slot-button');
-    if (button) {
-      const rect = button.getBoundingClientRect();
-      setTimeSlotPosition({
-        top: rect.bottom + window.scrollY + 5,
-        left: rect.left + window.scrollX
-      });
-    }
-    setIsTimeSlotOpen(true);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -414,13 +402,13 @@ const SPEDBookingForm = () => {
                     <span className="text-gray-600">Loading available slots...</span>
                   </div>
                 ) : availableTimeSlots.length > 0 ? (
-                  <div>
+                  <div className="relative">
                     <Button
                       variant="outline"
                       className="w-full justify-start text-left font-normal"
                       type="button"
                       id="time-slot-button"
-                      onClick={handleTimeSlotOpen}
+                      onClick={() => setIsTimeSlotOpen(!isTimeSlotOpen)}
                     >
                       <Clock className="mr-2 h-4 w-4" />
                       {formData.booking_time ? 
@@ -430,36 +418,47 @@ const SPEDBookingForm = () => {
                     </Button>
                     
                     {isTimeSlotOpen && (
-                      <div 
-                        className="time-slot-container fixed z-[100] bg-white border border-gray-200 rounded-md shadow-lg p-0 min-w-[300px]"
-                        style={{
-                          top: `${timeSlotPosition.top}px`,
-                          left: `${timeSlotPosition.left}px`
-                        }}
-                      >
-                        <div className="max-h-60 overflow-y-auto">
-                          {availableTimeSlots.map((slot, index) => (
-                            <button
-                              key={`${slot.time}-${index}`}
-                              className={`w-full text-left px-4 py-2 hover:bg-gray-100 border-b border-gray-100 last:border-b-0 ${
-                                !slot.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                              }`}
-                              disabled={!slot.available}
-                              onClick={() => {
-                                if (slot.available) {
-                                  handleInputChange('booking_time', slot.time);
-                                  setIsTimeSlotOpen(false);
-                                }
-                              }}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span>{slot.display}</span>
-                                {!slot.available && <Badge variant="secondary">Booked</Badge>}
-                              </div>
-                            </button>
-                          ))}
+                      <>
+                        {/* Background overlay for mobile */}
+                        <div 
+                          className="fixed inset-0 z-[99] bg-black bg-opacity-20 md:hidden"
+                          onClick={() => setIsTimeSlotOpen(false)}
+                        />
+                        {/* Time slot dropdown - positioned absolutely below button */}
+                        <div 
+                          className="time-slot-container absolute z-[100] bg-white border border-gray-300 rounded-lg shadow-xl p-0 mt-1"
+                          style={{
+                            top: 'calc(100% + 4px)',
+                            left: '0',
+                            right: '0',
+                            maxWidth: '100%',
+                            width: '100%'
+                          }}
+                        >
+                          <div className="max-h-60 overflow-y-auto">
+                            {availableTimeSlots.map((slot, index) => (
+                              <button
+                                key={`${slot.time}-${index}`}
+                                className={`w-full text-left px-4 py-2 hover:bg-gray-100 border-b border-gray-100 last:border-b-0 ${
+                                  !slot.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                                }`}
+                                disabled={!slot.available}
+                                onClick={() => {
+                                  if (slot.available) {
+                                    handleInputChange('booking_time', slot.time);
+                                    setIsTimeSlotOpen(false);
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span>{slot.display}</span>
+                                  {!slot.available && <Badge variant="secondary">Booked</Badge>}
+                                </div>
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      </>
                     )}
                   </div>
                 ) : (
