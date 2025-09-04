@@ -195,51 +195,8 @@ const SPEDBookingForm = () => {
   };
 
   const handleCalendarOpen = () => {
-    const button = document.getElementById('date-picker-button');
-    if (button) {
-      const rect = button.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const scrollY = window.scrollY || window.pageYOffset;
-      
-      // Calculate position relative to button with scroll offset
-      let left = rect.left;
-      let top = rect.bottom + scrollY + 10; // Add scroll position to top
-      
-      // Mobile-specific positioning
-      if (viewportWidth < 768) {
-        // On mobile, position calendar right below the button
-        left = Math.max(10, rect.left);
-        
-        // If button is too far right, adjust to fit screen
-        if (left + 300 > viewportWidth) {
-          left = viewportWidth - 310;
-        }
-        
-        // Position below button with scroll offset
-        top = rect.bottom + scrollY + 10;
-        
-        // If there's not enough space below in viewport, position above
-        if (rect.bottom + 360 > viewportHeight) {
-          top = rect.top + scrollY - 360;
-        }
-        
-        // Ensure calendar doesn't go above the page
-        if (top < scrollY) {
-          top = scrollY + 10;
-        }
-      } else {
-        // Desktop positioning
-        if (left + 300 > viewportWidth) {
-          left = viewportWidth - 310;
-        }
-      }
-      
-      setCalendarPosition({ top, left });
-    } else {
-      // Fallback position
-      setCalendarPosition({ top: 200, left: 50 });
-    }
+    // Simple, reliable positioning
+    setCalendarPosition({ top: 100, left: 50 });
     setIsCalendarOpen(true);
   };
 
@@ -418,22 +375,19 @@ const SPEDBookingForm = () => {
                 
                 {isCalendarOpen && (
                   <>
-                    {/* Mobile overlay */}
+                    {/* Background overlay */}
                     <div 
-                      className="fixed inset-0 z-[99] bg-black bg-opacity-20 md:hidden"
+                      className="fixed inset-0 z-[99] bg-black bg-opacity-20"
                       onClick={() => setIsCalendarOpen(false)}
                     />
+                    {/* Calendar container - visible and simple */}
                     <div 
-                      className="calendar-container absolute z-[100] bg-white border border-gray-200 rounded-md shadow-lg p-0"
+                      className="fixed z-[100] bg-white border border-gray-300 rounded-lg shadow-xl p-4"
                       style={{
                         top: `${calendarPosition.top}px`,
                         left: `${calendarPosition.left}px`,
-                        width: '300px',
-                        maxHeight: '350px',
-                        overflow: 'hidden',
-                        borderRadius: '8px',
-                        position: 'absolute',
-                        transform: 'none'
+                        width: '320px',
+                        maxHeight: '400px'
                       }}
                     >
                       <Calendar
