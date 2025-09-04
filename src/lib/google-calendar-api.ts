@@ -2,9 +2,9 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Google Calendar configuration - these should be set as environment variables
-const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || ''
-const SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || ''
-const PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY || ''
+const CALENDAR_ID = import.meta.env.VITE_GOOGLE_CALENDAR_ID || 'c_04d6de5f15712c0334d1c5112ed7e9072a57454eb202d464f3f7dca5c427a961@group.calendar.google.com'
+const SERVICE_ACCOUNT_EMAIL = import.meta.env.VITE_GOOGLE_SERVICE_ACCOUNT_EMAIL || 'ttsask-calendar-booking@n8nworkflows-469621.iam.gserviceaccount.com'
+const PRIVATE_KEY = import.meta.env.VITE_GOOGLE_PRIVATE_KEY || ''
 
 interface TimeSlot {
   time: string;
@@ -31,9 +31,33 @@ interface BookingData {
 
 // Generate JWT token for Google Calendar API
 async function generateJWT(): Promise<string> {
-  // This is a simplified version - in production you'd implement proper JWT signing
-  // For now, we'll use a placeholder that should be replaced with actual JWT generation
-  return 'PLACEHOLDER_JWT_TOKEN'
+  if (!PRIVATE_KEY) {
+    throw new Error('Google Private Key not configured')
+  }
+
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT'
+  }
+
+  const now = Math.floor(Date.now() / 1000)
+  const payload = {
+    iss: SERVICE_ACCOUNT_EMAIL,
+    scope: 'https://www.googleapis.com/auth/calendar',
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now,
+    exp: now + 3600 // 1 hour
+  }
+
+  // For now, we'll use a simplified approach
+  // In a real implementation, you'd use a JWT library to sign the token
+  const encodedHeader = btoa(JSON.stringify(header))
+  const encodedPayload = btoa(JSON.stringify(payload))
+  
+  // This is a placeholder - you'd need to implement actual RSA signing
+  const signature = 'PLACEHOLDER_SIGNATURE'
+  
+  return `${encodedHeader}.${encodedPayload}.${signature}`
 }
 
 // Get available time slots for a specific date

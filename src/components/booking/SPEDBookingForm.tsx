@@ -81,23 +81,19 @@ const SPEDBookingForm: React.FC = () => {
   const fetchAvailableTimeSlots = async (date: Date) => {
     setIsLoadingSlots(true);
     try {
-      // Call your Google Calendar API endpoint
-      const response = await fetch('/api/google-calendar/available-slots', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Call Supabase Edge Function for Google Calendar integration
+      const { data, error } = await supabase.functions.invoke('google-calendar', {
+        body: {
+          action: 'getSlots',
           date: format(date, 'yyyy-MM-dd')
-        })
+        }
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setAvailableTimeSlots(data.slots || []);
-      } else {
-        // Fallback to predefined slots if API fails
+      if (error) {
+        console.error('Error fetching time slots:', error);
         setAvailableTimeSlots(getDefaultTimeSlots(date));
+      } else {
+        setAvailableTimeSlots(data.slots || []);
       }
     } catch (error) {
       console.error('Error fetching time slots:', error);
@@ -174,21 +170,20 @@ const SPEDBookingForm: React.FC = () => {
         return;
       }
 
-      // Create Google Calendar event
-      const calendarResponse = await fetch('/api/google-calendar/create-event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          bookingId: data.id,
-          ...bookingData
-        })
+      // Create Google Calendar event using Supabase Edge Function
+      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar', {
+        body: {
+          action: 'bookSlot',
+          booking: {
+            id: data.id,
+            ...bookingData
+          }
+        }
       });
 
-      if (calendarResponse.ok) {
-        const calendarData = await calendarResponse.json();
-        
+      if (calendarError) {
+        console.error('Error creating calendar event:', calendarError);
+      } else if (calendarData?.eventId) {
         // Update booking with Google Calendar event ID
         await supabase
           .from('confirmed_bookings')

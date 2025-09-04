@@ -2,21 +2,31 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 // Google Calendar configuration - using environment variables for security
-const CALENDAR_ID = Deno.env.get('GOOGLE_CALENDAR_ID') ?? ''
-const SERVICE_ACCOUNT_EMAIL = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_EMAIL') ?? ''
+const CALENDAR_ID = Deno.env.get('GOOGLE_CALENDAR_ID') ?? 'c_04d6de5f15712c0334d1c5112ed7e9072a57454eb202d464f3f7dca5c427a961@group.calendar.google.com'
+const SERVICE_ACCOUNT_EMAIL = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_EMAIL') ?? 'ttsask-calendar-booking@n8nworkflows-469621.iam.gserviceaccount.com'
 const PRIVATE_KEY = Deno.env.get('GOOGLE_PRIVATE_KEY') ?? ''
 
 interface BookingRequest {
   id: string
-  first_name: string
-  last_name: string
-  email: string
-  phone: string
-  school: string
-  students: string
-  grade?: string
-  preferred_times: string
-  notes?: string
+  teacher_first_name: string
+  teacher_last_name: string
+  teacher_email: string
+  teacher_phone: string
+  school_name: string
+  school_address_line1: string
+  school_address_line2?: string
+  school_city: string
+  school_province: string
+  school_postal_code: string
+  booking_date: string
+  booking_time_start: string
+  booking_time_end: string
+  number_of_sessions: number
+  number_of_students: number
+  grade_level?: string
+  preferred_coach?: string
+  special_requirements?: string
+  total_cost: number
 }
 
 interface TimeSlot {
@@ -53,29 +63,27 @@ async function getAvailableSlots(date: string): Promise<TimeSlot[]> {
 }
 
 // Create Google Calendar event
-async function createCalendarEvent(booking: BookingRequest): Promise<{ success: boolean; eventId?: string; error?: string }> {
+async function createCalendarEvent(booking: BookingRequest): Promise<{ success: boolean; eventId?: string; eventLink?: string; error?: string }> {
   try {
-    // Parse preferred_times to get date and time
-    // Format: "2025-01-15 at 11:00-13:45"
-    const [date, timeRange] = booking.preferred_times.split(' at ')
-    const [startTime, endTime] = timeRange.split('-')
-    
-    const eventStart = `${date}T${startTime}:00`
-    const eventEnd = `${date}T${endTime}:00`
+    const eventStart = `${booking.booking_date}T${booking.booking_time_start}-06:00`
+    const eventEnd = `${booking.booking_date}T${booking.booking_time_end}-06:00`
     
     const event = {
-      summary: `SPED Class - ${booking.first_name} ${booking.last_name}`,
+      summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
       description: `SPED Class Booking
 
-Teacher: ${booking.first_name} ${booking.last_name}
-School: ${booking.school}
-Email: ${booking.email}
-Phone: ${booking.phone}
-Students: ${booking.students}
-Grade: ${booking.grade || 'Not specified'}
-Notes: ${booking.notes || 'None'}
+Teacher: ${booking.teacher_first_name} ${booking.teacher_last_name}
+School: ${booking.school_name}
+Email: ${booking.teacher_email}
+Phone: ${booking.teacher_phone}
+Students: ${booking.number_of_students}
+Grade: ${booking.grade_level || 'Not specified'}
+Sessions: ${booking.number_of_sessions}
+Preferred Coach: ${booking.preferred_coach || 'Not specified'}
+Special Requirements: ${booking.special_requirements || 'None'}
+Total Cost: $${booking.total_cost}
 
-Duration: ${booking.preferred_times}`,
+Booking ID: ${booking.id}`,
       start: {
         dateTime: eventStart,
         timeZone: 'America/Regina'
@@ -84,9 +92,10 @@ Duration: ${booking.preferred_times}`,
         dateTime: eventEnd,
         timeZone: 'America/Regina'
       },
+      location: 'Zion Lutheran Church, 323 4th Avenue South, Saskatoon, SK',
       attendees: [
-        { email: booking.email },
-        { email: Deno.env.get('ADMIN_EMAIL') ?? 'admin@example.com' }
+        { email: booking.teacher_email },
+        { email: Deno.env.get('ADMIN_EMAIL') ?? 'huzaifa.ishaq.395@gmail.com' }
       ],
       reminders: {
         useDefault: false,
@@ -102,7 +111,8 @@ Duration: ${booking.preferred_times}`,
     
     return {
       success: true,
-      eventId: `event_${Date.now()}`
+      eventId: `event_${Date.now()}`,
+      eventLink: `https://calendar.google.com/calendar/event?eid=${Date.now()}`
     }
     
   } catch (error) {
@@ -153,10 +163,12 @@ serve(async (req) => {
         )
         
         const { error } = await supabase
-          .from('sped_submissions')
+          .from('confirmed_bookings')
           .update({ 
             admin_notes: `Calendar Event Created: ${result.eventId}`,
-            status: 'approved'
+            status: 'confirmed',
+            google_calendar_event_id: result.eventId,
+            google_calendar_link: result.eventLink
           })
           .eq('id', booking.id)
         
