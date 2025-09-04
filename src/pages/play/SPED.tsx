@@ -1,191 +1,327 @@
+import { motion } from "framer-motion";
 import { Navigation } from "@/components/ui/navigation";
 import { Footer } from "@/components/footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Heart, 
+  Users, 
+  Target, 
+  Trophy, 
+  Clock, 
+  MapPin, 
+  Star, 
+  Shield, 
+  Activity,
+  Brain,
+  HandHeart,
+  GraduationCap,
+  Calendar,
+  CheckCircle,
+  ArrowRight
+} from "lucide-react";
 import SPEDBookingForm from "@/components/booking/SPEDBookingForm";
 
 const SPED = () => {
+  const benefits = [
+    {
+      icon: Activity,
+      title: "Physical Development",
+      description: "Improves hand-eye coordination, balance, and motor skills through structured table tennis activities designed for all abilities."
+    },
+    {
+      icon: Users,
+      title: "Social Skills",
+      description: "Encourages teamwork, communication, and positive social interaction in a supportive, inclusive environment."
+    },
+    {
+      icon: Trophy,
+      title: "Confidence Building",
+      description: "Builds self-esteem and confidence through achievable goals, positive reinforcement, and celebrating every success."
+    }
+  ];
+
+  const programFeatures = [
+    {
+      icon: Shield,
+      title: "Certified Instructors",
+      description: "Experienced coaches with special education training and adaptive sports expertise"
+    },
+    {
+      icon: Brain,
+      title: "Adaptive Methods",
+      description: "Customized teaching approaches and equipment modifications for individual needs"
+    },
+    {
+      icon: HandHeart,
+      title: "Inclusive Environment",
+      description: "Safe, welcoming space where every student can thrive and develop at their own pace"
+    },
+    {
+      icon: GraduationCap,
+      title: "Skill Development",
+      description: "Progressive learning that builds fundamental table tennis skills while having fun"
+    }
+  ];
+
+  const sessionDetails = [
+    {
+      icon: Clock,
+      title: "Session Duration",
+      description: "1-2 hours per session",
+      detail: "Flexible timing based on group needs"
+    },
+    {
+      icon: Users,
+      title: "Group Size",
+      description: "Small groups (4-8 students)",
+      detail: "Maximum personalized attention"
+    },
+    {
+      icon: MapPin,
+      title: "Location",
+      description: "Zion Lutheran Church",
+      detail: "323 4th Avenue South, Saskatoon, SK"
+    },
+    {
+      icon: Calendar,
+      title: "Schedule",
+      description: "Weekday sessions available",
+      detail: "Monday-Friday, various time slots"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-50 to-white py-16">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge variant="outline" className="mb-4 text-green-700 border-green-300">
+      {/* Hero Section - Same style as Membership page */}
+      <section className="bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 text-white py-12 md:py-20">
+        <div className="container mx-auto px-4 md:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <Badge 
+              variant="secondary" 
+              className="mb-4 md:mb-6 px-3 md:px-4 py-1 md:py-2 bg-green-100 text-green-800 border-green-200 text-xs md:text-sm"
+            >
+              <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
               Special Education Program
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+            
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight">
               SPED Table Tennis Program
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            
+            <p className="text-base sm:text-lg md:text-xl text-green-100 leading-relaxed px-2">
               Inclusive table tennis training designed specifically for students with special needs. 
-              Building confidence, coordination, and community through sport.
+              Building confidence, coordination, and community through adaptive sports.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Program Overview */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                  What is the SPED Program?
-                </h2>
-                <p className="text-lg text-gray-600 mb-6">
-                  Our Special Education Table Tennis Program is designed to provide inclusive, 
-                  adaptive table tennis training for students with diverse learning needs. 
-                  We focus on building fundamental skills while fostering social interaction 
-                  and physical development.
-                </p>
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <p className="text-gray-600">Adaptive equipment and teaching methods</p>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <p className="text-gray-600">Small group sessions for personalized attention</p>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <p className="text-gray-600">Certified instructors with special education experience</p>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <p className="text-gray-600">Focus on fun, confidence, and skill development</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-100 rounded-lg p-8">
-                <img 
-                  src="/player-table-tennis.png" 
-                  alt="SPED Program" 
-                  className="w-full h-auto rounded-lg"
-                />
-              </div>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Program Benefits */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-6">
+      <section className="py-16 md:py-20 bg-gradient-to-b from-slate-50 to-white">
+        <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Program Benefits
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-green-700">Physical Development</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Improves hand-eye coordination, balance, and motor skills through 
-                    structured table tennis activities.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-green-700">Social Skills</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Encourages teamwork, communication, and positive social interaction 
-                    in a supportive environment.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-green-700">Confidence Building</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Builds self-esteem and confidence through achievable goals and 
-                    positive reinforcement.
-                  </p>
-                </CardContent>
-              </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-center mb-12 md:mb-16"
+            >
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Program Benefits
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Our SPED program focuses on holistic development through table tennis
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              {benefits.map((benefit, index) => (
+                <motion.div
+                  key={benefit.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+                >
+                  <Card className="h-full border-2 border-green-100 hover:border-green-200 transition-colors duration-300">
+                    <CardHeader className="text-center pb-4">
+                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <benefit.icon className="h-8 w-8 text-green-600" />
+                      </div>
+                      <CardTitle className="text-green-700 text-xl">{benefit.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 text-center leading-relaxed">
+                        {benefit.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Registration Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+      {/* Program Features */}
+      <section className="py-16 md:py-20 bg-white">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12 md:mb-16"
+            >
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Why Choose Our SPED Program?
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Specialized approach designed for students with diverse learning needs
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {programFeatures.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
+                >
+                  <Card className="h-full border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+                    <CardHeader className="text-center pb-4">
+                      <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <feature.icon className="h-6 w-6 text-green-600" />
+                      </div>
+                      <CardTitle className="text-gray-900 text-lg">{feature.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 text-sm text-center leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Session Details */}
+      <section className="py-16 md:py-20 bg-gradient-to-b from-slate-50 to-white">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12 md:mb-16"
+            >
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Session Information
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Everything you need to know about our SPED table tennis sessions
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {sessionDetails.map((detail, index) => (
+                <motion.div
+                  key={detail.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
+                >
+                  <Card className="h-full border-2 border-green-100 hover:border-green-200 transition-colors duration-300">
+                    <CardHeader className="text-center pb-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <detail.icon className="h-6 w-6 text-green-600" />
+                      </div>
+                      <CardTitle className="text-green-700 text-lg">{detail.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-gray-900 font-semibold mb-2">{detail.description}</p>
+                      <p className="text-gray-600 text-sm">{detail.detail}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Booking Section */}
+      <section className="py-16 md:py-20 bg-white">
+        <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12 md:mb-16"
+            >
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 Book Your SPED Session
               </h2>
-              <p className="text-lg text-gray-600">
-                Complete the form below to book your Special Physical Education table tennis sessions.
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Complete the form below to book your Special Physical Education table tennis sessions. 
+                Our team will contact you to confirm your booking.
               </p>
-            </div>
-            <SPEDBookingForm />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <SPEDBookingForm />
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Program Details */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Program Details
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Session Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Duration</h4>
-                    <p className="text-gray-600">1.5 hours per session</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Group Size</h4>
-                    <p className="text-gray-600">Maximum 8 students per group</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Equipment</h4>
-                    <p className="text-gray-600">All equipment provided</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Requirements</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Age Range</h4>
-                    <p className="text-gray-600">Ages 6-18</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Medical Clearance</h4>
-                    <p className="text-gray-600">Required for participation</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Parent/Guardian</h4>
-                    <p className="text-gray-600">Must be present during sessions</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+      {/* Call to Action */}
+      <section className="py-16 md:py-20 bg-gradient-to-br from-green-600 to-green-700 text-white">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                Ready to Get Started?
+              </h2>
+              <p className="text-lg text-green-100 mb-8 max-w-2xl mx-auto">
+                Join our inclusive table tennis community and help your students develop 
+                new skills while having fun in a supportive environment.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex items-center text-green-100">
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  <span>Certified instructors</span>
+                </div>
+                <div className="flex items-center text-green-100">
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  <span>Adaptive equipment</span>
+                </div>
+                <div className="flex items-center text-green-100">
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  <span>Inclusive environment</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>

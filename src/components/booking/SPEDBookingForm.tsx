@@ -609,7 +609,7 @@ const SPEDBookingForm: React.FC = () => {
             className="w-full md:w-auto px-8 py-3 text-lg" 
             disabled={isSubmitting || !formData.booking_date || !formData.booking_time}
           >
-            {isSubmitting ? 'Creating Booking...' : `Confirm Booking - $${totalCost}`}
+            {isSubmitting ? 'Creating Booking...' : 'Confirm Booking'}
           </Button>
         </div>
 
