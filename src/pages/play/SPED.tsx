@@ -64,7 +64,7 @@ const SPED = () => {
               </div>
               <div className="bg-gray-100 rounded-lg p-8">
                 <img 
-                  src="/sped.png" 
+                  src="/player-table-tennis.png" 
                   alt="SPED Program" 
                   className="w-full h-auto rounded-lg"
                 />
