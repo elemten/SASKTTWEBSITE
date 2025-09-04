@@ -100,7 +100,7 @@ const SPEDBookingForm: React.FC = () => {
     setIsLoadingSlots(true);
     try {
       // Call Supabase Edge Function for Google Calendar integration
-      const { data, error } = await supabase.functions.invoke('google-calendar', {
+      const { data, error } = await supabase.functions.invoke('google-calendar-function', {
         body: {
           action: 'getSlots',
           date: format(date, 'yyyy-MM-dd')
@@ -234,30 +234,59 @@ const SPEDBookingForm: React.FC = () => {
       }
 
       // Create Google Calendar event using Supabase Edge Function
-      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar', {
+      console.log('Calling Edge Function with booking ID:', data.id);
+      console.log('Supabase client:', supabase);
+      
+      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar-function', {
         body: {
           action: 'bookSlot',
           booking: {
             id: data.id,
-            ...bookingData
+            teacher_first_name: bookingData.teacher_first_name,
+            teacher_last_name: bookingData.teacher_last_name,
+            teacher_email: bookingData.teacher_email,
+            teacher_phone: bookingData.teacher_phone,
+            school_name: bookingData.school_name,
+            school_address_line1: bookingData.school_address_line1,
+            school_address_line2: bookingData.school_address_line2,
+            school_city: bookingData.school_city,
+            school_province: bookingData.school_province,
+            school_postal_code: bookingData.school_postal_code,
+            booking_date: bookingData.booking_date,
+            booking_time_start: bookingData.booking_time_start,
+            booking_time_end: bookingData.booking_time_end,
+            number_of_students: bookingData.number_of_students,
+            grade_level: bookingData.grade_level,
+            preferred_coach: bookingData.preferred_coach,
+            special_requirements: bookingData.special_requirements,
+            total_cost: bookingData.total_cost
           }
         }
       });
 
+      console.log('Edge Function response:', { calendarData, calendarError });
+
       if (calendarError) {
         console.error('Error creating calendar event:', calendarError);
-      } else if (calendarData?.eventId) {
+        setSubmitStatus('error');
+        return;
+      } else if (calendarData?.success) {
+        console.log('Calendar event created successfully:', calendarData.eventId);
         // Update booking with Google Calendar event ID
         await supabase
           .from('confirmed_bookings')
           .update({
             google_calendar_event_id: calendarData.eventId,
-            google_calendar_link: calendarData.eventLink
+            google_calendar_link: calendarData.eventLink,
+            status: 'confirmed'
           })
           .eq('id', data.id);
+        setSubmitStatus('success');
+      } else {
+        console.error('Calendar event creation failed:', calendarData);
+        setSubmitStatus('error');
+        return;
       }
-
-      setSubmitStatus('success');
       
       // Reset form
       setFormData({
