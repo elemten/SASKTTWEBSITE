@@ -66,7 +66,12 @@ const SmartBookingForm: React.FC = () => {
 
       if (error) {
         console.error('Error submitting form:', error);
-        setSubmitStatus('error');
+        if (error.message === 'Supabase not configured') {
+          // Show a different message for configuration issues
+          setSubmitStatus('error');
+        } else {
+          setSubmitStatus('error');
+        }
       } else {
         setSubmitStatus('success');
         // Reset form

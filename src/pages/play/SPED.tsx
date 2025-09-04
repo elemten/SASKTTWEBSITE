@@ -1,9 +1,8 @@
 import { Navigation } from "@/components/ui/navigation";
 import { Footer } from "@/components/footer";
-import { SupportedBySection } from "@/components/supported-by-section";
-import SmartBookingForm from "@/components/booking/SmartBookingForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import SPEDBookingForm from "@/components/booking/SPEDBookingForm";
 
 const SPED = () => {
   return (
@@ -128,13 +127,13 @@ const SPED = () => {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Register for SPED Program
+                Book Your SPED Session
               </h2>
               <p className="text-lg text-gray-600">
-                Complete the form below to register your students for our Special Education Table Tennis Program.
+                Complete the form below to book your Special Physical Education table tennis sessions.
               </p>
             </div>
-            <SmartBookingForm />
+            <SPEDBookingForm />
           </div>
         </div>
       </section>
@@ -191,7 +190,6 @@ const SPED = () => {
         </div>
       </section>
 
-      <SupportedBySection />
       <Footer />
     </div>
   );
