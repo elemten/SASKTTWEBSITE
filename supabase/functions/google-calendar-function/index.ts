@@ -128,31 +128,17 @@ async function getAvailableSlots(date) {
     }
     const data = await response.json();
     console.log('Fetched calendar events:', data.items?.length || 0);
-    
-    // Always log events for debugging
-    console.log('=== CALENDAR EVENTS FOUND ===');
-    if (data.items && data.items.length > 0) {
-      data.items.forEach((event, index) => {
-        console.log(`Event ${index + 1}: "${event.summary}"`);
-        console.log(`  Start: ${event.start.dateTime || event.start.date}`);
-        console.log(`  End: ${event.end.dateTime || event.end.date}`);
-        console.log(`  All-day: ${!event.start.dateTime}`);
-      });
-    } else {
-      console.log('No events found for this date');
-    }
-    console.log('=== END EVENTS ===');
     // Get default slots and mark unavailable ones
     const defaultSlots = getDefaultTimeSlots(new Date(date));
     const bookedSlots = data.items || [];
     // Mark slots as unavailable if they conflict with existing events
     const availableSlots = defaultSlots.map((slot) => {
       const [hours, minutes] = slot.time.split(':').map(Number);
-      // Create slot times in Saskatchewan timezone (-06:00)
-      const slotStartTime = new Date(`${date}T${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00-06:00`);
-      const slotEndTime = new Date(slotStartTime.getTime() + (slot.duration * 60 * 1000));
+      const slotStartTime = new Date(date + 'T00:00:00-06:00');
+      slotStartTime.setHours(hours, minutes, 0, 0);
       
-      console.log(`Creating slot ${slot.time}: ${slotStartTime.toISOString()} - ${slotEndTime.toISOString()}`);
+      const slotEndTime = new Date(slotStartTime);
+      slotEndTime.setMinutes(slotEndTime.getMinutes() + slot.duration);
       
       const slotStart = slotStartTime.toISOString();
       const slotEnd = slotEndTime.toISOString();
@@ -161,19 +147,9 @@ async function getAvailableSlots(date) {
         const eventStart = event.start.dateTime || event.start.date;
         const eventEnd = event.end.dateTime || event.end.date;
         
-        // Skip all-day events (they don't have dateTime, only date)
-        if (!event.start.dateTime || !event.end.dateTime) {
-          return false;
-        }
-        
         // Convert to Date objects for proper comparison
-        // Make sure we're comparing in the same timezone (UTC)
         const eventStartTime = new Date(eventStart);
         const eventEndTime = new Date(eventEnd);
-        
-        // Debug: log the actual times being compared
-        console.log(`  Original event times: ${eventStart} to ${eventEnd}`);
-        console.log(`  Converted to UTC: ${eventStartTime.toISOString()} to ${eventEndTime.toISOString()}`);
         
         // Check for true overlap (not just boundary touching)
         // Slot is booked if: slot starts before event ends AND slot ends after event starts
@@ -184,12 +160,9 @@ async function getAvailableSlots(date) {
         
         const isConflict = hasOverlap && !justTouching;
         
-        // Debug logging for conflicts only
-        if (isConflict) {
-          console.log(`❌ CONFLICT DETECTED - Slot ${slot.time} vs Event "${event.summary}":`);
-          console.log(`  Slot: ${slotStartTime.toISOString()} - ${slotEndTime.toISOString()}`);
-          console.log(`  Event: ${eventStartTime.toISOString()} - ${eventEndTime.toISOString()}`);
-          console.log(`  This slot will be marked as UNAVAILABLE`);
+        // Debug logging
+        if (hasOverlap) {
+          console.log(`Checking slot ${slot.time} (${slotStartTime.toISOString()} - ${slotEndTime.toISOString()}) vs event (${eventStartTime.toISOString()} - ${eventEndTime.toISOString()}): hasOverlap=${hasOverlap}, justTouching=${justTouching}, conflict=${isConflict}`);
         }
         
         return isConflict;

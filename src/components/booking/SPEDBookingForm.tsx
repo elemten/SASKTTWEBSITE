@@ -33,6 +33,7 @@ interface TimeSlot {
   time: string;
   display: string;
   available: boolean;
+  duration?: number; // Duration in minutes
 }
 
 const SPEDBookingForm = () => {
@@ -77,29 +78,16 @@ const SPEDBookingForm = () => {
     const hours = parseInt(time[0]);
     const minutes = parseInt(time[1]);
     
-    // Determine duration based on time slot
-    let durationHours = 1; // Default 1 hour
+    // Find the selected slot and use its duration
+    const selectedSlot = availableTimeSlots.find(slot => slot.time === startTime);
+    let durationMinutes = 60; // Default 1 hour
     
-    if (startTime === '11:00' && minutes === 0) {
-      // Check if it's a 1.5 hour slot (11:00-12:30) or 2.75 hour slot (11:00-1:45) or 5 hour slot (11:00-4:00)
-      const selectedSlot = availableTimeSlots.find(slot => slot.time === startTime);
-      if (selectedSlot?.display.includes('1.5 hours')) {
-        durationHours = 1.5;
-      } else if (selectedSlot?.display.includes('2.75 hours')) {
-        durationHours = 2.75;
-      } else if (selectedSlot?.display.includes('5 hours')) {
-        durationHours = 5;
-      }
-    } else if (startTime === '12:30') {
-      durationHours = 1.5; // 12:30-2:00
-    } else if (startTime === '14:00') {
-      durationHours = 1.5; // 2:00-3:30
-    } else if (startTime === '15:30') {
-      durationHours = 1.5; // 3:30-5:00
+    if (selectedSlot && selectedSlot.duration) {
+      durationMinutes = selectedSlot.duration;
     }
     
     // Calculate end time
-    const totalMinutes = hours * 60 + minutes + (durationHours * 60);
+    const totalMinutes = hours * 60 + minutes + durationMinutes;
     const endHours = Math.floor(totalMinutes / 60);
     const endMinutes = totalMinutes % 60;
     
@@ -194,6 +182,45 @@ const SPEDBookingForm = () => {
 
 
 
+  // Comprehensive form validation
+  const validateForm = (): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    // Required field validation
+    if (!formData.teacher_first_name.trim()) errors.push('Teacher first name is required');
+    if (!formData.teacher_last_name.trim()) errors.push('Teacher last name is required');
+    if (!formData.teacher_email.trim()) errors.push('Teacher email is required');
+    if (!formData.teacher_phone.trim()) errors.push('Teacher phone is required');
+    if (!formData.school_name.trim()) errors.push('School name is required');
+    if (!formData.school_address_line1.trim()) errors.push('School address is required');
+    if (!formData.school_city.trim()) errors.push('School city is required');
+    if (!formData.school_province.trim()) errors.push('School province is required');
+    if (!formData.school_postal_code.trim()) errors.push('School postal code is required');
+    if (!formData.booking_date) errors.push('Please select a booking date');
+    if (!formData.booking_time) errors.push('Please select a time slot');
+    if (!formData.number_of_students || formData.number_of_students <= 0) errors.push('Number of students must be greater than 0');
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.teacher_email && !emailRegex.test(formData.teacher_email)) {
+      errors.push('Please enter a valid email address');
+    }
+
+    // Phone format validation (basic)
+    const phoneRegex = /^[\d\s\-\(\)\+]{10,}$/;
+    if (formData.teacher_phone && !phoneRegex.test(formData.teacher_phone)) {
+      errors.push('Please enter a valid phone number');
+    }
+
+    // Postal code validation (basic Canadian format)
+    const postalRegex = /^[A-Za-z]\d[A-Za-z][\s\-]?\d[A-Za-z]\d$/;
+    if (formData.school_postal_code && !postalRegex.test(formData.school_postal_code)) {
+      errors.push('Please enter a valid postal code (e.g., S7K 1A1)');
+    }
+
+    return { isValid: errors.length === 0, errors };
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -201,12 +228,13 @@ const SPEDBookingForm = () => {
     setErrorMessage('');
 
     try {
-      if (!formData.booking_date || !formData.booking_time) {
-        throw new Error('Please select a date and time slot');
+      // Step 1: Validate form data
+      const validation = validateForm();
+      if (!validation.isValid) {
+        throw new Error(validation.errors.join('. '));
       }
 
       const bookingData = {
-        id: `booking_${Date.now()}`,
         teacher_first_name: formData.teacher_first_name,
         teacher_last_name: formData.teacher_last_name,
         teacher_email: formData.teacher_email,
@@ -217,7 +245,7 @@ const SPEDBookingForm = () => {
         school_city: formData.school_city,
         school_province: formData.school_province,
         school_postal_code: formData.school_postal_code,
-        booking_date: formData.booking_date.toISOString().split('T')[0],
+        booking_date: formData.booking_date!.toISOString().split('T')[0],
         booking_time_start: formData.booking_time + ':00',
         booking_time_end: calculateEndTime(formData.booking_time),
         number_of_students: formData.number_of_students,
@@ -228,33 +256,15 @@ const SPEDBookingForm = () => {
         total_cost: totalCost
       };
 
-      // Create calendar event first
+      // Step 2: Save to database FIRST (without calendar info)
       const supabase = createClient(
         import.meta.env.VITE_SUPABASE_URL,
         import.meta.env.VITE_SUPABASE_ANON_KEY
       );
 
-      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar-function', {
-        body: {
-          action: 'bookSlot',
-          booking: bookingData
-        }
-      });
-
-      if (calendarError) {
-        throw new Error(`Calendar function error: ${calendarError.message}`);
-      }
-
-      if (!calendarData.success) {
-        throw new Error(calendarData.error || 'Failed to create calendar event');
-      }
-
-      // Save to Supabase database
-
-      const { error } = await supabase
+      const { data: insertedData, error: dbError } = await supabase
         .from('confirmed_bookings')
         .insert([{
-          id: bookingData.id,
           teacher_first_name: bookingData.teacher_first_name,
           teacher_last_name: bookingData.teacher_last_name,
           teacher_email: bookingData.teacher_email,
@@ -274,14 +284,49 @@ const SPEDBookingForm = () => {
           special_requirements: bookingData.special_requirements,
           rate_per_hour: bookingData.rate_per_hour,
           total_cost: bookingData.total_cost,
-          calendar_event_id: calendarData.eventId,
-          calendar_event_link: calendarData.eventLink,
-          status: 'confirmed',
-          created_at: new Date().toISOString()
-        }]);
+          status: 'pending' // Set as pending until calendar event is created
+        }])
+        .select();
 
-      if (error) {
-        throw new Error(`Database error: ${error.message}`);
+      if (dbError) {
+        throw new Error(`Database error: ${dbError.message}`);
+      }
+
+      if (!insertedData || insertedData.length === 0) {
+        throw new Error('Failed to save booking to database');
+      }
+
+      const bookingRecord = insertedData[0];
+
+      // Step 3: Create calendar event ONLY after successful database save
+      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar-function', {
+        body: {
+          action: 'bookSlot',
+          booking: bookingData
+        }
+      });
+
+      if (calendarError) {
+        throw new Error(`Calendar function error: ${calendarError.message}`);
+      }
+
+      if (!calendarData.success) {
+        throw new Error(calendarData.error || 'Failed to create calendar event');
+      }
+
+      // Step 4: Update database record with calendar event info
+      const { error: updateError } = await supabase
+        .from('confirmed_bookings')
+        .update({
+          google_calendar_event_id: calendarData.eventId,
+          google_calendar_link: calendarData.eventLink,
+          status: 'confirmed'
+        })
+        .eq('id', bookingRecord.id);
+
+      if (updateError) {
+        console.error('Failed to update booking with calendar info:', updateError);
+        // Don't throw error here - booking is still valid even without calendar link
       }
 
       setSubmitStatus('success');
@@ -645,8 +690,10 @@ const SPEDBookingForm = () => {
         {/* Status Messages */}
         {submitStatus === 'success' && (
           <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-            <p className="text-green-800 font-medium">Booking confirmed successfully!</p>
-            <p className="text-green-700 text-sm">You will receive a confirmation email shortly.</p>
+            <p className="text-green-800 font-medium">✅ Booking confirmed successfully!</p>
+            <p className="text-green-700 text-sm">• Database record created</p>
+            <p className="text-green-700 text-sm">• Google Calendar event added</p>
+            <p className="text-green-700 text-sm">• Invoice will be issued to admin</p>
           </div>
         )}
 
