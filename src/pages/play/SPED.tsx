@@ -1,81 +1,74 @@
+// app/play/sped/page.tsx (or wherever your SPED page lives)
+
 import { motion } from "framer-motion";
 import { Navigation } from "@/components/ui/navigation";
 import { Footer } from "@/components/footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Heart, 
-  Users, 
-  Trophy, 
-  Clock, 
-  MapPin, 
-  Shield, 
+import {
+  Heart,
+  Users,
+  Trophy,
+  Clock,
+  MapPin,
+  Shield,
   Activity,
   Brain,
   HandHeart,
   GraduationCap,
   Calendar,
   CheckCircle,
-  ArrowDown
 } from "lucide-react";
 import SPEDBookingForm from "@/components/booking/SPEDBookingForm";
-import { useState, useEffect } from "react";
+import FloatingBookNow from "@/components/FloatingBookNow";
 
 const SPED = () => {
-  const [showFloatingBubble, setShowFloatingBubble] = useState(true); // Show immediately for testing
-
-  // Always show floating button - no scroll detection needed
-  useEffect(() => {
-    setShowFloatingBubble(true);
-  }, []);
-
-  // Scroll to booking form
-  const scrollToBookingForm = () => {
-    const bookingSection = document.getElementById('booking-section');
-    if (bookingSection) {
-      bookingSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const benefits = [
     {
       icon: Activity,
       title: "Physical Development",
-      description: "Improves hand-eye coordination, balance, and motor skills through structured table tennis activities designed for all abilities."
+      description:
+        "Improves hand-eye coordination, balance, and motor skills through structured table tennis activities designed for all abilities.",
     },
     {
       icon: Users,
       title: "Social Skills",
-      description: "Encourages teamwork, communication, and positive social interaction in a supportive, inclusive environment."
+      description:
+        "Encourages teamwork, communication, and positive social interaction in a supportive, inclusive environment.",
     },
     {
       icon: Trophy,
       title: "Confidence Building",
-      description: "Builds self-esteem and confidence through achievable goals, positive reinforcement, and celebrating every success."
-    }
+      description:
+        "Builds self-esteem and confidence through achievable goals, positive reinforcement, and celebrating every success.",
+    },
   ];
 
   const programFeatures = [
     {
       icon: Shield,
       title: "Certified Instructors",
-      description: "Experienced coaches with special education training and adaptive sports expertise"
+      description:
+        "Experienced coaches with special education training and adaptive sports expertise",
     },
     {
       icon: Brain,
       title: "Adaptive Methods",
-      description: "Customized teaching approaches and equipment modifications for individual needs"
+      description:
+        "Customized teaching approaches and equipment modifications for individual needs",
     },
     {
       icon: HandHeart,
       title: "Inclusive Environment",
-      description: "Safe, welcoming space where every student can thrive and develop at their own pace"
+      description:
+        "Safe, welcoming space where every student can thrive and develop at their own pace",
     },
     {
       icon: GraduationCap,
       title: "Skill Development",
-      description: "Progressive learning that builds fundamental table tennis skills while having fun"
-    }
+      description:
+        "Progressive learning that builds fundamental table tennis skills while having fun",
+    },
   ];
 
   const sessionDetails = [
@@ -83,33 +76,33 @@ const SPED = () => {
       icon: Clock,
       title: "Session Duration",
       description: "1-2 hours per session",
-      detail: "Flexible timing based on group needs"
+      detail: "Flexible timing based on group needs",
     },
     {
       icon: Users,
       title: "Group Size",
       description: "Small groups (4-8 students)",
-      detail: "Maximum personalized attention"
+      detail: "Maximum personalized attention",
     },
     {
       icon: MapPin,
       title: "Location",
       description: "Zion Lutheran Church",
-      detail: "323 4th Avenue South, Saskatoon, SK"
+      detail: "323 4th Avenue South, Saskatoon, SK",
     },
     {
       icon: Calendar,
       title: "Schedule",
       description: "Weekday sessions available",
-      detail: "Monday-Friday, various time slots"
-    }
+      detail: "Monday-Friday, various time slots",
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation />
-      
-      {/* Hero Section - Same style as Membership page */}
+    <div className="min-h-screen bg-white" style={{ paddingTop: "60px" }}>
+      {/* <Navigation /> */}
+
+      {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 text-white py-12 md:py-20">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
@@ -118,27 +111,28 @@ const SPED = () => {
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <Badge 
-              variant="secondary" 
+            <Badge
+              variant="secondary"
               className="mb-4 md:mb-6 px-3 md:px-4 py-1 md:py-2 bg-green-100 text-green-800 border-green-200 text-xs md:text-sm"
             >
               <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
               Special Education Program
             </Badge>
-            
+
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight">
               SPED Table Tennis Program
             </h1>
-            
+
             <p className="text-base sm:text-lg md:text-xl text-green-100 leading-relaxed px-2">
-              Inclusive table tennis training designed specifically for students with special needs. 
-              Building confidence, coordination, and community through adaptive sports.
+              Inclusive table tennis training designed specifically for students
+              with special needs. Building confidence, coordination, and
+              community through adaptive sports.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Program Benefits */}
+      {/* Benefits */}
       <section className="py-16 md:py-20 bg-gradient-to-b from-slate-50 to-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-6xl mx-auto">
@@ -152,7 +146,8 @@ const SPED = () => {
                 Program Benefits
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Our SPED program focuses on holistic development through table tennis
+                Our SPED program focuses on holistic development through table
+                tennis
               </p>
             </motion.div>
 
@@ -169,7 +164,9 @@ const SPED = () => {
                       <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <benefit.icon className="h-8 w-8 text-green-600" />
                       </div>
-                      <CardTitle className="text-green-700 text-xl">{benefit.title}</CardTitle>
+                      <CardTitle className="text-green-700 text-xl">
+                        {benefit.title}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-600 text-center leading-relaxed">
@@ -184,7 +181,7 @@ const SPED = () => {
         </div>
       </section>
 
-      {/* Program Features */}
+      {/* Features */}
       <section className="py-16 md:py-20 bg-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-6xl mx-auto">
@@ -198,7 +195,8 @@ const SPED = () => {
                 Why Choose Our SPED Program?
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Specialized approach designed for students with diverse learning needs
+                Specialized approach designed for students with diverse learning
+                needs
               </p>
             </motion.div>
 
@@ -215,7 +213,9 @@ const SPED = () => {
                       <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mx-auto mb-3">
                         <feature.icon className="h-6 w-6 text-green-600" />
                       </div>
-                      <CardTitle className="text-gray-900 text-lg">{feature.title}</CardTitle>
+                      <CardTitle className="text-gray-900 text-lg">
+                        {feature.title}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-gray-600 text-sm text-center leading-relaxed">
@@ -261,10 +261,14 @@ const SPED = () => {
                       <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
                         <detail.icon className="h-6 w-6 text-green-600" />
                       </div>
-                      <CardTitle className="text-green-700 text-lg">{detail.title}</CardTitle>
+                      <CardTitle className="text-green-700 text-lg">
+                        {detail.title}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="text-center">
-                      <p className="text-gray-900 font-semibold mb-2">{detail.description}</p>
+                      <p className="text-gray-900 font-semibold mb-2">
+                        {detail.description}
+                      </p>
                       <p className="text-gray-600 text-sm">{detail.detail}</p>
                     </CardContent>
                   </Card>
@@ -289,11 +293,12 @@ const SPED = () => {
                 Book Your SPED Session
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Complete the form below to book your Special Physical Education table tennis sessions. 
-                Our team will contact you to confirm your booking.
+                Complete the form below to book your Special Physical Education
+                table tennis sessions. Our team will contact you to confirm your
+                booking.
               </p>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -305,7 +310,7 @@ const SPED = () => {
         </div>
       </section>
 
-      {/* Call to Action */}
+      {/* CTA */}
       <section className="py-16 md:py-20 bg-gradient-to-br from-green-600 to-green-700 text-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-4xl mx-auto text-center">
@@ -318,8 +323,8 @@ const SPED = () => {
                 Ready to Get Started?
               </h2>
               <p className="text-lg text-green-100 mb-8 max-w-2xl mx-auto">
-                Join our inclusive table tennis community and help your students develop 
-                new skills while having fun in a supportive environment.
+                Join our inclusive table tennis community and help your students
+                develop new skills while having fun in a supportive environment.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <div className="flex items-center text-green-100">
@@ -340,45 +345,10 @@ const SPED = () => {
         </div>
       </section>
 
-      {/* Floating Bubble - Super Obvious */}
-      <div
-        style={{ 
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          zIndex: 99999,
-          width: '80px',
-          height: '80px'
-        }}
-      >
-        <button
-          onClick={scrollToBookingForm}
-          style={{
-            width: '80px',
-            height: '80px',
-            backgroundColor: '#16a34a',
-            border: '4px solid white',
-            borderRadius: '50%',
-            color: 'white',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            boxShadow: '0 10px 40px rgba(34, 197, 94, 0.9)',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: 1,
-            visibility: 'visible',
-            transform: 'none'
-          }}
-        >
-          <ArrowDown style={{ width: '24px', height: '24px', marginBottom: '2px' }} />
-          <div style={{ fontSize: '10px', fontWeight: 'bold' }}>BOOK</div>
-        </button>
-      </div>
+      {/* Floating Book Now (portal, fixed to viewport) */}
+      <FloatingBookNow targetId="booking-form" offset={64} />
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

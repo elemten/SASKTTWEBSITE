@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
@@ -26,7 +25,7 @@ interface FormData {
   grade_level?: string;
   preferred_coach?: string;
   special_requirements?: string;
-  school_system?: 'Saskatoon Public' | 'Catholic' | 'Other';
+  school_system?: 'Saskatoon Public' | 'Catholic' | 'Other' | undefined;
 }
 
 interface TimeSlot {
@@ -73,7 +72,6 @@ const SPEDBookingForm = () => {
 
   // Calendar & dropdowns
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [isTimeSlotOpen, setIsTimeSlotOpen] = useState(false);
 
   // Totals (derived)
   const totalMinutes = useMemo(
@@ -96,7 +94,6 @@ const SPEDBookingForm = () => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       if (!target.closest('.calendar-container') && !target.closest('#date-picker-button')) setIsCalendarOpen(false);
-      if (!target.closest('.time-slot-container') && !target.closest('#time-slot-button')) setIsTimeSlotOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -310,7 +307,7 @@ const SPEDBookingForm = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto" id="booking-form">
       <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between">
           <div>
