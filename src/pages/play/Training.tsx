@@ -14,8 +14,10 @@ import {
   Target,
   Trophy,
   Accessibility,
-  ExternalLink
+  ExternalLink,
+  ArrowRight
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const trainingGroups: Array<{
   id: 'group1' | 'group2' | 'para';
@@ -144,6 +146,34 @@ const Training = () => {
               Professional training programs designed for all skill levels. 
               Join our development program and take your game to the next level.
             </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-8 bg-white border-b border-gray-100">
+        <div className="container mx-auto px-4 md:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Ready to Start Your Training Journey?
+            </h2>
+            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+              Join our professional training programs and take your table tennis skills to the next level. 
+              Sign up today and become part of our community.
+            </p>
+            <NavLink
+              to="/training-signup"
+              className="inline-flex items-center px-8 py-4 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              Let's Start Today
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </NavLink>
           </motion.div>
         </div>
       </section>

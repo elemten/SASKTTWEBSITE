@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,9 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Clock } from "lucide-react";
+import { CalendarIcon, Clock, Check } from "lucide-react";
 import { format } from "date-fns";
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 interface FormData {
   teacher_first_name: string;
@@ -22,19 +22,27 @@ interface FormData {
   school_province: string;
   school_postal_code: string;
   booking_date: Date | null;
-  booking_time: string;
   number_of_students: number;
   grade_level?: string;
   preferred_coach?: string;
   special_requirements?: string;
+  school_system?: 'Saskatoon Public' | 'Catholic' | 'Other';
 }
 
 interface TimeSlot {
   time: string;
   display: string;
   available: boolean;
-  duration?: number; // Duration in minutes
+  duration?: number; // minutes
 }
+
+const HOURLY_RATE = 95;
+
+// ✅ Single Supabase client (prevents "Multiple GoTrueClient instances" warning)
+const supabase: SupabaseClient = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 const SPEDBookingForm = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -49,144 +57,107 @@ const SPEDBookingForm = () => {
     school_province: '',
     school_postal_code: '',
     booking_date: null,
-    booking_time: '',
     number_of_students: 0,
     grade_level: '',
     preferred_coach: '',
     special_requirements: '',
+    school_system: undefined
   });
 
   const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
+  const [selectedSlots, setSelectedSlots] = useState<TimeSlot[]>([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [totalCost, setTotalCost] = useState(0);
 
-  // Calendar and time slot dropdown states
+  // Calendar & dropdowns
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isTimeSlotOpen, setIsTimeSlotOpen] = useState(false);
 
-  // Calculate total cost (fixed at $95 for single session)
-  useEffect(() => {
-    setTotalCost(95); // $95 per session
-  }, []);
+  // Totals (derived)
+  const totalMinutes = useMemo(
+    () => selectedSlots.reduce((sum, s) => sum + (s.duration ?? 60), 0),
+    [selectedSlots]
+  );
+  const totalCost = useMemo(
+    () => Math.round(((totalMinutes / 60) * HOURLY_RATE) * 100) / 100,
+    [totalMinutes]
+  );
 
-  // Calculate end time based on selected time slot
-  const calculateEndTime = (startTime: string): string => {
-    const time = startTime.split(':');
-    const hours = parseInt(time[0]);
-    const minutes = parseInt(time[1]);
-    
-    // Find the selected slot and use its duration
-    const selectedSlot = availableTimeSlots.find(slot => slot.time === startTime);
-    let durationMinutes = 60; // Default 1 hour
-    
-    if (selectedSlot && selectedSlot.duration) {
-      durationMinutes = selectedSlot.duration;
-    }
-    
-    // Calculate end time
-    const totalMinutes = hours * 60 + minutes + durationMinutes;
-    const endHours = Math.floor(totalMinutes / 60);
-    const endMinutes = totalMinutes % 60;
-    
-    return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}:00`;
-  };
-
-  // Fetch available time slots when date is selected
+  // Fetch slots when date changes
   useEffect(() => {
-    if (formData.booking_date) {
-      fetchAvailableTimeSlots(formData.booking_date);
-    }
+    if (formData.booking_date) fetchAvailableTimeSlots(formData.booking_date);
+    setSelectedSlots([]);
   }, [formData.booking_date]);
 
-  // Close dropdowns when clicking outside
+  // Close popovers when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      
-      if (!target.closest('.calendar-container') && !target.closest('#date-picker-button')) {
-        setIsCalendarOpen(false);
-      }
-      
-      if (!target.closest('.time-slot-container') && !target.closest('#time-slot-button')) {
-        setIsTimeSlotOpen(false);
-      }
+      if (!target.closest('.calendar-container') && !target.closest('#date-picker-button')) setIsCalendarOpen(false);
+      if (!target.closest('.time-slot-container') && !target.closest('#time-slot-button')) setIsTimeSlotOpen(false);
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleInputChange = (field: keyof FormData, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const fetchAvailableTimeSlots = async (date: Date) => {
     setIsLoadingSlots(true);
     try {
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY
-      );
-
       const { data, error } = await supabase.functions.invoke('google-calendar-function', {
-        body: {
-          action: 'getSlots',
-          date: date.toISOString().split('T')[0]
-        }
+        body: { action: 'getSlots', date: date.toISOString().split('T')[0] }
       });
-
-      if (error) {
-        throw new Error(`Supabase function error: ${error.message}`);
-      }
-
-      if (data.success) {
-        setAvailableTimeSlots(data.slots);
-      } else {
-        throw new Error(data.error || 'Failed to fetch time slots');
-      }
+      if (error) throw new Error(`Supabase function error: ${error.message}`);
+      if (!data?.success) throw new Error(data?.message || data?.error || 'Failed to fetch time slots');
+      setAvailableTimeSlots(data.slots);
     } catch (error) {
       console.error('Error fetching time slots:', error);
-      // Fallback to default slots
-      setAvailableTimeSlots(getDefaultTimeSlots(date));
+      setAvailableTimeSlots(getDefaultTimeSlots(date)); // fallback
     } finally {
       setIsLoadingSlots(false);
     }
   };
 
+  // Mirror of Edge defaults (Mon same; Tue/Wed/Thu 11:20–12:20 & 12:45–1:45; Fri same)
   const getDefaultTimeSlots = (date: Date): TimeSlot[] => {
-    const dayOfWeek = date.getDay();
+    const day = date.getDay();
     const slots: TimeSlot[] = [];
-
-    if (dayOfWeek === 1) { // Monday
-      slots.push({ time: '11:00', display: '11:00 AM - 12:00 PM (1 hour)', available: true });
-    } else if (dayOfWeek >= 2 && dayOfWeek <= 4) { // Tuesday-Thursday
-      slots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true });
-      slots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true });
-      slots.push({ time: '11:00-2.75', display: '11:00 AM - 1:45 PM (2.75 hours)', available: true });
-    } else if (dayOfWeek === 5) { // Friday
-      slots.push({ time: '11:00', display: '11:00 AM - 12:30 PM (1.5 hours)', available: true });
-      slots.push({ time: '12:30', display: '12:30 PM - 2:00 PM (1.5 hours)', available: true });
-      slots.push({ time: '14:00', display: '2:00 PM - 3:30 PM (1.5 hours)', available: true });
-      slots.push({ time: '15:30', display: '3:30 PM - 5:00 PM (1.5 hours)', available: true });
-      slots.push({ time: '11:00-5', display: '11:00 AM - 4:00 PM (5 hours)', available: true });
+    if (day === 1) {
+      slots.push({ time: '11:00', display: '11:00 AM - 12:00 PM (60 min)', available: true, duration: 60 });
+    } else if (day >= 2 && day <= 4) {
+      slots.push(
+        { time: '11:20', display: '11:20 AM - 12:20 PM (60 min)', available: true, duration: 60 },
+        { time: '12:45', display: '12:45 PM - 1:45 PM (60 min)', available: true, duration: 60 },
+      );
+    } else if (day === 5) {
+      slots.push(
+        { time: '11:00', display: '11:00 AM - 12:00 PM (60 min)', available: true, duration: 60 },
+        { time: '12:00', display: '12:00 PM - 1:00 PM (60 min)', available: true, duration: 60 },
+        { time: '13:00', display: '1:00 PM - 2:00 PM (60 min)', available: true, duration: 60 },
+        { time: '14:00', display: '2:00 PM - 3:00 PM (60 min)', available: true, duration: 60 },
+        { time: '15:00', display: '3:00 PM - 4:00 PM (60 min)', available: true, duration: 60 },
+      );
     }
-
     return slots;
   };
 
+  const slotEndTime = (startHHMM: string, duration = 60): string => {
+    const [h, m] = startHHMM.split(':').map(Number);
+    const total = h * 60 + m + duration;
+    const eh = Math.floor(total / 60);
+    const em = total % 60;
+    return `${String(eh).padStart(2, '0')}:${String(em).padStart(2, '0')}:00`;
+  };
 
-
-  // Comprehensive form validation
+  // Validation
   const validateForm = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
-
-    // Required field validation
+    if (!formData.school_system) errors.push('Please select School Type');
     if (!formData.teacher_first_name.trim()) errors.push('Teacher first name is required');
     if (!formData.teacher_last_name.trim()) errors.push('Teacher last name is required');
     if (!formData.teacher_email.trim()) errors.push('Teacher email is required');
@@ -197,26 +168,16 @@ const SPEDBookingForm = () => {
     if (!formData.school_province.trim()) errors.push('School province is required');
     if (!formData.school_postal_code.trim()) errors.push('School postal code is required');
     if (!formData.booking_date) errors.push('Please select a booking date');
-    if (!formData.booking_time) errors.push('Please select a time slot');
-    if (!formData.number_of_students || formData.number_of_students <= 0) errors.push('Number of students must be greater than 0');
+    if (selectedSlots.length === 0) errors.push('Please select at least one time slot');
 
-    // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.teacher_email && !emailRegex.test(formData.teacher_email)) {
-      errors.push('Please enter a valid email address');
-    }
+    if (formData.teacher_email && !emailRegex.test(formData.teacher_email)) errors.push('Please enter a valid email address');
 
-    // Phone format validation (basic)
     const phoneRegex = /^[\d\s\-\(\)\+]{10,}$/;
-    if (formData.teacher_phone && !phoneRegex.test(formData.teacher_phone)) {
-      errors.push('Please enter a valid phone number');
-    }
+    if (formData.teacher_phone && !phoneRegex.test(formData.teacher_phone)) errors.push('Please enter a valid phone number');
 
-    // Postal code validation (basic Canadian format)
     const postalRegex = /^[A-Za-z]\d[A-Za-z][\s\-]?\d[A-Za-z]\d$/;
-    if (formData.school_postal_code && !postalRegex.test(formData.school_postal_code)) {
-      errors.push('Please enter a valid postal code (e.g., S7K 1A1)');
-    }
+    if (formData.school_postal_code && !postalRegex.test(formData.school_postal_code)) errors.push('Please enter a valid postal code (e.g., S7K 1A1)');
 
     return { isValid: errors.length === 0, errors };
   };
@@ -228,11 +189,18 @@ const SPEDBookingForm = () => {
     setErrorMessage('');
 
     try {
-      // Step 1: Validate form data
+      // 1) Validate form data
       const validation = validateForm();
-      if (!validation.isValid) {
-        throw new Error(validation.errors.join('. '));
-      }
+      if (!validation.isValid) throw new Error(validation.errors.join('. '));
+
+      const bookingDateStr = formData.booking_date!.toISOString().split('T')[0];
+      const slotsPayload = selectedSlots.map(s => ({
+        time: s.time,
+        display: s.display,
+        duration: s.duration ?? 60,
+        available: s.available
+      }));
+      const first = selectedSlots[0];
 
       const bookingData = {
         teacher_first_name: formData.teacher_first_name,
@@ -245,24 +213,37 @@ const SPEDBookingForm = () => {
         school_city: formData.school_city,
         school_province: formData.school_province,
         school_postal_code: formData.school_postal_code,
-        booking_date: formData.booking_date!.toISOString().split('T')[0],
-        booking_time_start: formData.booking_time + ':00',
-        booking_time_end: calculateEndTime(formData.booking_time),
+        booking_date: bookingDateStr,
+        // legacy columns satisfied by first slot
+        booking_time_start: `${first.time}:00`,
+        booking_time_end: slotEndTime(first.time, first.duration ?? 60),
         number_of_students: formData.number_of_students,
         grade_level: formData.grade_level,
         preferred_coach: formData.preferred_coach,
         special_requirements: formData.special_requirements,
-        rate_per_hour: 95.00,
-        total_cost: totalCost
+        rate_per_hour: HOURLY_RATE,
+        total_cost: totalCost,
+        total_minutes: totalMinutes,
+        selected_slots: slotsPayload,
+        school_system: formData.school_system
       };
 
-      // Step 2: Save to database FIRST (without calendar info)
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY
-      );
+      // ✅ 2) CALL EDGE FUNCTION FIRST — create calendar event(s)
+      const { data: calendarData, error: calError } = await supabase.functions.invoke('google-calendar-function', {
+        body: { action: 'bookSlot', booking: bookingData }
+      });
 
-      const { data: insertedData, error: dbError } = await supabase
+      if (calError) throw new Error(`Calendar function error: ${calError.message}`);
+      if (!calendarData?.success) {
+        const details = calendarData?.message || calendarData?.error || 'Failed to create calendar event(s)';
+        throw new Error(details);
+      }
+
+      // 3) ONLY IF SUCCESS → insert into DB
+      const firstEvent = calendarData.events?.[0];
+      const extraLinks = calendarData.events?.map((e: any) => e.eventLink).join('\n') ?? null;
+
+      const { error: dbError } = await supabase
         .from('confirmed_bookings')
         .insert([{
           teacher_first_name: bookingData.teacher_first_name,
@@ -284,54 +265,20 @@ const SPEDBookingForm = () => {
           special_requirements: bookingData.special_requirements,
           rate_per_hour: bookingData.rate_per_hour,
           total_cost: bookingData.total_cost,
-          status: 'pending' // Set as pending until calendar event is created
-        }])
-        .select();
-
-      if (dbError) {
-        throw new Error(`Database error: ${dbError.message}`);
-      }
-
-      if (!insertedData || insertedData.length === 0) {
-        throw new Error('Failed to save booking to database');
-      }
-
-      const bookingRecord = insertedData[0];
-
-      // Step 3: Create calendar event ONLY after successful database save
-      const { data: calendarData, error: calendarError } = await supabase.functions.invoke('google-calendar-function', {
-        body: {
-          action: 'bookSlot',
-          booking: bookingData
-        }
-      });
-
-      if (calendarError) {
-        throw new Error(`Calendar function error: ${calendarError.message}`);
-      }
-
-      if (!calendarData.success) {
-        throw new Error(calendarData.error || 'Failed to create calendar event');
-      }
-
-      // Step 4: Update database record with calendar event info
-      const { error: updateError } = await supabase
-        .from('confirmed_bookings')
-        .update({
-          google_calendar_event_id: calendarData.eventId,
-          google_calendar_link: calendarData.eventLink,
+          total_minutes: bookingData.total_minutes,
+          selected_slots: bookingData.selected_slots,
+          school_system: bookingData.school_system,
+          google_calendar_event_id: firstEvent?.eventId ?? null,
+          google_calendar_link: firstEvent?.eventLink ?? null,
+          admin_notes: extraLinks ? `All events:\n${extraLinks}` : null,
           status: 'confirmed'
-        })
-        .eq('id', bookingRecord.id);
+        }]);
 
-      if (updateError) {
-        console.error('Failed to update booking with calendar info:', updateError);
-        // Don't throw error here - booking is still valid even without calendar link
-      }
+      if (dbError) throw new Error(`Database error: ${dbError.message}`);
 
       setSubmitStatus('success');
-      
-      // Reset form
+
+      // Reset
       setFormData({
         teacher_first_name: '',
         teacher_last_name: '',
@@ -344,18 +291,19 @@ const SPEDBookingForm = () => {
         school_province: '',
         school_postal_code: '',
         booking_date: null,
-        booking_time: '',
         number_of_students: 0,
         grade_level: '',
         preferred_coach: '',
         special_requirements: '',
+        school_system: undefined
       });
       setAvailableTimeSlots([]);
+      setSelectedSlots([]);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Booking error:', error);
       setSubmitStatus('error');
-      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
+      setErrorMessage(error?.message || 'An unexpected error occurred');
     } finally {
       setIsSubmitting(false);
     }
@@ -363,28 +311,49 @@ const SPEDBookingForm = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* Location & Rate Info */}
       <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-green-800">Location</h3>
-            <p className="text-green-700">Regina Table Tennis Club</p>
+            <p className="text-green-700">Zion Lutheran Church<br/>323 4th Avenue South, Saskatoon, SK</p>
           </div>
           <div className="text-right">
             <h3 className="font-semibold text-green-800">Rate</h3>
-            <p className="text-green-700">$95 per session</p>
+            <p className="text-green-700">${HOURLY_RATE} per hour</p>
           </div>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Booking Details - MOVED TO TOP */}
+        {/* School Type */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Availability</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-lg">School Type</CardTitle></CardHeader>
+          <CardContent>
+            <div>
+              <Label>School System *</Label>
+              <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-3">
+                {['Saskatoon Public','Catholic','Other'].map((opt) => (
+                  <Button
+                    key={opt}
+                    type="button"
+                    variant={formData.school_system === opt ? 'default' : 'outline'}
+                    onClick={() => handleInputChange('school_system', opt)}
+                    className="justify-start"
+                  >
+                    {formData.school_system === opt && <Check className="h-4 w-4 mr-2" />}
+                    {opt}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Availability */}
+        <Card>
+          <CardHeader><CardTitle className="text-lg">Availability</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            {/* Date Selection */}
+            {/* Date */}
             <div className="space-y-2">
               <Label>Select Date *</Label>
               <div className="relative">
@@ -393,42 +362,19 @@ const SPEDBookingForm = () => {
                   className="w-full justify-start text-left font-normal"
                   type="button"
                   id="date-picker-button"
-                  data-testid="date-picker-button"
                   onClick={() => setIsCalendarOpen(!isCalendarOpen)}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {formData.booking_date ? format(formData.booking_date, 'PPP') : 'Pick a date'}
                 </Button>
-                
                 {isCalendarOpen && (
                   <>
-                    {/* Background overlay */}
-                    <div 
-                      className="fixed inset-0 z-[99] bg-black bg-opacity-20"
-                      onClick={() => setIsCalendarOpen(false)}
-                    />
-                    {/* Calendar container - positioned absolutely below button */}
-                    <div 
-                      className="calendar-container absolute z-[100] bg-white border border-gray-300 rounded-lg shadow-xl p-3 mt-1"
-                      style={{
-                        top: 'calc(100% + 4px)',
-                        left: '0',
-                        right: '0',
-                        maxWidth: '320px'
-                      }}
-                    >
+                    <div className="fixed inset-0 z-[99] bg-black bg-opacity-20" onClick={() => setIsCalendarOpen(false)} />
+                    <div className="calendar-container absolute z-[100] bg-white border border-gray-300 rounded-lg shadow-xl p-3 mt-1" style={{ top: 'calc(100% + 4px)', left: 0, right: 0, maxWidth: '320px' }}>
                       <Calendar
                         mode="single"
                         selected={formData.booking_date || undefined}
-                        onSelect={(date) => {
-                          if (date) {
-                            handleInputChange('booking_date', date);
-                            // Brief delay to ensure state updates
-                            setTimeout(() => {
-                              setIsCalendarOpen(false);
-                            }, 150);
-                          }
-                        }}
+                        onSelect={(date) => { if (date) { handleInputChange('booking_date', date); setTimeout(() => setIsCalendarOpen(false), 150); } }}
                         disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
                       />
                     </div>
@@ -437,7 +383,7 @@ const SPEDBookingForm = () => {
               </div>
             </div>
 
-            {/* Time Slot Selection */}
+            {/* Time slots: multi-select */}
             {formData.booking_date && (
               <div>
                 <Label>Available Time Slots *</Label>
@@ -447,256 +393,171 @@ const SPEDBookingForm = () => {
                     <span className="text-gray-600">Loading available slots...</span>
                   </div>
                 ) : availableTimeSlots.length > 0 ? (
-                  <div className="relative">
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left font-normal"
-                      type="button"
-                      id="time-slot-button"
-                      onClick={() => setIsTimeSlotOpen(!isTimeSlotOpen)}
-                    >
-                      <Clock className="mr-2 h-4 w-4" />
-                      {formData.booking_time ? 
-                        availableTimeSlots.find(slot => slot.time === formData.booking_time)?.display || 'Select a time slot' 
-                        : 'Select a time slot'
-                      }
-                    </Button>
-                    
-                    {isTimeSlotOpen && (
-                      <>
-                        {/* Background overlay for mobile */}
-                        <div 
-                          className="fixed inset-0 z-[99] bg-black bg-opacity-20 md:hidden"
-                          onClick={() => setIsTimeSlotOpen(false)}
-                        />
-                        {/* Time slot dropdown - positioned absolutely below button */}
-                        <div 
-                          className="time-slot-container absolute z-[100] bg-white border border-gray-300 rounded-lg shadow-xl p-0 mt-1"
-                          style={{
-                            top: 'calc(100% + 4px)',
-                            left: '0',
-                            right: '0',
-                            maxWidth: '100%',
-                            width: '100%'
+                  <div className="time-slot-container grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {availableTimeSlots.map((slot, index) => {
+                      const selected = selectedSlots.some(s => s.time === slot.time);
+                      return (
+                        <button
+                          key={`${slot.time}-${index}`}
+                          type="button"
+                          className={`w-full text-left px-4 py-2 border rounded-md ${!slot.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'} ${selected ? 'ring-2 ring-green-500' : ''}`}
+                          disabled={!slot.available}
+                          onClick={() => {
+                            if (!slot.available) return;
+                            setSelectedSlots(prev => {
+                              const exists = prev.some(s => s.time === slot.time);
+                              if (exists) return prev.filter(s => s.time !== slot.time);
+                              return [...prev, slot].sort((a, b) => a.time.localeCompare(b.time));
+                            });
                           }}
                         >
-                          <div className="max-h-60 overflow-y-auto">
-                            {availableTimeSlots.map((slot, index) => (
-                              <button
-                                key={`${slot.time}-${index}`}
-                                className={`w-full text-left px-4 py-2 hover:bg-gray-100 border-b border-gray-100 last:border-b-0 ${
-                                  !slot.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                                }`}
-                                disabled={!slot.available}
-                                onClick={() => {
-                                  if (slot.available) {
-                                    handleInputChange('booking_time', slot.time);
-                                    setIsTimeSlotOpen(false);
-                                  }
-                                }}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <span>{slot.display}</span>
-                                  {!slot.available && <Badge variant="secondary">Booked</Badge>}
-                                </div>
-                              </button>
-                            ))}
+                          <div className="flex items-center justify-between">
+                            <span>{slot.display}</span>
+                            {!slot.available ? <Badge variant="secondary">Booked</Badge> : selected ? <Badge>Selected</Badge> : null}
                           </div>
-                        </div>
-                      </>
-                    )}
+                        </button>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
                     <p className="text-yellow-800">No available time slots found for this date.</p>
-                    <p className="text-sm text-yellow-700">Please try selecting a different date.</p>
+                    <p className="text-sm text-yellow-700">Please try a different date.</p>
                   </div>
                 )}
               </div>
             )}
 
+            {/* Totals */}
+            <div className="flex items-center justify-between border rounded-md p-3">
+              <div>
+                <div className="text-sm text-gray-600">Total Minutes</div>
+                <div className="font-semibold">{totalMinutes}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-gray-600">Total Cost</div>
+                <div className="font-semibold">${totalCost.toFixed(2)}</div>
+              </div>
+            </div>
+
+            {/* Students / Grade / Pref Coach / Notes */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="number_of_students">Number of Students *</Label>
-                <Input
-                  id="number_of_students"
-                  type="number"
-                  min="1"
-                  value={formData.number_of_students}
-                  onChange={(e) => handleInputChange('number_of_students', parseInt(e.target.value) || 0)}
-                  required
-                />
+                <Input id="number_of_students" type="number" min="1" value={formData.number_of_students} onChange={(e) => handleInputChange('number_of_students', parseInt(e.target.value) || 0)} required />
               </div>
               <div>
                 <Label htmlFor="grade_level">Grade Level</Label>
-                <Input
-                  id="grade_level"
-                  placeholder="e.g., Grade 3-5"
-                  value={formData.grade_level}
-                  onChange={(e) => handleInputChange('grade_level', e.target.value)}
-                />
+                <Input id="grade_level" placeholder="e.g., Grade 3-5" value={formData.grade_level} onChange={(e) => handleInputChange('grade_level', e.target.value)} />
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="preferred_coach">Preferred Coach</Label>
-              <Input
-                id="preferred_coach"
-                placeholder="Any specific coach preference"
-                value={formData.preferred_coach}
-                onChange={(e) => handleInputChange('preferred_coach', e.target.value)}
-              />
-            </div>
+            {/*
+<div>
+  <label className="block text-sm font-medium">Preferred Coach</label>
+  <input
+    type="text"
+    name="preferred_coach"
+    value={formData.preferred_coach}
+    onChange={handleChange}
+    className="mt-1 block w-full border-gray-300 rounded-md"
+  />
+</div>
+*/}
 
-            <div>
-              <Label htmlFor="special_requirements">Special Requirements</Label>
-              <Textarea
-                id="special_requirements"
-                placeholder="Any special requirements or notes"
-                value={formData.special_requirements}
-                onChange={(e) => handleInputChange('special_requirements', e.target.value)}
-                rows={3}
-              />
-            </div>
+{/*
+<div>
+  <label className="block text-sm font-medium">Special Requirements</label>
+  <textarea
+    name="special_requirements"
+    value={formData.special_requirements}
+    onChange={handleChange}
+    className="mt-1 block w-full border-gray-300 rounded-md"
+  />
+</div>
+*/}
+
           </CardContent>
         </Card>
 
-        {/* School Information - MOVED TO MIDDLE */}
+        {/* School Information */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">School Information</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-lg">School Information</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="school_name">School Name *</Label>
-              <Input
-                id="school_name"
-                value={formData.school_name}
-                onChange={(e) => handleInputChange('school_name', e.target.value)}
-                required
-              />
+              <Input id="school_name" value={formData.school_name} onChange={(e) => handleInputChange('school_name', e.target.value)} required />
             </div>
             <div>
               <Label htmlFor="school_address_line1">Address Line 1 *</Label>
-              <Input
-                id="school_address_line1"
-                value={formData.school_address_line1}
-                onChange={(e) => handleInputChange('school_address_line1', e.target.value)}
-                required
-              />
+              <Input id="school_address_line1" value={formData.school_address_line1} onChange={(e) => handleInputChange('school_address_line1', e.target.value)} required />
             </div>
             <div>
               <Label htmlFor="school_address_line2">Address Line 2</Label>
-              <Input
-                id="school_address_line2"
-                value={formData.school_address_line2}
-                onChange={(e) => handleInputChange('school_address_line2', e.target.value)}
-              />
+              <Input id="school_address_line2" value={formData.school_address_line2} onChange={(e) => handleInputChange('school_address_line2', e.target.value)} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="school_city">City *</Label>
-                <Input
-                  id="school_city"
-                  value={formData.school_city}
-                  onChange={(e) => handleInputChange('school_city', e.target.value)}
-                  required
-                />
+                <Input id="school_city" value={formData.school_city} onChange={(e) => handleInputChange('school_city', e.target.value)} required />
               </div>
               <div>
                 <Label htmlFor="school_province">Province *</Label>
-                <Input
-                  id="school_province"
-                  value={formData.school_province}
-                  onChange={(e) => handleInputChange('school_province', e.target.value)}
-                  required
-                />
+                <Input id="school_province" value={formData.school_province} onChange={(e) => handleInputChange('school_province', e.target.value)} required />
               </div>
               <div>
                 <Label htmlFor="school_postal_code">Postal Code *</Label>
-                <Input
-                  id="school_postal_code"
-                  value={formData.school_postal_code}
-                  onChange={(e) => handleInputChange('school_postal_code', e.target.value)}
-                  required
-                />
+                <Input id="school_postal_code" value={formData.school_postal_code} onChange={(e) => handleInputChange('school_postal_code', e.target.value)} required />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Teacher Information - MOVED TO BOTTOM */}
+        {/* Teacher Info */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Teacher Information</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle className="text-lg">Teacher Information</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="teacher_first_name">First Name *</Label>
-                <Input
-                  id="teacher_first_name"
-                  value={formData.teacher_first_name}
-                  onChange={(e) => handleInputChange('teacher_first_name', e.target.value)}
-                  required
-                />
+                <Input id="teacher_first_name" value={formData.teacher_first_name} onChange={(e) => handleInputChange('teacher_first_name', e.target.value)} required />
               </div>
               <div>
                 <Label htmlFor="teacher_last_name">Last Name *</Label>
-                <Input
-                  id="teacher_last_name"
-                  value={formData.teacher_last_name}
-                  onChange={(e) => handleInputChange('teacher_last_name', e.target.value)}
-                  required
-                />
+                <Input id="teacher_last_name" value={formData.teacher_last_name} onChange={(e) => handleInputChange('teacher_last_name', e.target.value)} required />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="teacher_email">Email Address *</Label>
-                <Input
-                  id="teacher_email"
-                  type="email"
-                  value={formData.teacher_email}
-                  onChange={(e) => handleInputChange('teacher_email', e.target.value)}
-                  required
-                />
+                <Input id="teacher_email" type="email" value={formData.teacher_email} onChange={(e) => handleInputChange('teacher_email', e.target.value)} required />
               </div>
               <div>
                 <Label htmlFor="teacher_phone">Phone Number *</Label>
-                <Input
-                  id="teacher_phone"
-                  type="tel"
-                  value={formData.teacher_phone}
-                  onChange={(e) => handleInputChange('teacher_phone', e.target.value)}
-                  required
-                />
+                <Input id="teacher_phone" type="tel" value={formData.teacher_phone} onChange={(e) => handleInputChange('teacher_phone', e.target.value)} required />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <div className="text-center">
-          <Button 
-            type="submit" 
-            className="w-full md:w-auto px-8 py-3 text-lg" 
-            disabled={isSubmitting || !formData.booking_date || !formData.booking_time}
+          <Button
+            type="submit"
+            className="w-full md:w-auto px-8 py-3 text-lg"
+            disabled={isSubmitting || !formData.booking_date || selectedSlots.length === 0}
           >
             {isSubmitting ? 'Creating Booking...' : 'Confirm Booking'}
           </Button>
         </div>
 
-        {/* Status Messages */}
+        {/* Status */}
         {submitStatus === 'success' && (
           <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-            <p className="text-green-800 font-medium">✅ Booking confirmed successfully!</p>
-            <p className="text-green-700 text-sm">• Database record created</p>
-            <p className="text-green-700 text-sm">• Google Calendar event added</p>
-            <p className="text-green-700 text-sm">• Invoice will be issued to admin</p>
+            <p className="text-green-800 font-medium">✅ Booking confirmed!</p>
+          
           </div>
         )}
-
         {submitStatus === 'error' && (
           <div className="p-4 bg-red-50 border border-red-200 rounded-md">
             <p className="text-red-800 font-medium">Booking failed</p>
