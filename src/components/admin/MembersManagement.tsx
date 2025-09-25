@@ -92,11 +92,11 @@ export const MembersManagement = () => {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
-        return "bg-success text-success-foreground";
+        return "bg-green-100 text-green-800";
       case "expired":
-        return "bg-destructive text-destructive-foreground";
+        return "bg-green-50 text-green-600";
       default:
-        return "bg-muted text-muted-foreground";
+        return "bg-green-50 text-green-600";
     }
   };
 
@@ -115,13 +115,13 @@ export const MembersManagement = () => {
         </div>
         
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2 border-green-300 text-green-700 hover:bg-green-50">
             <Download className="h-4 w-4" />
             Export CSV
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="gap-2">
+              <Button className="gap-2 bg-green-600 hover:bg-green-700">
                 <Plus className="h-4 w-4" />
                 Add New Member
               </Button>

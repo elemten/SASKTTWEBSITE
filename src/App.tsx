@@ -7,6 +7,7 @@ import { Component, ReactNode, Suspense, lazy, useEffect } from "react";
 import { PageLoadingFallback } from "@/components/ui/loading-spinner";
 import { isLowEndMobile } from "@/lib/performance-utils";
 import { useScrollRestoration } from "@/hooks/use-scroll-restoration";
+import { AuthGuard } from "@/components/AuthGuard";
 
 // Lazy-loaded components for better code splitting
 const Index = lazy(() => import("./pages/Index"));
@@ -14,10 +15,21 @@ const Membership = lazy(() => import("./pages/Membership"));
 const GetStarted = lazy(() => import("./pages/GetStarted"));
 const Events = lazy(() => import("./pages/Events"));
 
-const Admin = lazy(() => import("./pages/Admin"));
+// Admin pages
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminMembers = lazy(() => import("./pages/admin/Members"));
+const AdminMemberships = lazy(() => import("./pages/admin/Memberships"));
+const AdminClubs = lazy(() => import("./pages/admin/Clubs"));
+const AdminClinics = lazy(() => import("./pages/admin/Clinics"));
+const AdminSPED = lazy(() => import("./pages/admin/SPED"));
+const AdminTournaments = lazy(() => import("./pages/admin/Tournaments"));
+const AdminFinance = lazy(() => import("./pages/admin/Finance"));
+const AdminMapGrants = lazy(() => import("./pages/admin/MapGrants"));
+const AdminReports = lazy(() => import("./pages/admin/Reports"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const ComingSoon = lazy(() => import("./pages/ComingSoon"));
+const SignIn = lazy(() => import("./pages/SignIn"));
 
 // Secondary pages
 const Clubs = lazy(() => import("./pages/Clubs"));
@@ -208,9 +220,20 @@ const App = () => {
                 {/* Coming Soon page for auth features */}
                 <Route path="/coming-soon" element={<ComingSoon />} />
 
-                {/* Auth routes - REMOVED */}
+                {/* Sign In Route */}
+                <Route path="/sign-in" element={<SignIn />} />
 
-                <Route path="/admin" element={<Admin />} />
+                {/* Protected Admin Routes */}
+                <Route path="/admin" element={<AuthGuard><AdminDashboard /></AuthGuard>} />
+                <Route path="/admin/members" element={<AuthGuard><AdminMembers /></AuthGuard>} />
+                <Route path="/admin/memberships" element={<AuthGuard><AdminMemberships /></AuthGuard>} />
+                <Route path="/admin/clubs" element={<AuthGuard><AdminClubs /></AuthGuard>} />
+                <Route path="/admin/clinics" element={<AuthGuard><AdminClinics /></AuthGuard>} />
+                <Route path="/admin/sped" element={<AuthGuard><AdminSPED /></AuthGuard>} />
+                <Route path="/admin/tournaments" element={<AuthGuard><AdminTournaments /></AuthGuard>} />
+                <Route path="/admin/finance" element={<AuthGuard><AdminFinance /></AuthGuard>} />
+                <Route path="/admin/map-grants" element={<AuthGuard><AdminMapGrants /></AuthGuard>} />
+                <Route path="/admin/reports" element={<AuthGuard><AdminReports /></AuthGuard>} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

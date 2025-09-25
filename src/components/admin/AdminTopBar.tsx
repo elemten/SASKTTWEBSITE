@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { mockAuth } from "@/lib/mock-auth";
+import { auth } from "@/lib/auth";
 import { GlobalSearch, useGlobalSearch } from "./GlobalSearch";
 import { MobileAdminMode } from "./MobileAdminMode";
 
@@ -30,17 +30,16 @@ export const AdminTopBar = () => {
   const globalSearch = useGlobalSearch();
 
   useEffect(() => {
-    // Get initial user
-    const getUser = async () => {
-      const user = await mockAuth.getCurrentUser();
-      setUser(user);
-    };
-    getUser();
+    // Set mock user data for display
+    setUser({
+      name: 'Admin User',
+      email: 'info@ttsask.ca'
+    });
   }, []);
 
-  const handleSignOut = async () => {
-    await mockAuth.signOut();
-    navigate('/');
+  const handleSignOut = () => {
+    auth.signOut();
+    navigate('/sign-in');
   };
 
   return (
@@ -99,8 +98,7 @@ export const AdminTopBar = () => {
                 <Bell className="h-5 w-5" />
                 {notifications.length > 0 && (
                   <Badge 
-                    variant="destructive" 
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-green-500 text-white hover:bg-green-600"
                   >
                     {notifications.length}
                   </Badge>
@@ -115,9 +113,9 @@ export const AdminTopBar = () => {
                   <div className="flex items-center gap-2 w-full">
                     <div className={cn(
                       "w-2 h-2 rounded-full",
-                      notification.type === "warning" && "bg-warning",
-                      notification.type === "info" && "bg-primary",
-                      notification.type === "error" && "bg-destructive"
+                      notification.type === "warning" && "bg-green-400",
+                      notification.type === "info" && "bg-green-500",
+                      notification.type === "error" && "bg-green-600"
                     )} />
                     <span className="text-sm">{notification.message}</span>
                   </div>
@@ -130,11 +128,13 @@ export const AdminTopBar = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 hover:bg-accent">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center p-1">
+                  <img
+                    src="/logo.png"
+                    alt="Admin User"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium">
                     {user?.name || 'Admin User'}

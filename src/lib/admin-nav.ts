@@ -2,17 +2,14 @@ import {
   LayoutDashboard,
   Users,
   Building2,
-  FileText,
+  Trophy,
   Calendar,
-  Receipt,
   BarChart3,
-  Shield,
-  Trophy
+  DollarSign,
+  Award,
+  UserCheck,
+  Activity
 } from "lucide-react";
-
-
-
-
 
 export interface AdminNavItem {
   id: string;
@@ -35,10 +32,10 @@ export const ADMIN_NAV: AdminNavItem[] = [
     href: "/admin/members"
   },
   {
-    id: "membership",
-    label: "Membership Analytics",
-    icon: Users,
-    href: "/admin/membership"
+    id: "memberships",
+    label: "Memberships",
+    icon: UserCheck,
+    href: "/admin/memberships"
   },
   {
     id: "clubs",
@@ -47,16 +44,16 @@ export const ADMIN_NAV: AdminNavItem[] = [
     href: "/admin/clubs"
   },
   {
-    id: "invoices",
-    label: "Invoices & Payments",
-    icon: FileText,
-    href: "/admin/billing"
+    id: "clinics",
+    label: "Clinics",
+    icon: Calendar,
+    href: "/admin/clinics"
   },
   {
-    id: "events",
-    label: "Events",
-    icon: Calendar,
-    href: "/admin/events"
+    id: "sped",
+    label: "SPED",
+    icon: Activity,
+    href: "/admin/sped"
   },
   {
     id: "tournaments",
@@ -65,10 +62,16 @@ export const ADMIN_NAV: AdminNavItem[] = [
     href: "/admin/tournaments"
   },
   {
-    id: "expenses",
-    label: "Expenses",
-    icon: Receipt,
-    href: "/admin/expenses"
+    id: "finance",
+    label: "Finance",
+    icon: DollarSign,
+    href: "/admin/finance"
+  },
+  {
+    id: "map-grants",
+    label: "MAP Grants",
+    icon: Award,
+    href: "/admin/map-grants"
   },
   {
     id: "reports",
@@ -76,22 +79,16 @@ export const ADMIN_NAV: AdminNavItem[] = [
     icon: BarChart3,
     href: "/admin/reports"
   },
-  {
-    id: "admins",
-    label: "Admins & Logs",
-    icon: Shield,
-    href: "/admin/admins"
-  },
 ];
 
 export type AdminSection =
   | "dashboard"
   | "members"
-  | "membership"
+  | "memberships"
   | "clubs"
-  | "invoices"
-  | "events"
+  | "clinics"
+  | "sped"
   | "tournaments"
-  | "expenses"
-  | "reports"
-  | "admins";
+  | "finance"
+  | "map-grants"
+  | "reports";

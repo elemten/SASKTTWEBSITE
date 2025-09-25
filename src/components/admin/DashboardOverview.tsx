@@ -12,7 +12,7 @@ const statsData = [
     change: "+12%",
     trend: "up",
     icon: Users,
-    color: "text-success"
+    color: "text-green-600"
   },
   {
     title: "Expired Memberships",
@@ -20,7 +20,7 @@ const statsData = [
     change: "-5%",
     trend: "down",
     icon: UserX,
-    color: "text-warning"
+    color: "text-green-500"
   },
   {
     title: "Pending Invoices",
@@ -28,7 +28,7 @@ const statsData = [
     change: "+3%",
     trend: "up",
     icon: FileText,
-    color: "text-destructive"
+    color: "text-green-600"
   },
   {
     title: "Upcoming Events",
@@ -36,7 +36,7 @@ const statsData = [
     change: "+2",
     trend: "up",
     icon: Calendar,
-    color: "text-primary"
+    color: "text-green-600"
   }
 ];
 
@@ -94,14 +94,14 @@ export const DashboardOverview = () => {
       label: "Add Member",
       icon: UserPlus,
       onClick: () => navigate('/admin/members/new'),
-      color: "bg-blue-500 hover:bg-blue-600",
+      color: "bg-green-500 hover:bg-green-600",
       ariaLabel: "Add a new member"
     },
     {
       label: "Create Tournament",
       icon: Trophy,
       onClick: () => navigate('/admin/tournaments/new'),
-      color: "bg-purple-500 hover:bg-purple-600",
+      color: "bg-green-600 hover:bg-green-700",
       ariaLabel: "Create a new tournament"
     },
     {
@@ -115,14 +115,14 @@ export const DashboardOverview = () => {
       label: "Monthly Report",
       icon: BarChart3,
       onClick: () => navigate('/admin/reports/monthly'),
-      color: "bg-indigo-500 hover:bg-indigo-600",
+      color: "bg-green-600 hover:bg-green-700",
       ariaLabel: "Generate monthly financial report"
     },
     {
       label: "Export Data",
       icon: Download,
       onClick: handleExportCSV,
-      color: "bg-orange-500 hover:bg-orange-600",
+      color: "bg-green-700 hover:bg-green-800",
       ariaLabel: "Export current data as CSV"
     }
   ];
@@ -151,8 +151,12 @@ export const DashboardOverview = () => {
             </p>
           </div>
           <div className="hidden md:block">
-            <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">TTS</span>
+            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center p-2">
+              <img
+                src="/logo.png"
+                alt="Table Tennis Saskatchewan"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
         </div>
@@ -204,8 +208,8 @@ export const DashboardOverview = () => {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <div className={`w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center`}>
-                      <stat.icon className="h-4 w-4 text-primary" />
+                    <div className={`w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center`}>
+                      <stat.icon className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
                       <div className="text-2xl font-bold">{stat.value}</div>
@@ -241,7 +245,7 @@ export const DashboardOverview = () => {
             <CardContent>
               <div className="w-full h-64 bg-muted/20 rounded-lg flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <div className="w-12 h-12 border-2 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                   <p className="text-muted-foreground">Chart loading...</p>
                 </div>
               </div>
@@ -262,7 +266,7 @@ export const DashboardOverview = () => {
             <CardContent>
               <div className="w-full h-64 bg-muted/20 rounded-lg flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <div className="w-12 h-12 border-2 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                   <p className="text-muted-foreground">Chart loading...</p>
                 </div>
               </div>
