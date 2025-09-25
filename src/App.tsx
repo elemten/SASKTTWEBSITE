@@ -26,10 +26,14 @@ const AdminTournaments = lazy(() => import("./pages/admin/Tournaments"));
 const AdminFinance = lazy(() => import("./pages/admin/Finance"));
 const AdminMapGrants = lazy(() => import("./pages/admin/MapGrants"));
 const AdminReports = lazy(() => import("./pages/admin/Reports"));
+const AdminAddMember = lazy(() => import("./pages/admin/AddMember"));
+const AdminEditMember = lazy(() => import("./pages/admin/EditMember"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const ComingSoon = lazy(() => import("./pages/ComingSoon"));
 const SignIn = lazy(() => import("./pages/SignIn"));
+const MembershipRegistration = lazy(() => import("./pages/MembershipRegistration"));
+const MembershipSuccess = lazy(() => import("./pages/MembershipSuccess"));
 
 // Secondary pages
 const Clubs = lazy(() => import("./pages/Clubs"));
@@ -223,9 +227,15 @@ const App = () => {
                 {/* Sign In Route */}
                 <Route path="/sign-in" element={<SignIn />} />
 
+                {/* Public Membership Routes */}
+                <Route path="/membership/register" element={<MembershipRegistration />} />
+                <Route path="/membership-success" element={<MembershipSuccess />} />
+
                 {/* Protected Admin Routes */}
                 <Route path="/admin" element={<AuthGuard><AdminDashboard /></AuthGuard>} />
                 <Route path="/admin/members" element={<AuthGuard><AdminMembers /></AuthGuard>} />
+                <Route path="/admin/members/add" element={<AuthGuard><AdminAddMember /></AuthGuard>} />
+                <Route path="/admin/members/edit/:id" element={<AuthGuard><AdminEditMember /></AuthGuard>} />
                 <Route path="/admin/memberships" element={<AuthGuard><AdminMemberships /></AuthGuard>} />
                 <Route path="/admin/clubs" element={<AuthGuard><AdminClubs /></AuthGuard>} />
                 <Route path="/admin/clinics" element={<AuthGuard><AdminClinics /></AuthGuard>} />
