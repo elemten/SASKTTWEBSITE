@@ -20,6 +20,11 @@ const createMockClient = () => ({
     signOut: () => Promise.resolve({ error: null }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
   },
+  rpc: (functionName: string, params?: any) => 
+    Promise.resolve({ 
+      data: null, 
+      error: { message: 'Supabase not configured' } 
+    }),
   functions: {
     invoke: (functionName: string, options?: any) => 
       Promise.resolve({ 
