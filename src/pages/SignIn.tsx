@@ -5,6 +5,7 @@ import { LogIn, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@/lib/supabase';
 import { auth } from '@/lib/auth';
 
 export default function SignIn() {
@@ -20,18 +21,34 @@ export default function SignIn() {
     setError('');
     setIsLoading(true);
 
-    // Simulate loading delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
 
-    const success = auth.signIn(email, password);
-    
-    if (success) {
-      navigate('/admin');
-    } else {
-      setError('Invalid email or password');
+      // Try Supabase auth first
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (!signInError && data.session) {
+        // Supabase auth successful
+        navigate('/admin');
+        return;
+      }
+
+      // If Supabase auth fails, try mock auth for local testing
+      const mockAuthSuccess = auth.signIn(email, password);
+      if (mockAuthSuccess) {
+        navigate('/admin');
+        return;
+      }
+
+      // Both failed
+      setError(signInError?.message || 'Invalid email or password');
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during sign in');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (

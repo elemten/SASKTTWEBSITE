@@ -14,28 +14,29 @@ const createMockClient = () => ({
   }),
   auth: {
     getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+    getSession: () => Promise.resolve({ data: { session: null }, error: { message: 'Supabase not configured' } }),
     signInWithPassword: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
     signInWithOtp: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
     signInWithOAuth: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
     signOut: () => Promise.resolve({ error: null }),
-    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => { } } } })
   },
-  rpc: (functionName: string, params?: any) => 
-    Promise.resolve({ 
-      data: null, 
-      error: { message: 'Supabase not configured' } 
+  rpc: (functionName: string, params?: any) =>
+    Promise.resolve({
+      data: null,
+      error: { message: 'Supabase not configured' }
     }),
   functions: {
-    invoke: (functionName: string, options?: any) => 
-      Promise.resolve({ 
-        data: { slots: [], success: false }, 
-        error: { message: 'Supabase not configured' } 
+    invoke: (functionName: string, options?: any) =>
+      Promise.resolve({
+        data: { slots: [], success: false },
+        error: { message: 'Supabase not configured' }
       })
   }
 })
 
 // Only create real client if both URL and key are provided
-export const supabase = (supabaseUrl && supabaseAnonKey) 
+export const supabase = (supabaseUrl && supabaseAnonKey)
   ? createClient(supabaseUrl, supabaseAnonKey)
   : createMockClient()
 

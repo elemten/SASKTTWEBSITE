@@ -7,7 +7,11 @@ import { PDFDocument, rgb, StandardFonts } from 'https://esm.sh/pdf-lib@1.17.1';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Expose-Headers': 'Content-Disposition',
 };
+
+const DEBUG = Deno.env.get("DEBUG_INVOICES") === "true";
 
 interface InvoiceRequest {
   monthStart: string; // YYYY-MM-DD
@@ -34,9 +38,33 @@ function formatMonthYear(date: Date): string {
   return `${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-function formatDate(date: Date): string {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${months[date.getMonth()]} ${date.getDate()}`;
+// Format YYYY-MM-DD date string without timezone issues
+function formatDateYMD(ymd: string): string {
+  const [y, m, d] = ymd.split("-").map(Number);
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${months[m - 1]} ${d}`;
+}
+
+// Simple text wrapping for PDF
+function wrapText(text: string, maxWidth: number): string[] {
+  if (text.length <= maxWidth) return [text];
+
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let currentLine = '';
+
+  for (const word of words) {
+    const testLine = currentLine ? `${currentLine} ${word}` : word;
+    if (testLine.length <= maxWidth) {
+      currentLine = testLine;
+    } else {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+  if (currentLine) lines.push(currentLine);
+
+  return lines;
 }
 
 serve(async (req) => {
@@ -45,53 +73,104 @@ serve(async (req) => {
   }
 
   try {
+    // Extract Authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: 'Missing or invalid Authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate environment variables
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceRoleKey) {
+      throw new Error('Missing required environment variables: SUPABASE_URL, SUPABASE_ANON_KEY, or SUPABASE_SERVICE_ROLE_KEY');
+    }
+
+    // Create Supabase client with user JWT
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: { Authorization: authHeader },
+      },
+    });
+
+    // Verify user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      if (DEBUG) console.log('Auth error:', authError);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - invalid or expired token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if user is admin via profiles table
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile) {
+      if (DEBUG) console.log('Profile error:', profileError);
+      return new Response(
+        JSON.stringify({ error: 'User profile not found. Please contact an administrator.' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!['admin', 'finance_admin'].includes(profile.role)) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden - admin or finance_admin role required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // User is authenticated and authorized, proceed with invoice generation
     const { monthStart, schoolSystem, schoolName }: InvoiceRequest = await req.json();
 
-    // Initialize Supabase
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    // Validate request payload
+    if (!monthStart || !schoolSystem || !schoolName) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields: monthStart, schoolSystem, schoolName' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Now use service role for data access (after auth check)
+    const supabaseServiceRole = createClient(supabaseUrl, supabaseServiceRoleKey);
 
     // Get bookings for this month and school
-    // monthStart should be the first day of the month (YYYY-MM-01)
-    // But handle case where it might be any day in the month
     const inputDate = new Date(monthStart + 'T00:00:00');
     const year = inputDate.getFullYear();
-    const month = inputDate.getMonth(); // 0-indexed
-    
+    const monthIndex = inputDate.getMonth(); // 0-indexed
+
     // Get first day of the month
-    const monthStartDate = new Date(year, month, 1);
+    const monthStartDate = new Date(year, monthIndex, 1);
     // Get last day of the month
-    const monthEndDate = new Date(year, month + 1, 0);
-    
+    const monthEndDate = new Date(year, monthIndex + 1, 0);
+
     // Format dates as YYYY-MM-DD
-    const startDateStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-    const endDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(monthEndDate.getDate()).padStart(2, '0')}`;
-    
-    console.log('Query parameters:', {
-      monthStart,
-      schoolSystem,
-      schoolName,
-      startDateStr,
-      endDateStr
-    });
-    
-    // First, let's check what bookings exist for debugging
-    const { data: allBookings, error: debugError } = await supabase
-      .from('confirmed_bookings')
-      .select('school_name, school_system, booking_date, status')
-      .gte('booking_date', startDateStr)
-      .lte('booking_date', endDateStr)
-      .in('status', ['confirmed', 'completed'])
-      .limit(100);
-    
-    console.log('All bookings in date range:', allBookings);
-    console.log('Unique school names:', [...new Set(allBookings?.map(b => b.school_name) || [])]);
-    console.log('Unique school systems:', [...new Set(allBookings?.map(b => b.school_system) || [])]);
-    
-    // Now query with exact match
-    const { data: bookings, error } = await supabase
+    const startDateStr = `${year}-${String(monthIndex + 1).padStart(2, '0')}-01`;
+    const endDateStr = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(monthEndDate.getDate()).padStart(2, '0')}`;
+
+    if (DEBUG) {
+      console.log('Query parameters:', {
+        monthStart,
+        schoolSystem,
+        schoolName,
+        startDateStr,
+        endDateStr
+      });
+    }
+
+    // Query bookings
+    const { data: bookings, error } = await supabaseServiceRole
       .from('confirmed_bookings')
       .select('*')
       .eq('school_system', schoolSystem)
@@ -101,38 +180,35 @@ serve(async (req) => {
       .in('status', ['confirmed', 'completed'])
       .order('booking_date', { ascending: true });
 
-    console.log('Filtered bookings count:', bookings?.length || 0);
-    
+    if (DEBUG) {
+      console.log('Bookings found:', bookings?.length || 0);
+    }
+
     if (error) {
       console.error('Database error:', error);
       throw error;
     }
-    
+
     if (!bookings || bookings.length === 0) {
-      // Return more helpful error message
-      const matchingSchools = allBookings?.filter(b => 
-        b.school_name?.toLowerCase().includes(schoolName.toLowerCase()) ||
-        schoolName.toLowerCase().includes(b.school_name?.toLowerCase() || '')
-      ).map(b => b.school_name) || [];
-      
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'No bookings found for this school and month',
-          debug: {
-            searchedSchool: schoolName,
-            searchedSystem: schoolSystem,
-            dateRange: `${startDateStr} to ${endDateStr}`,
-            totalBookingsInRange: allBookings?.length || 0,
-            matchingSchools: [...new Set(matchingSchools)]
-          }
+          details: `No confirmed/completed bookings for ${schoolName} (${schoolSystem}) in ${startDateStr} to ${endDateStr}`
         }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Calculate totals
-    const totalCost = bookings.reduce((sum: number, b: any) => sum + (parseFloat(b.total_cost) || 0), 0);
-    const totalMinutes = bookings.reduce((sum: number, b: any) => sum + (b.total_minutes || 0), 0);
+    // Calculate totals with consistent minutes default
+    let totalCost = 0;
+    let totalMinutes = 0;
+
+    for (const booking of bookings) {
+      const minutes = booking.total_minutes && booking.total_minutes > 0 ? booking.total_minutes : 60;
+      const cost = parseFloat(booking.total_cost) || 0;
+      totalMinutes += minutes;
+      totalCost += cost;
+    }
 
     // Create invoice number
     const invoiceNumber = createInvoiceNumber(
@@ -146,7 +222,7 @@ serve(async (req) => {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([612, 792]); // US Letter size
     const { width, height } = page.getSize();
-    
+
     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
@@ -201,7 +277,7 @@ serve(async (req) => {
     });
     y -= 40;
 
-    // Bill To
+    // Bill To with wrapping for long school names
     page.drawText('Bill To:', {
       x: 50,
       y,
@@ -209,13 +285,17 @@ serve(async (req) => {
       font: helveticaBold,
     });
     y -= 18;
-    page.drawText(schoolName, {
-      x: 50,
-      y,
-      size: 11,
-      font: helveticaFont,
-    });
-    y -= 40;
+    const schoolNameLines = wrapText(schoolName, 60);
+    for (const line of schoolNameLines) {
+      page.drawText(line, {
+        x: 50,
+        y,
+        size: 11,
+        font: helveticaFont,
+      });
+      y -= 18;
+    }
+    y -= 22;
 
     // Line items header
     const tableTop = y;
@@ -256,17 +336,17 @@ serve(async (req) => {
         y -= 15;
       }
 
-      const bookingDate = new Date(booking.booking_date);
-      const dateStr = formatDate(bookingDate);
+      // Use consistent minutes default
+      const minutes = booking.total_minutes && booking.total_minutes > 0 ? booking.total_minutes : 60;
+      const cost = parseFloat(booking.total_cost) || 0;
+      const dateStr = formatDateYMD(booking.booking_date);
       const teacherName = `${booking.teacher_first_name || ''} ${booking.teacher_last_name || ''}`.trim();
       const timeStr = `${booking.booking_time_start || ''} - ${booking.booking_time_end || ''}`;
-      const minutes = booking.total_minutes || 0;
-      const cost = parseFloat(booking.total_cost) || 0;
 
       currentPage.drawText(dateStr, { x: 50, y, size: 10, font: helveticaFont });
       currentPage.drawText(teacherName.substring(0, 20), { x: 130, y, size: 10, font: helveticaFont });
       currentPage.drawText(timeStr.substring(0, 18), { x: 280, y, size: 10, font: helveticaFont });
-      currentPage.drawText(minutes > 0 ? minutes.toString() : '60', { x: 380, y, size: 10, font: helveticaFont });
+      currentPage.drawText(minutes.toString(), { x: 380, y, size: 10, font: helveticaFont });
       currentPage.drawText(`$${cost.toFixed(2)}`, { x: 480, y, size: 10, font: helveticaFont });
       y -= 18;
     }
@@ -325,33 +405,30 @@ serve(async (req) => {
       y -= 18;
     }
 
-    // Generate PDF bytes
+    // Generate PDF bytes and return as application/pdf
     const pdfBytes = await pdfDoc.save();
-    const base64 = btoa(String.fromCharCode(...pdfBytes));
 
-    return new Response(
-      JSON.stringify({ pdf: base64 }),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    return new Response(pdfBytes, {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="INVOICE_${invoiceNumber}.pdf"`,
+      },
+    });
 
   } catch (error: any) {
     console.error('Error generating invoice:', error);
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: 'Failed to generate invoice',
-        details: error.message 
+        details: error.message
       }),
-      { 
-        status: 500, 
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        } 
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
       }
     );
   }
