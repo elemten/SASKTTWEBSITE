@@ -228,6 +228,22 @@ serve(async (req) => {
 
     let y = height - 60;
 
+    // --- LOGO (Top Right) ---
+    const logoUrl = "https://yzwdmqapoguzcpclpbwo.supabase.co/storage/v1/object/public/Assets/logo.png";
+    try {
+      const logoBytes = await fetch(logoUrl).then(res => res.arrayBuffer());
+      const logoImage = await pdfDoc.embedPng(logoBytes);
+      const logoDims = logoImage.scale(0.25); // Increased scale from 0.12 to 0.25
+      page.drawImage(logoImage, {
+        x: width - logoDims.width - 50,
+        y: height - logoDims.height - 30, // Adjusted y position slightly
+        width: logoDims.width,
+        height: logoDims.height,
+      });
+    } catch (error) {
+      console.error("Error embedding logo:", error);
+    }
+
     // Header
     page.drawText('Table Tennis Saskatchewan', {
       x: 50,
