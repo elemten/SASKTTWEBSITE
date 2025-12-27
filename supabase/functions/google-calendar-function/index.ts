@@ -39,7 +39,7 @@ async function generateJWT() {
     // Clean the private key
     const cleanPrivateKey = PRIVATE_KEY.replace(/\\n/g, '\n').replace(/-----BEGIN PRIVATE KEY-----/g, '').replace(/-----END PRIVATE KEY-----/g, '').replace(/\s/g, '');
     // Convert base64 to ArrayBuffer
-    const keyData = Uint8Array.from(atob(cleanPrivateKey), (c)=>c.charCodeAt(0));
+    const keyData = Uint8Array.from(atob(cleanPrivateKey), (c) => c.charCodeAt(0));
     // Import the private key
     const privateKey = await crypto.subtle.importKey('pkcs8', keyData, {
       name: 'RSASSA-PKCS1-v1_5',
@@ -93,7 +93,7 @@ async function getAccessToken() {
 function calculateSlotEndTime(date, startTime, display) {
   const [hours, minutes] = startTime.split(':').map(Number);
   let durationHours = 1 // Default 1 hour
-  ;
+    ;
   if (display.includes('1.5 hours')) {
     durationHours = 1.5;
   } else if (display.includes('2.75 hours')) {
@@ -136,44 +136,44 @@ async function getAvailableSlots(date) {
       const [hours, minutes] = slot.time.split(':').map(Number);
       const slotStartTime = new Date(date + 'T00:00:00-06:00');
       slotStartTime.setHours(hours, minutes, 0, 0);
-      
+
       const slotEndTime = new Date(slotStartTime);
       slotEndTime.setMinutes(slotEndTime.getMinutes() + slot.duration);
-      
+
       const slotStart = slotStartTime.toISOString();
       const slotEnd = slotEndTime.toISOString();
-      
+
       const isBooked = bookedSlots.some((event) => {
         const eventStart = event.start.dateTime || event.start.date;
         const eventEnd = event.end.dateTime || event.end.date;
-        
+
         // Convert to Date objects for proper comparison
         const eventStartTime = new Date(eventStart);
         const eventEndTime = new Date(eventEnd);
-        
+
         // Check for true overlap (not just boundary touching)
         // Slot is booked if: slot starts before event ends AND slot ends after event starts
         // But exclude cases where they just touch at the boundary
         const hasOverlap = slotStartTime < eventEndTime && slotEndTime > eventStartTime;
-        const justTouching = slotEndTime.getTime() === eventStartTime.getTime() || 
-                           slotStartTime.getTime() === eventEndTime.getTime();
-        
+        const justTouching = slotEndTime.getTime() === eventStartTime.getTime() ||
+          slotStartTime.getTime() === eventEndTime.getTime();
+
         const isConflict = hasOverlap && !justTouching;
-        
+
         // Debug logging
         if (hasOverlap) {
           console.log(`Checking slot ${slot.time} (${slotStartTime.toISOString()} - ${slotEndTime.toISOString()}) vs event (${eventStartTime.toISOString()} - ${eventEndTime.toISOString()}): hasOverlap=${hasOverlap}, justTouching=${justTouching}, conflict=${isConflict}`);
         }
-        
+
         return isConflict;
       });
-      
+
       return {
         ...slot,
         available: !isBooked
       };
     });
-    console.log('Available slots after checking calendar:', availableSlots.filter((s)=>s.available).length);
+    console.log('Available slots after checking calendar:', availableSlots.filter((s) => s.available).length);
     return availableSlots;
   } catch (error) {
     console.error('Error getting available slots from Google Calendar:', error);
@@ -186,7 +186,7 @@ async function getAvailableSlots(date) {
 function getDefaultTimeSlots(date) {
   const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
   const slots = [];
-  
+
   // Monday: 11am-12pm (1 hour only)
   if (dayOfWeek === 1) {
     slots.push({
@@ -195,7 +195,7 @@ function getDefaultTimeSlots(date) {
       available: true,
       duration: 60 // minutes
     });
-  } 
+  }
   // Tuesday-Thursday: 11am-1:45pm (3 slots: 2 x 60min + 1 x 45min)
   else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
     slots.push({
@@ -216,7 +216,7 @@ function getDefaultTimeSlots(date) {
       available: true,
       duration: 45
     });
-  } 
+  }
   // Friday: 11am-4pm (5 x 60min slots)
   else if (dayOfWeek === 5) {
     slots.push({
@@ -250,7 +250,7 @@ function getDefaultTimeSlots(date) {
       duration: 60
     });
   }
-  
+
   return slots;
 }
 
@@ -259,40 +259,89 @@ async function createCalendarEvent(booking) {
   try {
     console.log('Creating Google Calendar event for booking');
     console.log('Selected slots:', booking.selected_slots);
-    
+
     // Try to get access token and create real event
     try {
       const accessToken = await getAccessToken();
       console.log('Got access token, creating real calendar event...');
-      
+
+      // --- DOUBLE-BOOKING PROTECTION: Re-verify slots are still free ---
+      console.log(`Verifying availability for ${booking.booking_date}...`);
+      const startOfDay = `${booking.booking_date}T00:00:00-06:00`;
+      const endOfDay = `${booking.booking_date}T23:59:59-06:00`;
+
+      const checkResponse = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?timeMin=${startOfDay}&timeMax=${endOfDay}&singleEvents=true`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (checkResponse.ok) {
+        const checkData = await checkResponse.json();
+        const existingEvents = checkData.items || [];
+
+        // Convert requested times to full ISO for comparison
+        const requestedStart = `${booking.booking_date}T${booking.booking_time_start}`;
+        const requestedEnd = `${booking.booking_date}T${booking.booking_time_end}`;
+
+        console.log(`Checking conflict: ${requestedStart} to ${requestedEnd}`);
+
+        const conflict = existingEvents.some((event: any) => {
+          const evStart = event.start?.dateTime || event.start?.date;
+          const evEnd = event.end?.dateTime || event.end?.date;
+
+          if (!event.start?.dateTime || !event.end?.dateTime) return false;
+
+          // Check if the requested start and end exactly match or overlap an existing event
+          // For SPED slots, they are usually identical if it's the same slot
+          const existingStart = new Date(evStart).toISOString();
+          const existingEnd = new Date(evEnd).toISOString();
+
+          const reqStart = new Date(requestedStart).toISOString();
+          const reqEnd = new Date(requestedEnd).toISOString();
+
+          return (reqStart < existingEnd && reqEnd > existingStart);
+        });
+
+        if (conflict) {
+          console.error('❌ DOUBLE_BOOKED conflict detected');
+          throw new Error('DOUBLE_BOOKED');
+        }
+      }
+      // --- END PROTECTION ---
+
       // Create slot summary for description
-      const slotSummary = booking.selected_slots?.map(slot => 
+      const slotSummary = booking.selected_slots?.map(slot =>
         `${slot.time} (${slot.duration} min)`
       ).join(', ') || 'Custom time slots';
-      
+
       const eventData = {
         summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
         description: `SPED Class Booking\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nEmail: ${booking.teacher_email}\nPhone: ${booking.teacher_phone}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level}\nPreferred Coach: ${booking.preferred_coach}\nSpecial Requirements: ${booking.special_requirements}\nSelected Slots: ${slotSummary}\nTotal Minutes: ${booking.total_minutes}\nTotal Cost: $${booking.total_cost}`,
-      start: {
+        start: {
           dateTime: `${booking.booking_date}T${booking.booking_time_start}`,
-        timeZone: 'America/Regina'
-      },
-      end: {
+          timeZone: 'America/Regina'
+        },
+        end: {
           dateTime: `${booking.booking_date}T${booking.booking_time_end}`,
-        timeZone: 'America/Regina'
-      },
+          timeZone: 'America/Regina'
+        },
         location: `${booking.school_name}, ${booking.school_address_line1}, ${booking.school_city}, ${booking.school_province}`,
-      attendees: [
+        attendees: [
           {
             email: booking.teacher_email
           },
           {
             email: 'info@ttsask.ca'
           }
-      ],
-      reminders: {
-        useDefault: false,
-        overrides: [
+        ],
+        reminders: {
+          useDefault: false,
+          overrides: [
             {
               method: 'email',
               minutes: 1440
@@ -320,7 +369,7 @@ async function createCalendarEvent(booking) {
       }
       const event = await response.json();
       console.log('✅ Real calendar event created successfully:', event.id);
-    return {
+      return {
         eventId: event.id,
         eventLink: event.htmlLink || `https://calendar.google.com/calendar/event?eid=${event.id}`
       };
@@ -329,9 +378,9 @@ async function createCalendarEvent(booking) {
       // Fallback: create simulated event
       const eventId = `simulated_${Date.now()}`;
       const eventLink = `https://calendar.google.com/calendar/event?eid=${eventId}`;
-              console.log('⚠️ Created simulated calendar event (not in real calendar):', {
-          summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
-          description: `SPED Class Booking\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nEmail: ${booking.teacher_email}\nPhone: ${booking.teacher_phone}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level}\nPreferred Coach: ${booking.preferred_coach}\nSpecial Requirements: ${booking.special_requirements}\nTotal Cost: $${booking.total_cost}`,
+      console.log('⚠️ Created simulated calendar event (not in real calendar):', {
+        summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
+        description: `SPED Class Booking\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nEmail: ${booking.teacher_email}\nPhone: ${booking.teacher_phone}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level}\nPreferred Coach: ${booking.preferred_coach}\nSpecial Requirements: ${booking.special_requirements}\nTotal Cost: $${booking.total_cost}`,
         start: {
           dateTime: `${booking.booking_date}T${booking.booking_time_start}`,
           timeZone: 'America/Regina'
@@ -363,7 +412,7 @@ async function createCalendarEvent(booking) {
           ]
         }
       });
-    return {
+      return {
         eventId,
         eventLink
       };
@@ -375,7 +424,7 @@ async function createCalendarEvent(booking) {
 }
 
 // Main handler
-serve(async (req)=>{
+serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -424,8 +473,24 @@ serve(async (req)=>{
         'Content-Type': 'application/json'
       }
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Edge function error:', error);
+
+    // Specifically handle the double-booked case for the frontend
+    if (error.message === 'DOUBLE_BOOKED') {
+      return new Response(JSON.stringify({
+        success: false,
+        code: 'DOUBLE_BOOKED',
+        error: 'This time slot was just booked by another teacher. Please pick another available time.'
+      }), {
+        status: 409,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+
     return new Response(JSON.stringify({
       error: error.message
     }), {

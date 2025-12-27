@@ -231,6 +231,14 @@ const SPEDBookingForm = () => {
       });
 
       if (calError) throw new Error(`Calendar function error: ${calError.message}`);
+
+      // ✅ Handle double-booking conflict
+      if (calendarData?.code === "DOUBLE_BOOKED") {
+        // Refresh availability so the teacher sees the updated slots
+        if (formData.booking_date) fetchAvailableTimeSlots(formData.booking_date);
+        throw new Error("This time slot was just booked by another teacher. Please pick another available time.");
+      }
+
       if (!calendarData?.success) {
         const details = calendarData?.message || calendarData?.error || 'Failed to create calendar event(s)';
         throw new Error(details);
@@ -312,7 +320,7 @@ const SPEDBookingForm = () => {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-green-800">Location</h3>
-            <p className="text-green-700">Zion Lutheran Church<br/>323 4th Avenue South, Saskatoon, SK</p>
+            <p className="text-green-700">Zion Lutheran Church<br />323 4th Avenue South, Saskatoon, SK</p>
           </div>
           <div className="text-right">
             <h3 className="font-semibold text-green-800">Rate</h3>
@@ -329,7 +337,7 @@ const SPEDBookingForm = () => {
             <div>
               <Label>School System *</Label>
               <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-3">
-                {['Saskatoon Public','Catholic','Other'].map((opt) => (
+                {['Saskatoon Public', 'Catholic', 'Other'].map((opt) => (
                   <Button
                     key={opt}
                     type="button"
@@ -462,7 +470,7 @@ const SPEDBookingForm = () => {
 </div>
 */}
 
-{/*
+            {/*
 <div>
   <label className="block text-sm font-medium">Special Requirements</label>
   <textarea
@@ -552,7 +560,7 @@ const SPEDBookingForm = () => {
         {submitStatus === 'success' && (
           <div className="p-4 bg-green-50 border border-green-200 rounded-md">
             <p className="text-green-800 font-medium">✅ Booking confirmed!</p>
-          
+
           </div>
         )}
         {submitStatus === 'error' && (
