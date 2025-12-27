@@ -230,15 +230,25 @@ const SPEDBookingForm = () => {
         body: { action: 'bookSlot', booking: bookingData }
       });
 
-      if (calError) throw new Error(`Calendar function error: ${calError.message}`);
-
-      // ✅ Handle double-booking conflict
-      if (calendarData?.code === "DOUBLE_BOOKED") {
-        // Refresh availability so the teacher sees the updated slots
+      // ✅ 1) If backend returned DOUBLE_BOOKED in body
+      if (calendarData?.code === 'DOUBLE_BOOKED') {
         if (formData.booking_date) fetchAvailableTimeSlots(formData.booking_date);
-        throw new Error("This time slot was just booked by another teacher. Please pick another available time.");
+        throw new Error(calendarData.error || 'This time slot was just booked by another teacher. Please pick another time.');
       }
 
+      // ✅ 2) If Supabase SDK flagged non-2xx (like 409 conflict)
+      const status = (calError as any)?.context?.status;
+      if (status === 409) {
+        if (formData.booking_date) fetchAvailableTimeSlots(formData.booking_date);
+        throw new Error('This time slot was just booked by another teacher. Please pick another available time.');
+      }
+
+      // ✅ 3) Any other error from invocation
+      if (calError) {
+        throw new Error(calendarData?.error || `Calendar function error: ${calError.message}`);
+      }
+
+      // ✅ 4) Generic success check
       if (!calendarData?.success) {
         const details = calendarData?.message || calendarData?.error || 'Failed to create calendar event(s)';
         throw new Error(details);

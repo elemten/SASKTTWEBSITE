@@ -410,7 +410,7 @@ serve(async (req) => {
       });
     }
     if (action === 'bookSlot') {
-      console.log('Booking slot for:', booking.id);
+      console.log('Booking slot for:', booking.teacher_email);
       const { eventId, eventLink } = await createCalendarEvent(booking);
       return new Response(JSON.stringify({
         success: true,
