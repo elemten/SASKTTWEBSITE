@@ -259,23 +259,29 @@ async function createCalendarEvent(booking) {
     // Deterministic ID for de-duplication
     const icalUid = `sped-${booking.booking_date}-${booking.booking_time_start}-${booking.booking_time_end}@ttsask.ca`;
 
-    // --- 1) ATOMIC DB LOCK ---
-    console.log('Attempting to acquire DB lock for slot...');
-    const { error: lockError } = await supabase
-      .from('booking_locks')
-      .insert({
-        booking_date: booking.booking_date,
-        booking_time_start: booking.booking_time_start,
-        booking_time_end: booking.booking_time_end
-      });
+    // --- 1) ATOMIC DB LOCK VIA RPC ---
+    console.log('Attempting to acquire DB lock via RPC...');
+    const { data: acquired, error: rpcError } = await supabase.rpc('try_acquire_lock', {
+      p_date: booking.booking_date,
+      p_start: booking.booking_time_start,
+      p_end: booking.booking_time_end,
+      p_held_by: booking.teacher_email,
+      p_ttl_seconds: 300 // 5 minute TTL
+    });
 
-    if (lockError) {
-      console.error('❌ DB Lock failed (Race condition prevented!):', lockError);
-      throw new Error('DOUBLE_BOOKED');
+    if (rpcError) {
+      console.error('❌ RPC Lock Error:', rpcError);
+      throw new Error('LOCK_SERVICE_UNAVAILABLE');
+    }
+
+    if (!acquired) {
+      console.error('❌ Slot is currently held by another attempt');
+      throw new Error('SLOT_HELD');
     }
 
     try {
-      // --- 2) EXTRA SAFETY: Query Google by iCalUID ---
+      // --- 3) EXTRA SAFETY: Query Google by iCalUID ---
+      // (Keep this as a second source of truth)
       console.log('Verifying iCalUID with Google...');
       const listByUidUrl = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?iCalUID=${encodeURIComponent(icalUid)}&singleEvents=true&fields=items(id,htmlLink)`;
       const uidRes = await fetch(listByUidUrl, {
@@ -363,20 +369,18 @@ async function createCalendarEvent(booking) {
         eventId: event.id,
         eventLink: event.htmlLink || `https://calendar.google.com/calendar/event?eid=${event.id}`
       };
-    } catch (googleError: any) {
-      if (googleError.message !== 'DOUBLE_BOOKED') {
-        console.error('Google creation failed, rolling back DB lock:', googleError);
-        // Rollback lock if it wasn't a double-booking but some other failure (e.g., API down)
-        await supabase
-          .from('booking_locks')
-          .delete()
-          .match({
-            booking_date: booking.booking_date,
-            booking_time_start: booking.booking_time_start,
-            booking_time_end: booking.booking_time_end
-          });
-      }
-      throw googleError;
+    } finally {
+      // --- ALWAYS RELEASE LOCK ---
+      // This ensures we never leave "ghost" locks blocking future attempts.
+      console.log('Releasing DB lock...');
+      await supabase
+        .from('booking_locks')
+        .delete()
+        .match({
+          booking_date: booking.booking_date,
+          booking_time_start: booking.booking_time_start,
+          booking_time_end: booking.booking_time_end
+        });
     }
   } catch (error) {
     console.error('Error in createCalendarEvent:', error);
@@ -437,13 +441,17 @@ serve(async (req) => {
   } catch (error: any) {
     console.error('Edge function error:', error);
 
-    // Specifically handle the double-booked case for the frontend
-    // Google returns 409 for iCalUID conflicts, but we also catch it via pre-check
-    if (error.message === 'DOUBLE_BOOKED' || (error.status === 409 && error.message.includes('already exists'))) {
+    // Specifically handle the double-booked and held cases for the frontend
+    if (error.message === 'DOUBLE_BOOKED' || error.message === 'SLOT_HELD' || (error.status === 409 && error.message.includes('already exists'))) {
+      const code = error.message === 'SLOT_HELD' ? 'SLOT_HELD' : 'DOUBLE_BOOKED';
+      const userMessage = code === 'SLOT_HELD'
+        ? 'This slot is currently being held by another booking attempt. Please try again in a minute.'
+        : 'This time slot was just booked by another teacher. Please pick another available time.';
+
       return new Response(JSON.stringify({
         success: false,
-        code: 'DOUBLE_BOOKED',
-        error: 'This time slot was just booked by another teacher. Please pick another available time.'
+        code: code,
+        error: userMessage
       }), {
         status: 409,
         headers: {

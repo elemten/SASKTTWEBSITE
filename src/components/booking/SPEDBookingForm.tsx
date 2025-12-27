@@ -230,22 +230,23 @@ const SPEDBookingForm = () => {
         body: { action: 'bookSlot', booking: bookingData }
       });
 
-      // ✅ 1) If backend returned DOUBLE_BOOKED in body
-      if (calendarData?.code === 'DOUBLE_BOOKED') {
+      // ✅ 1) If backend returned a specific conflict code (DOUBLE_BOOKED or SLOT_HELD)
+      if (calendarData?.code === 'DOUBLE_BOOKED' || calendarData?.code === 'SLOT_HELD') {
         if (formData.booking_date) fetchAvailableTimeSlots(formData.booking_date);
-        throw new Error(calendarData.error || 'This time slot was just booked by another teacher. Please pick another time.');
+        throw new Error(calendarData.error || 'This slot is currently unavailable. Please try again in a moment.');
       }
 
-      // ✅ 2) If Supabase SDK flagged non-2xx (like 409 conflict)
+      // ✅ 2) If Supabase SDK flagged non-2xx (like 409 conflict) but we couldn't parse the code
       const status = (calError as any)?.context?.status;
       if (status === 409) {
         if (formData.booking_date) fetchAvailableTimeSlots(formData.booking_date);
-        throw new Error('This time slot was just booked by another teacher. Please pick another available time.');
+        throw new Error('This time slot is currently being handled. Please pick another time or refresh.');
       }
 
       // ✅ 3) Any other error from invocation
       if (calError) {
-        throw new Error(calendarData?.error || `Calendar function error: ${calError.message}`);
+        const serverMsg = calendarData?.error || calendarData?.message;
+        throw new Error(serverMsg || `Calendar function error: ${calError.message}`);
       }
 
       // ✅ 4) Generic success check
