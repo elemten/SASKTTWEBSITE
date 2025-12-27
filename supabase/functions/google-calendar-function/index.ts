@@ -337,6 +337,15 @@ async function createCalendarEvent(booking) {
           },
           {
             email: 'info@ttsask.ca'
+          },
+          {
+            email: 'zion.office@sasktel.net'
+          },
+          {
+            email: 'coach@ttsask.ca'
+          },
+          {
+            email: 'murraysproule@sasktel.net'
           }
         ],
         reminders: {
@@ -396,6 +405,15 @@ async function createCalendarEvent(booking) {
           },
           {
             email: 'info@ttsask.ca'
+          },
+          {
+            email: 'zion.office@sasktel.net'
+          },
+          {
+            email: 'coach@ttsask.ca'
+          },
+          {
+            email: 'murraysproule@sasktel.net'
           }
         ],
         reminders: {
