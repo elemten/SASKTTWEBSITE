@@ -416,6 +416,43 @@ serve(async (req) => {
     if (action === 'bookSlot') {
       console.log('Booking slot for:', booking.teacher_email);
       const { eventId, eventLink } = await createCalendarEvent(booking);
+
+      // ✅ Insert into DB from Edge Function (service role)
+      const { error: dbError } = await supabase
+        .from('confirmed_bookings')
+        .insert([{
+          teacher_first_name: booking.teacher_first_name,
+          teacher_last_name: booking.teacher_last_name,
+          teacher_email: booking.teacher_email,
+          teacher_phone: booking.teacher_phone,
+          school_name: booking.school_name,
+          school_address_line1: booking.school_address_line1,
+          school_address_line2: booking.school_address_line2,
+          school_city: booking.school_city,
+          school_province: booking.school_province,
+          school_postal_code: booking.school_postal_code,
+          booking_date: booking.booking_date,
+          booking_time_start: booking.booking_time_start,
+          booking_time_end: booking.booking_time_end,
+          number_of_students: booking.number_of_students,
+          grade_level: booking.grade_level,
+          preferred_coach: booking.preferred_coach,
+          special_requirements: booking.special_requirements,
+          rate_per_hour: booking.rate_per_hour,
+          total_cost: booking.total_cost,
+          total_minutes: booking.total_minutes,
+          selected_slots: booking.selected_slots,
+          school_system: booking.school_system,
+          google_calendar_event_id: eventId,
+          google_calendar_link: eventLink,
+          status: 'confirmed'
+        }]);
+
+      if (dbError) {
+        console.error('❌ Database insertion failed:', dbError);
+        throw new Error(`Database error: ${dbError.message}`);
+      }
+
       return new Response(JSON.stringify({
         success: true,
         eventId,
