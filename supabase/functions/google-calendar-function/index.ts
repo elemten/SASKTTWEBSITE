@@ -1,11 +1,16 @@
 // Deno imports - these work in Supabase Edge Functions environment
 // @ts-ignore - TypeScript doesn't understand Deno imports locally
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// @ts-ignore
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 // Google Calendar configuration - using environment variables for security
 const CALENDAR_ID = Deno.env.get('GOOGLE_CALENDAR_ID') ?? 'c_04d6de5f15712c0334d1c5112ed7e9072a57454eb202d464f3f7dca5c427a961@group.calendar.google.com';
 const SERVICE_ACCOUNT_EMAIL = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_EMAIL') ?? 'ttsask-calendar-booking@n8nworkflows-469621.iam.gserviceaccount.com';
 const PRIVATE_KEY = Deno.env.get('GOOGLE_PRIVATE_KEY') ?? '';
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 // CORS headers for all responses
 const corsHeaders = {
@@ -134,11 +139,8 @@ async function getAvailableSlots(date) {
     // Mark slots as unavailable if they conflict with existing events
     const availableSlots = defaultSlots.map((slot) => {
       const [hours, minutes] = slot.time.split(':').map(Number);
-      const slotStartTime = new Date(date + 'T00:00:00-06:00');
-      slotStartTime.setHours(hours, minutes, 0, 0);
-
-      const slotEndTime = new Date(slotStartTime);
-      slotEndTime.setMinutes(slotEndTime.getMinutes() + slot.duration);
+      const slotStartTime = new Date(`${date}T${slot.time}:00-06:00`);
+      const slotEndTime = new Date(slotStartTime.getTime() + slot.duration * 60 * 1000);
 
       const slotStart = slotStartTime.toISOString();
       const slotEnd = slotEndTime.toISOString();
@@ -196,25 +198,19 @@ function getDefaultTimeSlots(date) {
       duration: 60 // minutes
     });
   }
-  // Tuesday-Thursday: 11am-1:45pm (3 slots: 2 x 60min + 1 x 45min)
+  // Tuesday-Thursday: 11:20 AM and 12:45 PM (60 min each as per real policy)
   else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
     slots.push({
-      time: '11:00',
-      display: '11:00 AM - 12:00 PM (60 min)',
+      time: '11:20',
+      display: '11:20 AM - 12:20 PM (60 min)',
       available: true,
       duration: 60
     });
     slots.push({
-      time: '12:00',
-      display: '12:00 PM - 1:00 PM (60 min)',
+      time: '12:45',
+      display: '12:45 PM - 1:45 PM (60 min)',
       available: true,
       duration: 60
-    });
-    slots.push({
-      time: '13:00',
-      display: '1:00 PM - 1:45 PM (45 min)',
-      available: true,
-      duration: 45
     });
   }
   // Friday: 11am-4pm (5 x 60min slots)
@@ -258,61 +254,41 @@ function getDefaultTimeSlots(date) {
 async function createCalendarEvent(booking) {
   try {
     console.log('Creating Google Calendar event for booking');
-    console.log('Selected slots:', booking.selected_slots);
+    const accessToken = await getAccessToken();
 
-    // Try to get access token and create real event
+    // Deterministic ID for de-duplication
+    const icalUid = `sped-${booking.booking_date}-${booking.booking_time_start}-${booking.booking_time_end}@ttsask.ca`;
+
+    // --- 1) ATOMIC DB LOCK ---
+    console.log('Attempting to acquire DB lock for slot...');
+    const { error: lockError } = await supabase
+      .from('booking_locks')
+      .insert({
+        booking_date: booking.booking_date,
+        booking_time_start: booking.booking_time_start,
+        booking_time_end: booking.booking_time_end
+      });
+
+    if (lockError) {
+      console.error('❌ DB Lock failed (Race condition prevented!):', lockError);
+      throw new Error('DOUBLE_BOOKED');
+    }
+
     try {
-      const accessToken = await getAccessToken();
-      console.log('Got access token, creating real calendar event...');
+      // --- 2) EXTRA SAFETY: Query Google by iCalUID ---
+      console.log('Verifying iCalUID with Google...');
+      const listByUidUrl = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?iCalUID=${encodeURIComponent(icalUid)}&singleEvents=true&fields=items(id,htmlLink)`;
+      const uidRes = await fetch(listByUidUrl, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
 
-      // --- DOUBLE-BOOKING PROTECTION: Re-verify slots are still free ---
-      console.log(`Verifying availability for ${booking.booking_date}...`);
-      const startOfDay = `${booking.booking_date}T00:00:00-06:00`;
-      const endOfDay = `${booking.booking_date}T23:59:59-06:00`;
-
-      const checkResponse = await fetch(
-        `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?timeMin=${startOfDay}&timeMax=${endOfDay}&singleEvents=true`,
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      if (checkResponse.ok) {
-        const checkData = await checkResponse.json();
-        const existingEvents = checkData.items || [];
-
-        // Convert requested times to full ISO for comparison
-        const requestedStart = `${booking.booking_date}T${booking.booking_time_start}`;
-        const requestedEnd = `${booking.booking_date}T${booking.booking_time_end}`;
-
-        console.log(`Checking conflict: ${requestedStart} to ${requestedEnd}`);
-
-        const conflict = existingEvents.some((event: any) => {
-          const evStart = event.start?.dateTime || event.start?.date;
-          const evEnd = event.end?.dateTime || event.end?.date;
-
-          if (!event.start?.dateTime || !event.end?.dateTime) return false;
-
-          // Check if the requested start and end exactly match or overlap an existing event
-          // For SPED slots, they are usually identical if it's the same slot
-          const existingStart = new Date(evStart).toISOString();
-          const existingEnd = new Date(evEnd).toISOString();
-
-          const reqStart = new Date(requestedStart).toISOString();
-          const reqEnd = new Date(requestedEnd).toISOString();
-
-          return (reqStart < existingEnd && reqEnd > existingStart);
-        });
-
-        if (conflict) {
-          console.error('❌ DOUBLE_BOOKED conflict detected');
+      if (uidRes.ok) {
+        const uidData = await uidRes.json();
+        if ((uidData.items ?? []).length > 0) {
+          console.error('❌ iCalUID already exists in Google');
           throw new Error('DOUBLE_BOOKED');
         }
       }
-      // --- END PROTECTION ---
 
       // Create slot summary for description
       const slotSummary = booking.selected_slots?.map(slot =>
@@ -320,6 +296,7 @@ async function createCalendarEvent(booking) {
       ).join(', ') || 'Custom time slots';
 
       const eventData = {
+        iCalUID: icalUid,
         summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
         description: `SPED Class Booking\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nEmail: ${booking.teacher_email}\nPhone: ${booking.teacher_phone}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level}\nPreferred Coach: ${booking.preferred_coach}\nSpecial Requirements: ${booking.special_requirements}\nSelected Slots: ${slotSummary}\nTotal Minutes: ${booking.total_minutes}\nTotal Cost: $${booking.total_cost}`,
         start: {
@@ -362,8 +339,10 @@ async function createCalendarEvent(booking) {
           ]
         }
       };
+
       console.log('Creating real calendar event with data:', eventData);
-      const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events`, {
+      const calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?sendUpdates=all`;
+      const response = await fetch(calendarUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -371,72 +350,36 @@ async function createCalendarEvent(booking) {
         },
         body: JSON.stringify(eventData)
       });
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Google Calendar API error:', errorText);
         throw new Error(`Failed to create calendar event: ${response.statusText}`);
       }
+
       const event = await response.json();
       console.log('✅ Real calendar event created successfully:', event.id);
       return {
         eventId: event.id,
         eventLink: event.htmlLink || `https://calendar.google.com/calendar/event?eid=${event.id}`
       };
-    } catch (authError) {
-      console.error('Authentication failed, creating simulated event:', authError);
-      // Fallback: create simulated event
-      const eventId = `simulated_${Date.now()}`;
-      const eventLink = `https://calendar.google.com/calendar/event?eid=${eventId}`;
-      console.log('⚠️ Created simulated calendar event (not in real calendar):', {
-        summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
-        description: `SPED Class Booking\n\nTeacher: ${booking.teacher_first_name} ${booking.teacher_last_name}\nSchool: ${booking.school_name}\nEmail: ${booking.teacher_email}\nPhone: ${booking.teacher_phone}\nStudents: ${booking.number_of_students}\nGrade: ${booking.grade_level}\nPreferred Coach: ${booking.preferred_coach}\nSpecial Requirements: ${booking.special_requirements}\nTotal Cost: $${booking.total_cost}`,
-        start: {
-          dateTime: `${booking.booking_date}T${booking.booking_time_start}`,
-          timeZone: 'America/Regina'
-        },
-        end: {
-          dateTime: `${booking.booking_date}T${booking.booking_time_end}`,
-          timeZone: 'America/Regina'
-        },
-        location: `${booking.school_name}, ${booking.school_address_line1}, ${booking.school_city}, ${booking.school_province}`,
-        attendees: [
-          {
-            email: booking.teacher_email
-          },
-          {
-            email: 'info@ttsask.ca'
-          },
-          {
-            email: 'zion.office@sasktel.net'
-          },
-          {
-            email: 'coach@ttsask.ca'
-          },
-          {
-            email: 'murraysproule@sasktel.net'
-          }
-        ],
-        reminders: {
-          useDefault: false,
-          overrides: [
-            {
-              method: 'email',
-              minutes: 1440
-            },
-            {
-              method: 'popup',
-              minutes: 30
-            }
-          ]
-        }
-      });
-      return {
-        eventId,
-        eventLink
-      };
+    } catch (googleError: any) {
+      if (googleError.message !== 'DOUBLE_BOOKED') {
+        console.error('Google creation failed, rolling back DB lock:', googleError);
+        // Rollback lock if it wasn't a double-booking but some other failure (e.g., API down)
+        await supabase
+          .from('booking_locks')
+          .delete()
+          .match({
+            booking_date: booking.booking_date,
+            booking_time_start: booking.booking_time_start,
+            booking_time_end: booking.booking_time_end
+          });
+      }
+      throw googleError;
     }
   } catch (error) {
-    console.error('Error creating calendar event:', error);
+    console.error('Error in createCalendarEvent:', error);
     throw error;
   }
 }
@@ -495,7 +438,8 @@ serve(async (req) => {
     console.error('Edge function error:', error);
 
     // Specifically handle the double-booked case for the frontend
-    if (error.message === 'DOUBLE_BOOKED') {
+    // Google returns 409 for iCalUID conflicts, but we also catch it via pre-check
+    if (error.message === 'DOUBLE_BOOKED' || (error.status === 409 && error.message.includes('already exists'))) {
       return new Response(JSON.stringify({
         success: false,
         code: 'DOUBLE_BOOKED',
