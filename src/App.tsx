@@ -124,9 +124,6 @@ const App = () => {
   useEffect(() => {
     const lowEnd = isLowEndMobile();
 
-    // Enable CSS containment for better performance
-    document.documentElement.style.contain = 'layout style paint';
-
     // Optimize scroll behavior
     document.documentElement.style.scrollBehavior = lowEnd ? 'auto' : 'smooth';
 
@@ -173,7 +170,6 @@ const App = () => {
 
     return () => {
       // Cleanup
-      document.documentElement.style.contain = '';
       document.documentElement.style.scrollBehavior = '';
     };
   }, []);
@@ -193,62 +189,62 @@ const App = () => {
             <ErrorBoundary>
               <Suspense fallback={<PageLoadingFallback />}>
                 <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/membership" element={<Membership />} />
-                <Route path="/get-started" element={<GetStarted />} />
-                <Route path="/events" element={<Events />} />
+                  <Route path="/" element={<Index />} />
+                  <Route path="/membership" element={<Membership />} />
+                  <Route path="/get-started" element={<GetStarted />} />
+                  <Route path="/events" element={<Events />} />
 
-                <Route path="/about" element={<Navigate to="/about/history-mission" replace />} />
-                {/* About subsections */}
-                <Route path="/about/history-mission" element={<AboutHistoryMission />} />
-                <Route path="/about/staff-board" element={<AboutStaffBoard />} />
-                <Route path="/about/governance" element={<AboutGovernance />} />
-                {/* Play & Train */}
-                <Route path="/play/locations" element={<PlayLocations />} />
-                <Route path="/play/training" element={<PlayTraining />} />
-                <Route path="/play/advanced-para" element={<PlayAdvancedPara />} />
-                <Route path="/play/clinics" element={<PlayClinics />} />
-                <Route path="/play/sped" element={<PlaySPED />} />
-                
-                {/* Training Signup */}
-                <Route path="/training-signup" element={<TrainingSignup />} />
-                {/* Other sections */}
-                <Route path="/clubs" element={<Clubs />} />
-                <Route path="/clubs/register" element={<ClubRegistration />} />
-                <Route path="/coaching" element={<Coaching />} />
-                <Route path="/officials" element={<Officials />} />
-                <Route path="/gallery" element={<Gallery />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/faq" element={<FAQ />} />
+                  <Route path="/about" element={<Navigate to="/about/history-mission" replace />} />
+                  {/* About subsections */}
+                  <Route path="/about/history-mission" element={<AboutHistoryMission />} />
+                  <Route path="/about/staff-board" element={<AboutStaffBoard />} />
+                  <Route path="/about/governance" element={<AboutGovernance />} />
+                  {/* Play & Train */}
+                  <Route path="/play/locations" element={<PlayLocations />} />
+                  <Route path="/play/training" element={<PlayTraining />} />
+                  <Route path="/play/advanced-para" element={<PlayAdvancedPara />} />
+                  <Route path="/play/clinics" element={<PlayClinics />} />
+                  <Route path="/play/sped" element={<PlaySPED />} />
 
-                {/* Coming Soon page for auth features */}
-                <Route path="/coming-soon" element={<ComingSoon />} />
+                  {/* Training Signup */}
+                  <Route path="/training-signup" element={<TrainingSignup />} />
+                  {/* Other sections */}
+                  <Route path="/clubs" element={<Clubs />} />
+                  <Route path="/clubs/register" element={<ClubRegistration />} />
+                  <Route path="/coaching" element={<Coaching />} />
+                  <Route path="/officials" element={<Officials />} />
+                  <Route path="/gallery" element={<Gallery />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/faq" element={<FAQ />} />
 
-                {/* Sign In Route */}
-                <Route path="/sign-in" element={<SignIn />} />
+                  {/* Coming Soon page for auth features */}
+                  <Route path="/coming-soon" element={<ComingSoon />} />
 
-                {/* Public Membership Routes */}
-                <Route path="/membership/register" element={<MembershipRegistration />} />
-                <Route path="/membership-success" element={<MembershipSuccess />} />
+                  {/* Sign In Route */}
+                  <Route path="/sign-in" element={<SignIn />} />
 
-                {/* Protected Admin Routes */}
-                <Route path="/admin" element={<AuthGuard><AdminDashboard /></AuthGuard>} />
-                <Route path="/admin/members" element={<AuthGuard><AdminMembers /></AuthGuard>} />
-                <Route path="/admin/members/add" element={<AuthGuard><AdminAddMember /></AuthGuard>} />
-                <Route path="/admin/members/edit/:id" element={<AuthGuard><AdminEditMember /></AuthGuard>} />
-                <Route path="/admin/memberships" element={<AuthGuard><AdminMemberships /></AuthGuard>} />
-                <Route path="/admin/clubs" element={<AuthGuard><AdminClubs /></AuthGuard>} />
-                <Route path="/admin/clinics" element={<AuthGuard><AdminClinics /></AuthGuard>} />
-                <Route path="/admin/sped" element={<AuthGuard><AdminSPED /></AuthGuard>} />
-                <Route path="/admin/tournaments" element={<AuthGuard><AdminTournaments /></AuthGuard>} />
-                <Route path="/admin/finance" element={<AuthGuard><AdminFinance /></AuthGuard>} />
-                <Route path="/admin/map-grants" element={<AuthGuard><AdminMapGrants /></AuthGuard>} />
-                <Route path="/admin/reports" element={<AuthGuard><AdminReports /></AuthGuard>} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </ErrorBoundary>
+                  {/* Public Membership Routes */}
+                  <Route path="/membership/register" element={<MembershipRegistration />} />
+                  <Route path="/membership-success" element={<MembershipSuccess />} />
+
+                  {/* Protected Admin Routes */}
+                  <Route path="/admin" element={<AuthGuard><AdminDashboard /></AuthGuard>} />
+                  <Route path="/admin/members" element={<AuthGuard><AdminMembers /></AuthGuard>} />
+                  <Route path="/admin/members/add" element={<AuthGuard><AdminAddMember /></AuthGuard>} />
+                  <Route path="/admin/members/edit/:id" element={<AuthGuard><AdminEditMember /></AuthGuard>} />
+                  <Route path="/admin/memberships" element={<AuthGuard><AdminMemberships /></AuthGuard>} />
+                  <Route path="/admin/clubs" element={<AuthGuard><AdminClubs /></AuthGuard>} />
+                  <Route path="/admin/clinics" element={<AuthGuard><AdminClinics /></AuthGuard>} />
+                  <Route path="/admin/sped" element={<AuthGuard><AdminSPED /></AuthGuard>} />
+                  <Route path="/admin/tournaments" element={<AuthGuard><AdminTournaments /></AuthGuard>} />
+                  <Route path="/admin/finance" element={<AuthGuard><AdminFinance /></AuthGuard>} />
+                  <Route path="/admin/map-grants" element={<AuthGuard><AdminMapGrants /></AuthGuard>} />
+                  <Route path="/admin/reports" element={<AuthGuard><AdminReports /></AuthGuard>} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </ScrollRestorationWrapper>
         </BrowserRouter>
       </TooltipProvider>

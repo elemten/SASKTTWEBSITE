@@ -22,7 +22,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-8 overflow-y-auto bg-green-50">
+        <main className="flex-1 p-8 bg-green-50">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

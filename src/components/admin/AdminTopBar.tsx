@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, User, Settings, LogOut, Command } from "lucide-react";
+import { Search, Bell, User, Settings, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,12 +42,7 @@ export const AdminTopBar = () => {
   };
 
   return (
-    <motion.header 
-      className="glass border-b border-border/50 px-6 py-4"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <header className="glass border-b border-border/50 px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Branding */}
         <div className="flex items-center gap-4 mr-8">
@@ -97,7 +91,7 @@ export const AdminTopBar = () => {
               <Button variant="ghost" size="icon" className="relative hover:bg-accent">
                 <Bell className="h-5 w-5" />
                 {notifications.length > 0 && (
-                  <Badge 
+                  <Badge
                     className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-green-500 text-white hover:bg-green-600"
                   >
                     {notifications.length}
@@ -174,7 +168,7 @@ export const AdminTopBar = () => {
         isOpen={globalSearch.isOpen}
         onClose={globalSearch.close}
       />
-    </motion.header>
+    </header>
   );
 };
 
