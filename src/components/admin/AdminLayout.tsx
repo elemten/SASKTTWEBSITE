@@ -45,10 +45,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="min-h-screen bg-green-50 flex overflow-x-hidden relative">
-      {/* Visual Build Verifier - Proof of Update */}
+      {/* Visual Build Verifier - Pointer-events-none ensures it doesn't block clicks! */}
       {showVerifier && (
-        <div className="fixed top-0 left-0 right-0 z-[100] bg-emerald-600 text-white text-[10px] font-black py-1 text-center animate-pulse uppercase tracking-[0.3em]">
-          UI Engine v2.1 Live - {new Date().toLocaleTimeString()}
+        <div className="fixed top-0 left-0 right-0 z-[100] bg-emerald-600 text-white text-[10px] font-black py-1 text-center animate-pulse uppercase tracking-[0.3em] pointer-events-none shadow-lg">
+          UI Engine v2.2 Live - {new Date().toLocaleTimeString()}
         </div>
       )}
 
@@ -78,8 +78,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] px-2">Navigation</span>
             <button
               type="button"
-              onClick={(e) => closeMenu(e)}
-              className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all active:scale-90"
+              onClick={closeMenu}
+              onTouchEnd={(e) => { e.preventDefault(); closeMenu(); }}
+              className="p-3 -mr-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all active:scale-90 touch-none"
               aria-label="Close menu"
             >
               <X className="h-6 w-6" />
@@ -97,8 +98,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 flex items-center h-16">
           <button
             type="button"
-            className="lg:hidden ml-4 p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95"
-            onClick={(e) => openMenu(e)}
+            className="lg:hidden ml-4 p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95 touch-none"
+            onClick={openMenu}
+            onTouchEnd={(e) => { e.preventDefault(); openMenu(); }}
             aria-label="Open menu"
           >
             <Menu className="h-6 w-6" />
