@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, User, Settings, LogOut } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Bell, User, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,12 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { auth } from "@/lib/auth";
-import { GlobalSearch, useGlobalSearch } from "./GlobalSearch";
 
 export const AdminTopBar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<any>(null);
   const [notifications] = useState([
     { id: 1, type: "warning", message: "5 memberships expiring this week" },
@@ -25,10 +21,8 @@ export const AdminTopBar = () => {
     { id: 3, type: "error", message: "3 overdue invoices" },
   ]);
   const navigate = useNavigate();
-  const globalSearch = useGlobalSearch();
 
   useEffect(() => {
-    // Set mock user data for display
     setUser({
       name: 'Admin User',
       email: 'info@ttsask.ca'
@@ -41,118 +35,78 @@ export const AdminTopBar = () => {
   };
 
   return (
-    <header className="glass border-b border-border/50 px-6 py-3">
-      <div className="flex items-center justify-between">
+    <header className="px-4 py-2 border-b border-gray-100 bg-white/50 backdrop-blur-md">
+      <div className="flex items-center justify-end gap-3">
 
-        {/* Search */}
-        <div className="flex items-center gap-4 flex-1 max-w-sm ml-auto mr-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-9 bg-gray-50/50 border-gray-100 focus:bg-white focus:border-emerald-200 transition-all duration-200 rounded-xl"
-            />
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-4">
-          {/* Global Search */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={globalSearch.open}
-            className="hover:bg-accent"
-            title="Search everything (⌘K)"
-          >
-            <Search className="h-5 w-5" />
-          </Button>
-
-          {/* Notifications */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative hover:bg-accent">
-                <Bell className="h-5 w-5" />
-                {notifications.length > 0 && (
-                  <Badge
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-green-500 text-white hover:bg-green-600"
-                  >
-                    {notifications.length}
-                  </Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 glass">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {notifications.map((notification) => (
-                <DropdownMenuItem key={notification.id} className="flex-col items-start p-4">
-                  <div className="flex items-center gap-2 w-full">
-                    <div className={cn(
-                      "w-2 h-2 rounded-full",
-                      notification.type === "warning" && "bg-green-400",
-                      notification.type === "info" && "bg-green-500",
-                      notification.type === "error" && "bg-green-600"
-                    )} />
-                    <span className="text-sm">{notification.message}</span>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Profile */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2 hover:bg-accent">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center p-1">
-                  <img
-                    src="/logo.png"
-                    alt="Admin User"
-                    className="w-full h-full object-contain"
-                  />
+        {/* Notifications */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative group hover:bg-emerald-50 rounded-full transition-all">
+              <Bell className="h-5 w-5 text-gray-500 group-hover:text-emerald-600" />
+              {notifications.length > 0 && (
+                <Badge
+                  className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full p-0 bg-emerald-500 border-2 border-white pointer-events-none"
+                />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80 rounded-2xl shadow-xl border-gray-100 p-2">
+            <DropdownMenuLabel className="px-3 py-2 text-xs font-black text-gray-400 uppercase tracking-widest">Recent Activity</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-gray-50" />
+            {notifications.map((notification) => (
+              <DropdownMenuItem key={notification.id} className="flex flex-col items-start p-3 rounded-xl focus:bg-emerald-50 cursor-pointer">
+                <div className="flex items-center gap-2 w-full">
+                  <div className={cn(
+                    "w-1.5 h-1.5 rounded-full shrink-0",
+                    notification.type === "warning" && "bg-yellow-400",
+                    notification.type === "info" && "bg-emerald-500",
+                    notification.type === "error" && "bg-red-500"
+                  )} />
+                  <span className="text-sm font-medium text-gray-700">{notification.message}</span>
                 </div>
-                <div className="hidden md:block text-left">
-                  <p className="text-sm font-medium">
-                    {user?.name || 'Admin User'}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {user?.email || 'admin@tts.ca'}
-                  </p>
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 glass">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" />
-                Profile
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="cursor-pointer text-destructive"
-                onClick={handleSignOut}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Profile */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-9 w-9 p-0 rounded-full hover:bg-emerald-50 overflow-hidden border border-gray-100 transition-all active:scale-95">
+              <div className="w-full h-full bg-emerald-100 flex items-center justify-center p-1.5">
+                <img
+                  src="/logo.png"
+                  alt="Avatar"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 rounded-2xl shadow-xl border-gray-100 p-2">
+            <div className="px-3 py-3">
+              <p className="text-sm font-black text-gray-900">{user?.name || 'Admin'}</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{user?.email || 'admin@tts.ca'}</p>
+            </div>
+            <DropdownMenuSeparator className="bg-gray-50" />
+            <DropdownMenuItem className="p-3 rounded-xl focus:bg-gray-50 cursor-pointer">
+              <User className="mr-3 h-4 w-4 text-gray-400" />
+              <span className="text-sm font-medium">Profile Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="p-3 rounded-xl focus:bg-gray-50 cursor-pointer">
+              <Settings className="mr-3 h-4 w-4 text-gray-400" />
+              <span className="text-sm font-medium">Preferences</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-gray-50" />
+            <DropdownMenuItem
+              className="p-3 rounded-xl focus:bg-red-50 text-red-600 cursor-pointer"
+              onClick={handleSignOut}
+            >
+              <LogOut className="mr-3 h-4 w-4" />
+              <span className="text-sm font-black italic uppercase">Sign Out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-
-      {/* Global Search Modal */}
-      <GlobalSearch
-        isOpen={globalSearch.isOpen}
-        onClose={globalSearch.close}
-      />
     </header>
   );
 };
