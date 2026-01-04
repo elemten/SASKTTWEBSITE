@@ -197,7 +197,7 @@ export const DashboardOverview = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-black tracking-tight text-black uppercase italic">
-            Command Hub
+            Overview
           </h1>
           <p className="text-gray-400 text-[10px] md:text-sm font-bold uppercase tracking-[0.2em]">
             Command Center
