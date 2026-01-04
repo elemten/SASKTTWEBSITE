@@ -46,10 +46,6 @@ export default function AdminFinance() {
     const initPage = async () => {
       setPageLoading(true);
       const today = new Date();
-      const monthStartStr = format(startOfMonth(today), "yyyy-MM-dd");
-
-      setSelectedYear(today.getFullYear().toString());
-      setSelectedMonth(monthStartStr);
 
       try {
         const { data: rawBookings, error } = await (supabase as any)
@@ -80,12 +76,6 @@ export default function AdminFinance() {
           currentMonthRevenue,
           totalAllTime: bookings.reduce((sum: number, b: any) => sum + (Number(b.total_cost) || 0), 0),
         });
-
-        const { data: headers } = await (supabase as any).rpc("get_sped_invoice_headers", {
-          month_start: monthStartStr,
-        });
-
-        setInvoiceHeaders(headers || []);
       } catch (err) {
         console.error("Finance Init Error:", err);
       } finally {
