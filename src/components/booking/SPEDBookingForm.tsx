@@ -7,8 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, Clock, Check } from "lucide-react";
 import { format } from "date-fns";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-
+import { supabase } from "@/lib/supabase";
 interface FormData {
   teacher_first_name: string;
   teacher_last_name: string;
@@ -36,12 +35,6 @@ interface TimeSlot {
 }
 
 const HOURLY_RATE = 95;
-
-// ✅ Single Supabase client
-const supabase: SupabaseClient = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
 
 const SPEDBookingForm = () => {
   const [formData, setFormData] = useState<FormData>({

@@ -122,15 +122,27 @@ export default function AdminFinance() {
       });
 
       if (error) throw error;
-      if (!data?.pdf) throw new Error("No PDF data returned");
+      if (!data) throw new Error("No data returned from function");
 
-      const byteCharacters = atob(data.pdf);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      let blob: Blob;
+
+      // If data is already a Blob (direct binary response)
+      if (data instanceof Blob) {
+        blob = data;
       }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      // If data is an object with a base64 'pdf' property
+      else if (data.pdf) {
+        const byteCharacters = atob(data.pdf);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        blob = new Blob([byteArray], { type: 'application/pdf' });
+      }
+      else {
+        throw new Error("Invalid response format from invoice function");
+      }
 
       const fileName = createInvoiceNumber(
         new Date(selectedMonth).getFullYear(),
