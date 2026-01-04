@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ADMIN_NAV } from "@/lib/admin-nav";
+import { auth } from "@/lib/auth";
 import logo from "@/assets/logo.png";
 
 export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onNavigate?: () => void }) => {
@@ -129,6 +130,27 @@ export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onN
             </motion.div>
           ))}
         </div>
+      </div>
+
+      {/* Sign Out - Bottom of Sidebar */}
+      <div className="px-3 py-4 border-t border-gray-100">
+        <button
+          onClick={() => {
+            auth.signOut();
+            navigate('/sign-in');
+          }}
+          className={cn(
+            "group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
+            "text-red-500 hover:bg-red-50 active:scale-95",
+            collapsed && !isMobile && "justify-center px-0"
+          )}
+          title="Sign Out"
+        >
+          <LogOut className="h-5 w-5 shrink-0" />
+          {(!collapsed || isMobile) && (
+            <span className="text-sm font-black italic uppercase tracking-wider">Sign Out</span>
+          )}
+        </button>
       </div>
 
       {/* Collapse Toggle - Hide on mobile */}
