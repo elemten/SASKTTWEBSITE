@@ -129,6 +129,11 @@ export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onN
         </div>
       </div>
 
+      {/* Build Info - Subtle version check */}
+      <div className="px-4 py-2 opacity-20 pointer-events-none">
+        <p className="text-[8px] font-mono text-gray-400">BUILD: {new Date().toLocaleTimeString()}</p>
+      </div>
+
       {/* Collapse Toggle - Hide on mobile */}
       {!isMobile && (
         <div className="px-3 py-3 border-t border-gray-100">
