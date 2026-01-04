@@ -1,8 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminTopBar } from "./AdminTopBar";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { X, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "react-router-dom";
 
@@ -11,8 +10,8 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  // Explicitly initialize to false
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showVerifier, setShowVerifier] = useState(false);
   const location = useLocation();
 
   // Close on route change
@@ -20,13 +19,19 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Handle closing explicitly to prevent bubbling
+  // Force close on initial mount + Show Verifier for debugging
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setShowVerifier(true);
+    const timer = setTimeout(() => setShowVerifier(false), 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const closeMenu = (e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
-    console.log("Closing mobile menu");
     setIsMobileMenuOpen(false);
   };
 
@@ -35,12 +40,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       e.preventDefault();
       e.stopPropagation();
     }
-    console.log("Opening mobile menu");
     setIsMobileMenuOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-green-50 flex overflow-x-hidden">
+    <div className="min-h-screen bg-green-50 flex overflow-x-hidden relative">
+      {/* Visual Build Verifier - Proof of Update */}
+      {showVerifier && (
+        <div className="fixed top-0 left-0 right-0 z-[100] bg-emerald-600 text-white text-[10px] font-black py-1 text-center animate-pulse uppercase tracking-[0.3em]">
+          UI Engine v2.0 Live - {new Date().toLocaleTimeString()}
+        </div>
+      )}
+
       {/* Sidebar - Desktop */}
       <div className="hidden lg:block flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
         <AdminSidebar />
@@ -67,7 +78,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] px-2">Navigation</span>
             <button
               type="button"
-              onClick={closeMenu}
+              onClick={(e) => closeMenu(e)}
               className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all active:scale-90"
               aria-label="Close menu"
             >
@@ -75,7 +86,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <AdminSidebar isMobile onNavigate={() => closeMenu()} />
+            <AdminSidebar isMobile onNavigate={() => setIsMobileMenuOpen(false)} />
           </div>
         </div>
       </div>
@@ -87,7 +98,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <button
             type="button"
             className="lg:hidden ml-4 p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95"
-            onClick={openMenu}
+            onClick={(e) => openMenu(e)}
             aria-label="Open menu"
           >
             <Menu className="h-6 w-6" />
