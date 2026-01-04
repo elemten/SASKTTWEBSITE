@@ -43,7 +43,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           >
             <X className="h-6 w-6" />
           </Button>
-          <AdminSidebar />
+          <AdminSidebar isMobile onNavigate={() => setIsMobileMenuOpen(false)} />
         </div>
       </div>
 

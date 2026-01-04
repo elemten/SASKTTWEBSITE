@@ -7,15 +7,21 @@ import { Button } from "@/components/ui/button";
 import { ADMIN_NAV } from "@/lib/admin-nav";
 import logo from "@/assets/logo.png";
 
-export const AdminSidebar = () => {
+export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onNavigate?: () => void }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
+
+  const handleNavigate = (href: string) => {
+    navigate(href);
+    if (onNavigate) onNavigate();
+  };
 
   return (
     <div className={cn(
-      "h-full bg-white border-r border-gray-100 flex flex-col transition-all duration-300",
-      collapsed ? "w-16" : "w-64"
+      "h-full bg-white flex flex-col transition-all duration-300",
+      isMobile ? "w-full" : (collapsed ? "w-16" : "w-64"),
+      !isMobile && "border-r border-gray-100"
     )}>
       {/* Header */}
       <div className="px-4 py-5 border-b border-gray-100">
@@ -32,7 +38,7 @@ export const AdminSidebar = () => {
               className="w-full h-full object-contain"
             />
           </div>
-          {!collapsed && (
+          {(!collapsed || isMobile) && (
             <div>
               <h2 className="font-semibold text-gray-900">Admin Panel</h2>
               <p className="text-xs text-gray-500">Table Tennis Saskatchewan</p>
@@ -52,10 +58,7 @@ export const AdminSidebar = () => {
               transition={{ delay: index * 0.03 }}
             >
               <button
-                onClick={() => {
-                  console.log('Navigating to:', item.href);
-                  navigate(item.href);
-                }}
+                onClick={() => handleNavigate(item.href)}
                 className={cn(
                   // Base Apple-like styling
                   "group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg",
@@ -96,7 +99,7 @@ export const AdminSidebar = () => {
                 />
 
                 {/* Label */}
-                {!collapsed && (
+                {(!collapsed || isMobile) && (
                   <span className={cn(
                     "truncate transition-colors duration-200 relative z-10 text-sm font-medium",
                     location.pathname === item.href || (item.href === "/admin" && location.pathname === "/admin")
@@ -108,7 +111,7 @@ export const AdminSidebar = () => {
                 )}
 
                 {/* Active dot indicator (Apple style) */}
-                {(location.pathname === item.href || (item.href === "/admin" && location.pathname === "/admin")) && !collapsed && (
+                {(location.pathname === item.href || (item.href === "/admin" && location.pathname === "/admin")) && (!collapsed || isMobile) && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
@@ -126,25 +129,27 @@ export const AdminSidebar = () => {
         </div>
       </div>
 
-      {/* Collapse Toggle */}
-      <div className="px-3 py-3 border-t border-gray-100">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn(
-            "w-full justify-center h-8 px-2",
-            "text-gray-500 hover:text-gray-700 hover:bg-gray-50",
-            "transition-colors duration-200"
-          )}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </Button>
-      </div>
+      {/* Collapse Toggle - Hide on mobile */}
+      {!isMobile && (
+        <div className="px-3 py-3 border-t border-gray-100">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCollapsed(!collapsed)}
+            className={cn(
+              "w-full justify-center h-8 px-2",
+              "text-gray-500 hover:text-gray-700 hover:bg-gray-50",
+              "transition-colors duration-200"
+            )}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
