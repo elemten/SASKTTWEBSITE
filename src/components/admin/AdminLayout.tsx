@@ -11,13 +11,33 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
+  // Explicitly initialize to false
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  // Automatically close sidebar on any route change (handles hardware back button too)
+  // Close on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
+
+  // Handle closing explicitly to prevent bubbling
+  const closeMenu = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    console.log("Closing mobile menu");
+    setIsMobileMenuOpen(false);
+  };
+
+  const openMenu = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    console.log("Opening mobile menu");
+    setIsMobileMenuOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-green-50 flex overflow-x-hidden">
@@ -29,32 +49,33 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar - Mobile Overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-50 lg:hidden bg-black/20 backdrop-blur-sm transition-opacity duration-300",
+          "fixed inset-0 z-[60] lg:hidden bg-black/40 backdrop-blur-sm transition-opacity duration-300",
           isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
-        onClick={() => setIsMobileMenuOpen(false)}
+        onClick={() => closeMenu()}
       />
 
+      {/* Sidebar - Mobile Drawer */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 lg:hidden w-72 bg-white shadow-2xl transition-transform duration-300 transform",
+          "fixed inset-y-0 left-0 z-[70] lg:hidden w-72 bg-white shadow-2xl transition-transform duration-300 ease-in-out transform",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between p-4 border-b border-gray-50">
-            <span className="text-xs font-black text-emerald-600 uppercase tracking-widest px-2">Menu</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-400 hover:text-emerald-600 rounded-xl"
-              onClick={() => setIsMobileMenuOpen(false)}
+            <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] px-2">Navigation</span>
+            <button
+              type="button"
+              onClick={closeMenu}
+              className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all active:scale-90"
+              aria-label="Close menu"
             >
               <X className="h-6 w-6" />
-            </Button>
+            </button>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <AdminSidebar isMobile onNavigate={() => setIsMobileMenuOpen(false)} />
+            <AdminSidebar isMobile onNavigate={() => closeMenu()} />
           </div>
         </div>
       </div>
@@ -62,15 +83,15 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
         {/* Header - Clean top bar */}
-        <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden ml-4 text-emerald-600 rounded-xl"
-            onClick={() => setIsMobileMenuOpen(true)}
+        <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 flex items-center h-16">
+          <button
+            type="button"
+            className="lg:hidden ml-4 p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95"
+            onClick={openMenu}
+            aria-label="Open menu"
           >
             <Menu className="h-6 w-6" />
-          </Button>
+          </button>
           <div className="flex-1 min-w-0">
             <AdminTopBar />
           </div>
