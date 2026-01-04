@@ -18,8 +18,8 @@ interface InvoiceHeader {
 
 function createInvoiceNumber(year: number, month: number, schoolSystem: string, schoolName: string): string {
   const sysCode = schoolSystem === 'Catholic' ? 'CATH' : schoolSystem === 'Saskatoon Public' ? 'PUB' : 'OTHER';
-  const schoolSlug = schoolName.toUpperCase().replace(/[^A-Z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-  return `${year}-${String(month).padStart(2, '0')}-${sysCode}-${schoolSlug}`;
+  const initials = schoolName.toUpperCase().replace(/[^A-Z0-9\s]/g, '').split(/\s+/).filter(Boolean).map(word => word[0]).join('');
+  return `${year}-${String(month).padStart(2, '0')}-${sysCode}-${initials}`;
 }
 
 export default function AdminFinance() {
