@@ -57,6 +57,7 @@ const PlayAdvancedPara = lazy(() => import("./pages/play/AdvancedPara"));
 const PlayClinics = lazy(() => import("./pages/play/Clinics"));
 const PlaySPED = lazy(() => import("./pages/play/SPED"));
 const TrainingSignup = lazy(() => import("./pages/TrainingSignup"));
+const Expenses = lazy(() => import("./pages/Expenses"));
 
 // Auth pages - REMOVED
 
@@ -216,6 +217,7 @@ const App = () => {
                   <Route path="/gallery" element={<Gallery />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/faq" element={<FAQ />} />
+                  <Route path="/expenses" element={<Expenses />} />
 
                   {/* Coming Soon page for auth features */}
                   <Route path="/coming-soon" element={<ComingSoon />} />

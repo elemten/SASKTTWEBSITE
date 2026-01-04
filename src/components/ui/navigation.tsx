@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
 import { useState, useEffect, useRef } from "react";
 import MobileMenu from "./MobileMenu";
+import { ShieldCheck } from "lucide-react";
 
 interface NavigationProps {
   className?: string;
@@ -46,7 +47,6 @@ const navigationItems = [
   },
   { href: "/events", label: "Events" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/resources", label: "Resources" },
   { href: "/contact", label: "Contact Us" },
 ];
 
@@ -121,7 +121,7 @@ export function Navigation({ className }: NavigationProps) {
             </li>
 
             {/* About Dropdown */}
-            <li 
+            <li
               className="has-dropdown"
               onMouseEnter={() => handleMouseEnter('/about')}
               onMouseLeave={handleMouseLeave}
@@ -155,7 +155,7 @@ export function Navigation({ className }: NavigationProps) {
             </li>
 
             {/* Services Dropdown */}
-            <li 
+            <li
               className="has-dropdown"
               onMouseEnter={() => handleMouseEnter('/membership')}
               onMouseLeave={handleMouseLeave}
@@ -194,7 +194,7 @@ export function Navigation({ className }: NavigationProps) {
             </li>
 
             {/* Training Dropdown */}
-            <li 
+            <li
               className="has-dropdown"
               onMouseEnter={() => handleMouseEnter('/play/training')}
               onMouseLeave={handleMouseLeave}
@@ -254,16 +254,7 @@ export function Navigation({ className }: NavigationProps) {
               </NavLink>
             </li>
 
-            <li>
-              <NavLink
-                to="/resources"
-                className={({ isActive }) =>
-                  cn("nav-item", isActive && "nav-item--active")
-                }
-              >
-                Resources
-              </NavLink>
-            </li>
+
 
             <li>
               <NavLink
@@ -280,8 +271,18 @@ export function Navigation({ className }: NavigationProps) {
 
         {/* CTA Buttons */}
         <div className="cta">
+          <NavLink
+            to="/admin"
+            className="btn hidden lg:inline-flex h-[38px] items-center justify-center gap-1.5 rounded-full px-3 text-[11px] font-bold uppercase tracking-wider transition-all bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 shadow-sm"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Admin
+          </NavLink>
+
+          <div className="hidden lg:block h-6 w-px bg-neutral-200 mx-1" />
+
           <NavLink to="/coming-soon" className="btn btn--ghost">
-            Sign In
+            Log In
           </NavLink>
           <NavLink to="/get-started" className="btn btn--primary">
             Get Started
@@ -303,8 +304,15 @@ export function Navigation({ className }: NavigationProps) {
 
           <div className="flex items-center gap-1 sm:gap-2">
             <NavLink
+              to="/admin"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm"
+              aria-label="Admin Dashboard"
+            >
+              <ShieldCheck className="h-5 w-5" />
+            </NavLink>
+            <NavLink
               to="/coming-soon"
-              className="inline-flex h-9 items-center rounded-full bg-[var(--tt-green-vibrant)] px-2 sm:px-3 text-xs sm:text-sm font-semibold text-white hover:bg-[var(--tt-green-vibrant-dark)] transition-colors whitespace-nowrap"
+              className="inline-flex h-9 items-center rounded-full bg-neutral-100 px-2 sm:px-3 text-xs sm:text-sm font-semibold text-neutral-800 hover:bg-neutral-200 transition-colors whitespace-nowrap"
             >
               Log In
             </NavLink>

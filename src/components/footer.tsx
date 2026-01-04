@@ -41,29 +41,29 @@ const footerSections = [
     title: "Resources & Support",
     links: [
       { label: "Gallery", href: "/gallery" },
-      { label: "Resources", href: "/resources" },
       { label: "FAQ", href: "/faq" },
       { label: "Contact Us", href: "/contact" },
+      { label: "Admin Dashboard", href: "/admin" },
     ],
   },
 ];
 
 const socialLinks = [
-  { 
-    icon: Facebook, 
-    href: "https://www.facebook.com/tabletennissask/", 
+  {
+    icon: Facebook,
+    href: "https://www.facebook.com/tabletennissask/",
     label: "Facebook",
     color: "hover:bg-blue-600 hover:text-white"
   },
-  { 
-    icon: Instagram, 
-    href: "https://www.instagram.com/tabletennissaskatchewan/?hl=en", 
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/tabletennissaskatchewan/?hl=en",
     label: "Instagram",
     color: "hover:bg-pink-600 hover:text-white"
   },
-  { 
-    icon: Mail, 
-    href: "mailto:info@ttsask.ca", 
+  {
+    icon: Mail,
+    href: "mailto:info@ttsask.ca",
     label: "Email",
     color: "hover:bg-green-600 hover:text-white"
   },
@@ -103,7 +103,7 @@ export function Footer() {
               viewport={{ once: true }}
               className="text-gray-300 mb-6 leading-relaxed"
             >
-              Promoting table tennis excellence across Saskatchewan through 
+              Promoting table tennis excellence across Saskatchewan through
               quality programs, competitive opportunities, and community engagement.
             </motion.p>
 
@@ -117,8 +117,8 @@ export function Footer() {
             >
               <div className="flex items-center space-x-3 text-sm text-gray-300">
                 <Mail className="h-4 w-4 text-primary" />
-                <a 
-                  href="mailto:info@ttsask.ca" 
+                <a
+                  href="mailto:info@ttsask.ca"
                   className="hover:text-primary transition-colors duration-200"
                 >
                   info@ttsask.ca
@@ -126,8 +126,8 @@ export function Footer() {
               </div>
               <div className="flex items-center space-x-3 text-sm text-gray-300">
                 <Phone className="h-4 w-4 text-primary" />
-                <a 
-                  href="tel:306-880-3660" 
+                <a
+                  href="tel:306-880-3660"
                   className="hover:text-primary transition-colors duration-200"
                 >
                   306-880-3660

@@ -9,6 +9,7 @@ import { Download, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
 
+
 interface InvoiceHeader {
   school_system: string;
   school_name: string;
@@ -397,6 +398,8 @@ export default function AdminFinance() {
             )}
           </CardContent>
         </Card>
+
+
       </motion.div>
     </AdminLayout>
   );
