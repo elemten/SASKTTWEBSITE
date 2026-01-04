@@ -23,29 +23,31 @@ export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onN
       isMobile ? "w-full" : (collapsed ? "w-16" : "w-64"),
       !isMobile && "border-r border-gray-100"
     )}>
-      {/* Header */}
-      <div className="px-4 py-5 border-b border-gray-100">
-        <motion.div
-          className="flex items-center gap-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          <div className="w-8 h-8 rounded-lg overflow-hidden shadow-sm">
-            <img
-              src={logo}
-              alt="Table Tennis Saskatchewan logo"
-              className="w-full h-full object-contain"
-            />
-          </div>
-          {(!collapsed || isMobile) && (
-            <div>
-              <h2 className="font-semibold text-gray-900">Admin Panel</h2>
-              <p className="text-xs text-gray-500">Table Tennis Saskatchewan</p>
+      {/* Header - Hidden on mobile as drawer has its own */}
+      {!isMobile && (
+        <div className="px-4 py-5 border-b border-gray-100">
+          <motion.div
+            className="flex items-center gap-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="w-8 h-8 rounded-lg overflow-hidden shadow-sm">
+              <img
+                src={logo}
+                alt="Table Tennis Saskatchewan logo"
+                className="w-full h-full object-contain"
+              />
             </div>
-          )}
-        </motion.div>
-      </div>
+            {!collapsed && (
+              <div>
+                <h2 className="font-semibold text-gray-900">Admin Panel</h2>
+                <p className="text-xs text-gray-500">Table Tennis Saskatchewan</p>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="flex-1 px-3 py-4">
@@ -127,11 +129,6 @@ export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onN
             </motion.div>
           ))}
         </div>
-      </div>
-
-      {/* Build Info - Subtle version check */}
-      <div className="px-4 py-2 opacity-20 pointer-events-none">
-        <p className="text-[8px] font-mono text-gray-400">BUILD: {new Date().toLocaleTimeString()}</p>
       </div>
 
       {/* Collapse Toggle - Hide on mobile */}
