@@ -58,7 +58,7 @@ const SmartBookingForm: React.FC = () => {
 
     try {
       const { error } = await supabase
-        .from('sped_submissions')
+        .from('confirmed_bookings')
         .insert([{
           ...formData,
           status: 'pending'
@@ -296,9 +296,9 @@ const SmartBookingForm: React.FC = () => {
           </div>
 
           {/* Submit Button */}
-          <Button 
-            type="submit" 
-            className="w-full" 
+          <Button
+            type="submit"
+            className="w-full"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Submitting...' : 'Submit Registration'}

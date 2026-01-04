@@ -106,7 +106,7 @@ export const DashboardOverview = () => {
       if (spedError) throw spedError;
 
       const { count: pendingSped } = await (supabase as any)
-        .from('sped_submissions')
+        .from('confirmed_bookings')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pending');
 

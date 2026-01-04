@@ -110,6 +110,52 @@ export default function AdminFinance() {
     }
   };
 
+  const handleDownload = async (header: InvoiceHeader) => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('sped-invoice-pdf', {
+        body: {
+          monthStart: selectedMonth,
+          schoolSystem: header.school_system,
+          schoolName: header.school_name
+        }
+      });
+
+      if (error) throw error;
+      if (!data?.pdf) throw new Error("No PDF data returned");
+
+      const byteCharacters = atob(data.pdf);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+      const fileName = createInvoiceNumber(
+        new Date(selectedMonth).getFullYear(),
+        new Date(selectedMonth).getMonth() + 1,
+        header.school_system,
+        header.school_name
+      ) + '.pdf';
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+    } catch (err) {
+      console.error("Download error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getYearOptions = () => {
     const cy = new Date().getFullYear();
     return [cy + 1, cy, cy - 1, cy - 2].map(y => ({ value: y.toString(), label: y.toString() }));
@@ -237,7 +283,12 @@ export default function AdminFinance() {
                         <p className="text-sm font-black text-gray-900">${Number(header.total_cost).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                         <p className="text-[10px] font-bold text-gray-400 uppercase">{header.booking_count} sessions</p>
                       </div>
-                      <Button variant="ghost" size="icon" className="rounded-xl text-gray-300 hover:text-emerald-600">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-xl text-gray-300 hover:text-emerald-600"
+                        onClick={() => handleDownload(header)}
+                      >
                         <Download className="h-4 w-4" />
                       </Button>
                     </div>
