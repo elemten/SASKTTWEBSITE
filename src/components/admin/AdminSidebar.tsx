@@ -79,7 +79,7 @@ export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onN
                 {/* Active indicator - green pill behind content */}
                 {(location.pathname === item.href || (item.href === "/admin" && location.pathname === "/admin")) && (
                   <motion.div
-                    layoutId="activeTab"
+                    layoutId={isMobile ? "mobileActiveTab" : "activeTab"}
                     className="absolute inset-0 bg-emerald-50 rounded-2xl border border-emerald-100/50"
                     transition={{
                       type: "spring",

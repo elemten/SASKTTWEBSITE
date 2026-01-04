@@ -15,7 +15,6 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { auth } from "@/lib/auth";
 import { GlobalSearch, useGlobalSearch } from "./GlobalSearch";
-import { MobileAdminMode } from "./MobileAdminMode";
 
 export const AdminTopBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,16 +43,6 @@ export const AdminTopBar = () => {
   return (
     <header className="glass border-b border-border/50 px-6 py-3">
       <div className="flex items-center justify-between">
-        {/* Branding - Hidden on mobile, shown on desktop */}
-        <div className="flex items-center gap-3 lg:hidden">
-          <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
-            <img
-              src="/logo.png"
-              alt="TTSASK"
-              className="w-full h-full object-contain"
-            />
-          </div>
-        </div>
 
         {/* Search */}
         <div className="flex items-center gap-4 flex-1 max-w-sm ml-auto mr-4">

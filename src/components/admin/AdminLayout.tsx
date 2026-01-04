@@ -1,9 +1,10 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminTopBar } from "./AdminTopBar";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useLocation } from "react-router-dom";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -11,6 +12,12 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Automatically close sidebar on any route change (handles hardware back button too)
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-green-50 flex overflow-x-hidden">
@@ -34,16 +41,21 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="h-full relative overflow-y-auto">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-4 right-4 z-50 text-gray-400 hover:text-emerald-600 rounded-xl"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <X className="h-6 w-6" />
-          </Button>
-          <AdminSidebar isMobile onNavigate={() => setIsMobileMenuOpen(false)} />
+        <div className="h-full flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b border-gray-50">
+            <span className="text-xs font-black text-emerald-600 uppercase tracking-widest px-2">Menu</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-gray-400 hover:text-emerald-600 rounded-xl"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <AdminSidebar isMobile onNavigate={() => setIsMobileMenuOpen(false)} />
+          </div>
         </div>
       </div>
 
