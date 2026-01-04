@@ -48,7 +48,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Visual Build Verifier - Proof of Update */}
       {showVerifier && (
         <div className="fixed top-0 left-0 right-0 z-[100] bg-emerald-600 text-white text-[10px] font-black py-1 text-center animate-pulse uppercase tracking-[0.3em]">
-          UI Engine v2.0 Live - {new Date().toLocaleTimeString()}
+          UI Engine v2.1 Live - {new Date().toLocaleTimeString()}
         </div>
       )}
 
