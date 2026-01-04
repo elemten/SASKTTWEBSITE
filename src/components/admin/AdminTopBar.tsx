@@ -42,32 +42,28 @@ export const AdminTopBar = () => {
   };
 
   return (
-    <header className="glass border-b border-border/50 px-6 py-4">
+    <header className="glass border-b border-border/50 px-6 py-3">
       <div className="flex items-center justify-between">
-        {/* Branding */}
-        <div className="flex items-center gap-4 mr-8">
-          <div className="w-10 h-10 rounded-lg overflow-hidden shadow-sm">
+        {/* Branding - Hidden on mobile, shown on desktop */}
+        <div className="flex items-center gap-3 lg:hidden">
+          <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0">
             <img
               src="/logo.png"
-              alt="Table Tennis Saskatchewan logo"
+              alt="TTSASK"
               className="w-full h-full object-contain"
             />
-          </div>
-          <div className="hidden md:block">
-            <h1 className="text-lg font-semibold text-foreground">Admin Panel</h1>
-            <p className="text-xs text-muted-foreground">Table Tennis Saskatchewan</p>
           </div>
         </div>
 
         {/* Search */}
-        <div className="flex items-center gap-4 flex-1 max-w-md">
+        <div className="flex items-center gap-4 flex-1 max-w-sm ml-auto mr-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search members, clubs, invoices..."
+              placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 glass border-border/50 focus:border-primary/50 transition-all duration-200"
+              className="pl-10 h-9 bg-gray-50/50 border-gray-100 focus:bg-white focus:border-emerald-200 transition-all duration-200 rounded-xl"
             />
           </div>
         </div>

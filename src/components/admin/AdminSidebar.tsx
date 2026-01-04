@@ -14,12 +14,12 @@ export const AdminSidebar = () => {
 
   return (
     <div className={cn(
-      "h-full bg-white border-r border-gray-200 flex flex-col transition-all duration-300",
+      "h-full bg-white border-r border-gray-100 flex flex-col transition-all duration-300",
       collapsed ? "w-16" : "w-64"
     )}>
       {/* Header */}
       <div className="px-4 py-5 border-b border-gray-100">
-        <motion.div 
+        <motion.div
           className="flex items-center gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -61,12 +61,12 @@ export const AdminSidebar = () => {
                   "group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg",
                   "text-left font-medium text-sm transition-all duration-200 ease-out",
                   "focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:ring-offset-1",
-                  
+
                   // Default state - subtle hover
                   location.pathname === item.href || (item.href === "/admin" && location.pathname === "/admin")
-                    ? "bg-green-100 text-green-800 shadow-sm" 
-                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
-                  
+                    ? "text-emerald-700 font-bold"
+                    : "text-gray-400 hover:text-gray-900 group-hover:translate-x-1",
+
                   // Apple-like hover effect - only on individual items
                   "hover:scale-[1.02] active:scale-[0.98]",
                   "motion-reduce:hover:scale-100 motion-reduce:active:scale-100"
@@ -77,7 +77,7 @@ export const AdminSidebar = () => {
                 {(location.pathname === item.href || (item.href === "/admin" && location.pathname === "/admin")) && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-green-100 rounded-lg"
+                    className="absolute inset-0 bg-emerald-50 rounded-2xl border border-emerald-100/50"
                     transition={{
                       type: "spring",
                       stiffness: 500,
@@ -85,24 +85,23 @@ export const AdminSidebar = () => {
                     }}
                   />
                 )}
-                
-                {/* Icon */}
-                <item.icon 
+
+                <item.icon
                   className={cn(
                     "h-5 w-5 flex-shrink-0 transition-colors duration-200 relative z-10",
                     location.pathname === item.href || (item.href === "/admin" && location.pathname === "/admin")
-                      ? "text-green-700" 
-                      : "text-gray-500 group-hover:text-gray-700"
-                  )} 
+                      ? "text-emerald-600"
+                      : "text-gray-400 group-hover:text-gray-600"
+                  )}
                 />
-                
+
                 {/* Label */}
                 {!collapsed && (
                   <span className={cn(
-                    "truncate transition-colors duration-200 relative z-10",
+                    "truncate transition-colors duration-200 relative z-10 text-sm font-medium",
                     location.pathname === item.href || (item.href === "/admin" && location.pathname === "/admin")
-                      ? "text-green-800" 
-                      : "text-gray-700 group-hover:text-gray-900"
+                      ? "text-emerald-900 font-semibold"
+                      : "text-gray-500"
                   )}>
                     {item.label}
                   </span>
@@ -113,7 +112,7 @@ export const AdminSidebar = () => {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="ml-auto w-2 h-2 bg-green-600 rounded-full relative z-10"
+                    className="ml-auto w-1.5 h-1.5 bg-emerald-600 rounded-full relative z-10"
                     transition={{
                       type: "spring",
                       stiffness: 500,

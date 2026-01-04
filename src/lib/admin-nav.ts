@@ -1,14 +1,9 @@
 import {
   LayoutDashboard,
   Users,
-  Building2,
   Trophy,
-  Calendar,
-  BarChart3,
-  DollarSign,
-  Award,
-  UserCheck,
-  Activity
+  Activity,
+  DollarSign
 } from "lucide-react";
 
 export interface AdminNavItem {
@@ -27,33 +22,9 @@ export const ADMIN_NAV: AdminNavItem[] = [
   },
   {
     id: "members",
-    label: "Members",
+    label: "Memberships",
     icon: Users,
     href: "/admin/members"
-  },
-  {
-    id: "memberships",
-    label: "Memberships",
-    icon: UserCheck,
-    href: "/admin/memberships"
-  },
-  {
-    id: "clubs",
-    label: "Clubs",
-    icon: Building2,
-    href: "/admin/clubs"
-  },
-  {
-    id: "clinics",
-    label: "Clinics",
-    icon: Calendar,
-    href: "/admin/clinics"
-  },
-  {
-    id: "sped",
-    label: "SPED",
-    icon: Activity,
-    href: "/admin/sped"
   },
   {
     id: "tournaments",
@@ -62,23 +33,17 @@ export const ADMIN_NAV: AdminNavItem[] = [
     href: "/admin/tournaments"
   },
   {
+    id: "sped",
+    label: "SPED",
+    icon: Activity,
+    href: "/admin/sped"
+  },
+  {
     id: "finance",
     label: "Finance",
     icon: DollarSign,
     href: "/admin/finance"
-  },
-  {
-    id: "map-grants",
-    label: "MAP Grants",
-    icon: Award,
-    href: "/admin/map-grants"
-  },
-  {
-    id: "reports",
-    label: "Reports",
-    icon: BarChart3,
-    href: "/admin/reports"
-  },
+  }
 ];
 
 export type AdminSection =
