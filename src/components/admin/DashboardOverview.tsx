@@ -194,26 +194,25 @@ export const DashboardOverview = () => {
       className="space-y-8 max-w-7xl mx-auto"
     >
       {/* Apple-style Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-black">
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-black uppercase italic">
             Overview
           </h1>
-          <p className="text-gray-400 text-sm font-semibold uppercase tracking-widest">
-            TTSASK Command Center
+          <p className="text-gray-400 text-[10px] md:text-sm font-bold uppercase tracking-[0.2em]">
+            Command Center
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2 md:gap-3">
           {quickActions.map((action) => (
-            <Button
+            <button
               key={action.label}
-              variant="outline"
               onClick={action.onClick}
-              className={`flex items-center gap-2 rounded-2xl border px-5 py-5 font-bold text-sm transition-all duration-300 hover:shadow-sm hover:scale-[1.02] active:scale-[0.98] ${action.color}`}
+              className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 font-black text-[10px] md:text-sm uppercase tracking-wider transition-all duration-300 hover:shadow-sm hover:scale-[1.02] active:scale-[0.98] ${action.color}`}
             >
-              <action.icon className="h-4 w-4" />
+              <action.icon className="h-3.5 w-3.5 md:h-4 md:w-4" />
               <span>{action.label}</span>
-            </Button>
+            </button>
           ))}
         </div>
       </div>
@@ -428,20 +427,20 @@ export const DashboardOverview = () => {
 };
 
 const StatsCard = ({ title, value, icon: Icon, subtitle, activeIn, isYellow }: any) => (
-  <Card className="border-none shadow-none bg-white overflow-hidden rounded-3xl hover:shadow-sm transition-all group cursor-default border border-gray-100">
-    <CardContent className="p-6">
-      <div className="flex flex-col gap-5">
+  <Card className="border-none shadow-none bg-white overflow-hidden rounded-[2rem] hover:shadow-sm transition-all group cursor-default border border-gray-100">
+    <CardContent className="p-5 md:p-6">
+      <div className="flex flex-col gap-4 md:gap-5">
         <div className="flex items-start justify-between">
-          <div className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all ${isYellow ? 'bg-yellow-50 text-yellow-600' : 'bg-gray-50 text-gray-400 group-hover:bg-emerald-50 group-hover:text-emerald-600'}`}>
-            <Icon className="h-5 w-5" />
+          <div className={`h-10 w-10 md:h-11 md:w-11 rounded-xl flex items-center justify-center transition-all ${isYellow ? 'bg-yellow-50 text-yellow-600' : 'bg-gray-50 text-gray-400 group-hover:bg-emerald-50 group-hover:text-emerald-600'}`}>
+            <Icon className="h-4 w-4 md:h-5 md:w-5" />
           </div>
           {activeIn && <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-sm animate-pulse" />}
         </div>
         <div>
-          <h3 className="text-3xl font-bold tracking-tight text-black mb-1">{value}</h3>
+          <h3 className="text-2xl md:text-3xl font-black tracking-tighter text-black mb-0.5">{value}</h3>
           <div className="space-y-0.5">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{title}</p>
-            {subtitle && <p className="text-xs font-medium text-gray-400">{subtitle}</p>}
+            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{title}</p>
+            {subtitle && <p className="text-[10px] font-bold text-gray-300">{subtitle}</p>}
           </div>
         </div>
       </div>

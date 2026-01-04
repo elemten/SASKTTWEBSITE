@@ -28,7 +28,6 @@ export default function AdminFinance() {
   const [invoiceHeaders, setInvoiceHeaders] = useState<InvoiceHeader[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
-  const [downloading, setDownloading] = useState<string | null>(null);
   const [summaryData, setSummaryData] = useState({
     revenueToDate: 0,
     bookingsToDate: 0,
@@ -58,25 +57,25 @@ export default function AdminFinance() {
 
         // Revenue to this date (Total sum of all sessions up to and including today)
         const revenueToDate = bookings
-          .filter(b => b.booking_date && (isBefore(parseISO(b.booking_date), now) || isSameDay(parseISO(b.booking_date), now)))
-          .reduce((sum, b) => sum + (Number(b.total_cost) || 0), 0);
+          .filter((b: any) => b.booking_date && (isBefore(parseISO(b.booking_date), now) || isSameDay(parseISO(b.booking_date), now)))
+          .reduce((sum: number, b: any) => sum + (Number(b.total_cost) || 0), 0);
 
         // Bookings till this date (Total count of sessions up to and including today)
         const bookingsToDate = bookings
-          .filter(b => b.booking_date && (isBefore(parseISO(b.booking_date), now) || isSameDay(parseISO(b.booking_date), now)))
+          .filter((b: any) => b.booking_date && (isBefore(parseISO(b.booking_date), now) || isSameDay(parseISO(b.booking_date), now)))
           .length;
 
         // Revenue by current month
         const currentMonthStart = startOfMonth(now);
         const currentMonthRevenue = bookings
-          .filter(b => b.booking_date && format(parseISO(b.booking_date), 'yyyy-MM') === format(currentMonthStart, 'yyyy-MM'))
-          .reduce((sum, b) => sum + (Number(b.total_cost) || 0), 0);
+          .filter((b: any) => b.booking_date && format(parseISO(b.booking_date), 'yyyy-MM') === format(currentMonthStart, 'yyyy-MM'))
+          .reduce((sum: number, b: any) => sum + (Number(b.total_cost) || 0), 0);
 
         setSummaryData({
           revenueToDate,
           bookingsToDate,
           currentMonthRevenue,
-          totalAllTime: bookings.reduce((sum, b) => sum + (Number(b.total_cost) || 0), 0)
+          totalAllTime: bookings.reduce((sum: number, b: any) => sum + (Number(b.total_cost) || 0), 0)
         });
 
         // Load the list for current month
@@ -144,12 +143,12 @@ export default function AdminFinance() {
   return (
     <AdminLayout>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 max-w-7xl mx-auto px-4 md:px-0">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
           <div className="space-y-1">
-            <h1 className="text-3xl font-black tracking-tight text-gray-900 italic uppercase">Finance</h1>
-            <p className="text-emerald-600 text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-gray-900 italic uppercase">Finance</h1>
+            <p className="text-emerald-600 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-2">
               <Database className="h-3 w-3" />
-              Live Database Calculations
+              Live Calculations
             </p>
           </div>
         </div>
