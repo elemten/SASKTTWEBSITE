@@ -22,6 +22,7 @@ const AdminMemberships = lazy(() => import("./pages/admin/Memberships"));
 const AdminClubs = lazy(() => import("./pages/admin/Clubs"));
 const AdminClinics = lazy(() => import("./pages/admin/Clinics"));
 const AdminSPED = lazy(() => import("./pages/admin/SPED"));
+const AdminSPEDAvailability = lazy(() => import("./pages/admin/SPEDAvailability"));
 const AdminTournaments = lazy(() => import("./pages/admin/Tournaments"));
 const AdminFinance = lazy(() => import("./pages/admin/Finance"));
 const AdminMapGrants = lazy(() => import("./pages/admin/MapGrants"));
@@ -238,6 +239,7 @@ const App = () => {
                   <Route path="/admin/clubs" element={<AuthGuard><AdminClubs /></AuthGuard>} />
                   <Route path="/admin/clinics" element={<AuthGuard><AdminClinics /></AuthGuard>} />
                   <Route path="/admin/sped" element={<AuthGuard><AdminSPED /></AuthGuard>} />
+                  <Route path="/admin/sped-availability" element={<AuthGuard><AdminSPEDAvailability /></AuthGuard>} />
                   <Route path="/admin/tournaments" element={<AuthGuard><AdminTournaments /></AuthGuard>} />
                   <Route path="/admin/finance" element={<AuthGuard><AdminFinance /></AuthGuard>} />
                   <Route path="/admin/map-grants" element={<AuthGuard><AdminMapGrants /></AuthGuard>} />

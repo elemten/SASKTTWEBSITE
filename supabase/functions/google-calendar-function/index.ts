@@ -1,18 +1,22 @@
-// Deno imports - Supabase Edge Functions
+
+// Supabase Edge Function (Deno)
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const CALENDAR_ID =
   Deno.env.get("GOOGLE_CALENDAR_ID") ??
   "c_04d6de5f15712c0334d1c5112ed7e9072a57454eb202d464f3f7dca5c427a961@group.calendar.google.com";
+
 const SERVICE_ACCOUNT_EMAIL =
   Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL") ??
   "ttsask-calendar-booking@n8nworkflows-469621.iam.gserviceaccount.com";
-const PRIVATE_KEY = Deno.env.get("GOOGLE_PRIVATE_KEY") ?? "";
 
+const PRIVATE_KEY = Deno.env.get("GOOGLE_PRIVATE_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+// Service role client (full access) to read/write bookings
+const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,21 +24,22 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, x-client-info, apikey",
 };
 
-// ---------- GOOGLE AUTH ----------
+// --- GOOGLE AUTH HELPERS ---
+
 async function generateJWT() {
   if (!PRIVATE_KEY) throw new Error("Google Private Key not configured");
-
   const now = Math.floor(Date.now() / 1000);
+
+  const header = { alg: "RS256", typ: "JWT" };
   const payload = {
     iss: SERVICE_ACCOUNT_EMAIL,
     scope: "https://www.googleapis.com/auth/calendar",
     aud: "https://oauth2.googleapis.com/token",
     iat: now,
     exp: now + 3600,
-    sub: "info@ttsask.ca", // Domain-wide delegation user
+    sub: "info@ttsask.ca",
   };
 
-  const header = { alg: "RS256", typ: "JWT" };
   const encodedHeader = btoa(JSON.stringify(header));
   const encodedPayload = btoa(JSON.stringify(payload));
   const signatureInput = `${encodedHeader}.${encodedPayload}`;
@@ -52,13 +57,13 @@ async function generateJWT() {
     keyData,
     { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
     false,
-    ["sign"],
+    ["sign"]
   );
 
   const signature = await crypto.subtle.sign(
     "RSASSA-PKCS1-v1_5",
     privateKey,
-    new TextEncoder().encode(signatureInput),
+    new TextEncoder().encode(signatureInput)
   );
 
   const encodedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)));
@@ -67,7 +72,7 @@ async function generateJWT() {
 
 async function getAccessToken() {
   const jwt = await generateJWT();
-  const res = await fetch("https://oauth2.googleapis.com/token", {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -76,86 +81,82 @@ async function getAccessToken() {
     }),
   });
 
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(`Failed to get access token: ${res.status} - ${t}`);
+  if (!response.ok) {
+    const txt = await response.text();
+    throw new Error(`OAuth token error: ${response.status} ${txt}`);
   }
 
-  const data = await res.json();
+  const data = await response.json();
   return data.access_token as string;
 }
 
-// ---------- SLOTS ----------
+// --- BOOKING LOGIC ---
+
 function getDefaultTimeSlots(date: Date) {
-  const dayOfWeek = date.getDay();
+  const day = date.getDay();
   const slots: any[] = [];
 
-  if (dayOfWeek === 1) {
+  if (day === 1) {
     slots.push({ time: "11:00", display: "11:00 AM - 12:00 PM (60 min)", available: true, duration: 60 });
-  } else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
+  } else if (day >= 2 && day <= 4) {
     slots.push(
       { time: "11:20", display: "11:20 AM - 12:20 PM (60 min)", available: true, duration: 60 },
-      { time: "12:45", display: "12:45 PM - 1:45 PM (60 min)", available: true, duration: 60 },
+      { time: "12:45", display: "12:45 PM - 1:45 PM (60 min)", available: true, duration: 60 }
     );
-  } else if (dayOfWeek === 5) {
+  } else if (day === 5) {
     slots.push(
       { time: "11:00", display: "11:00 AM - 12:00 PM (60 min)", available: true, duration: 60 },
       { time: "12:00", display: "12:00 PM - 1:00 PM (60 min)", available: true, duration: 60 },
       { time: "13:00", display: "1:00 PM - 2:00 PM (60 min)", available: true, duration: 60 },
       { time: "14:00", display: "2:00 PM - 3:00 PM (60 min)", available: true, duration: 60 },
-      { time: "15:00", display: "3:00 PM - 4:00 PM (60 min)", available: true, duration: 60 },
+      { time: "15:00", display: "3:00 PM - 4:00 PM (60 min)", available: true, duration: 60 }
     );
   }
 
   return slots;
 }
 
-async function getAvailableSlots(date: string) {
-  try {
-    const accessToken = await getAccessToken();
+// Source of truth: DATABASE (confirmed, pending, blocked)
+async function getAvailableSlots(dateStr: string) {
+  const defaultSlots = getDefaultTimeSlots(new Date(dateStr));
 
-    const startOfDay = `${date}T00:00:00-06:00`;
-    const endOfDay = `${date}T23:59:59-06:00`;
+  const { data: booked, error } = await supabaseAdmin
+    .from("confirmed_bookings")
+    .select("id, booking_time_start, booking_time_end, status")
+    .eq("booking_date", dateStr)
+    // We treat 'blocked' just like 'confirmed' or 'pending' - it takes up the slot
+    .in("status", ["pending", "confirmed", "blocked"]);
 
-    const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?timeMin=${encodeURIComponent(startOfDay)}&timeMax=${encodeURIComponent(endOfDay)}&singleEvents=true&orderBy=startTime`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
-    );
-
-    if (!response.ok) throw new Error(`Calendar API error: ${response.statusText}`);
-
-    const data = await response.json();
-    const bookedEvents = data.items || [];
-
-    const defaults = getDefaultTimeSlots(new Date(date));
-
-    return defaults.map((slot) => {
-      const slotStart = new Date(`${date}T${slot.time}:00-06:00`);
-      const slotEnd = new Date(slotStart.getTime() + (slot.duration ?? 60) * 60 * 1000);
-
-      const isBooked = bookedEvents.some((ev: any) => {
-        const es = new Date(ev.start.dateTime || ev.start.date);
-        const ee = new Date(ev.end.dateTime || ev.end.date);
-        return slotStart < ee && slotEnd > es;
-      });
-
-      return { ...slot, available: !isBooked };
-    });
-  } catch (_e) {
-    return getDefaultTimeSlots(new Date(date));
+  if (error) {
+    console.error("DB read error:", error);
+    return defaultSlots; // fallback
   }
+
+  const bookedStarts = new Set((booked ?? []).map((b: any) => String(b.booking_time_start).slice(0, 5)));
+
+  return defaultSlots.map((s) => {
+    const bookingMatch = (booked ?? []).find((b: any) => String(b.booking_time_start).slice(0, 5) === s.time);
+
+    return {
+      ...s,
+      available: !bookingMatch,
+      status: bookingMatch?.status || 'available',
+      bookingId: bookingMatch?.id // Need this to delete "real" bookings
+    };
+  });
 }
 
-// ---------- BOOKING ----------
-async function createGoogleEvent(booking: any, accessToken: string) {
-  const icalUid = `sped-${booking.booking_date}-${booking.booking_time_start}-${booking.booking_time_end}@ttsask.ca`;
+async function createGoogleEvent(booking: any, bookingRowId: string) {
+  const accessToken = await getAccessToken();
+
+  // UNIQUE per booking row
+  const iCalUID = `sped-${bookingRowId}@ttsask.ca`;
 
   const slotSummary =
-    booking.selected_slots?.map((s: any) => `${s.time} (${s.duration} min)`).join(", ") ??
-    "Custom time slots";
+    booking.selected_slots?.map((slot: any) => `${slot.time} (${slot.duration} min)`).join(", ") ?? "Custom";
 
   const eventData = {
-    iCalUID: icalUid,
+    iCalUID,
     summary: `SPED Class - ${booking.teacher_first_name} ${booking.teacher_last_name}`,
     description:
       `SPED Class Booking\n\n` +
@@ -164,9 +165,9 @@ async function createGoogleEvent(booking: any, accessToken: string) {
       `Email: ${booking.teacher_email}\n` +
       `Phone: ${booking.teacher_phone}\n` +
       `Students: ${booking.number_of_students}\n` +
-      `Grade: ${booking.grade_level}\n` +
-      `Preferred Coach: ${booking.preferred_coach}\n` +
-      `Special Requirements: ${booking.special_requirements}\n` +
+      `Grade: ${booking.grade_level ?? ""}\n` +
+      `Preferred Coach: ${booking.preferred_coach ?? ""}\n` +
+      `Special Requirements: ${booking.special_requirements ?? ""}\n` +
       `Selected Slots: ${slotSummary}\n` +
       `Total Minutes: ${booking.total_minutes}\n` +
       `Total Cost: $${booking.total_cost}`,
@@ -189,25 +190,17 @@ async function createGoogleEvent(booking: any, accessToken: string) {
     },
   };
 
-  const res = await fetch(
-    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?sendUpdates=all`,
-    {
-      method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify(eventData),
-    },
-  );
-
-  // If Google says duplicate iCalUID, treat it as DOUBLE_BOOKED (someone already created it)
-  if (res.status === 409) {
-    const t = await res.text();
-    console.error("Google duplicate iCalUID:", t);
-    throw new Error("DOUBLE_BOOKED");
-  }
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?sendUpdates=all`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify(eventData),
+  });
 
   if (!res.ok) {
-    const t = await res.text();
-    throw new Error(`GOOGLE_CREATE_FAILED: ${res.status} ${t}`);
+    const txt = await res.text();
+    console.error("Google Calendar create error:", txt);
+    throw new Error(`GOOGLE_CREATE_FAILED`);
   }
 
   const ev = await res.json();
@@ -215,8 +208,8 @@ async function createGoogleEvent(booking: any, accessToken: string) {
 }
 
 async function bookSlot(booking: any) {
-  // 1) Try to reserve slot in DB FIRST (this is the lock)
-  const { data: inserted, error: insertErr } = await supabase
+  // 1) Insert in DB. Unique index prevents double booking against blocked slots too.
+  const { data: inserted, error: insertErr } = await supabaseAdmin
     .from("confirmed_bookings")
     .insert([{
       teacher_first_name: booking.teacher_first_name,
@@ -241,46 +234,188 @@ async function bookSlot(booking: any) {
       total_minutes: booking.total_minutes,
       selected_slots: booking.selected_slots,
       school_system: booking.school_system,
-      status: "confirmed", // must match your CHECK constraint
+      status: "pending",
     }])
     .select("id")
     .single();
 
   if (insertErr) {
-    // Duplicate slot => already booked
-    // PostgREST error codes vary, but "23505" is common in logs
-    if ((insertErr as any).code === "23505") throw new Error("DOUBLE_BOOKED");
-    throw new Error(`DB_INSERT_FAILED: ${insertErr.message}`);
+    const msg = String(insertErr.message || "");
+    const code = (insertErr as any).code;
+
+    if (code === "23505" || msg.includes("duplicate key value") || msg.includes("unique constraint")) {
+      throw new Error("DOUBLE_BOOKED");
+    }
+
+    console.error("DB insert error:", insertErr);
+    throw new Error("DB_INSERT_FAILED");
   }
 
-  // 2) Create Google event
-  const accessToken = await getAccessToken();
+  const bookingId = inserted.id as string;
+
   try {
-    const { eventId, eventLink } = await createGoogleEvent(booking, accessToken);
+    const { eventId, eventLink } = await createGoogleEvent(booking, bookingId);
 
-    // 3) Save event info back to DB row
-    await supabase
+    const { error: updErr } = await supabaseAdmin
       .from("confirmed_bookings")
-      .update({ google_calendar_event_id: eventId, google_calendar_link: eventLink })
-      .eq("id", inserted.id);
+      .update({
+        google_calendar_event_id: eventId,
+        google_calendar_link: eventLink,
+        status: "confirmed",
+      })
+      .eq("id", bookingId);
 
-    return { success: true, eventId, eventLink };
+    if (updErr) {
+      console.error("DB update error:", updErr);
+    }
+
+    return { eventId, eventLink };
   } catch (e) {
-    // If Google fails, rollback DB reservation so slot becomes available again
-    await supabase.from("confirmed_bookings").delete().eq("id", inserted.id);
+    await supabaseAdmin.from("confirmed_bookings").delete().eq("id", bookingId);
     throw e;
   }
 }
 
-// ---------- MAIN ----------
+// --- ADMIN BLOCKING LOGIC ---
+
+async function verifyAdmin(authHeader: string | null) {
+  if (!authHeader) throw new Error("Missing Authorization header");
+
+  const token = authHeader.replace("Bearer ", "");
+  const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+
+  if (error || !user) throw new Error("Invalid token");
+
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") {
+    throw new Error("UNAUTHORIZED: Admin access required");
+  }
+
+  return user.id;
+}
+
+// Block a slot (DB only, no Google Event)
+async function blockSlot(booking: any, userId: string) {
+  const { data: inserted, error } = await supabaseAdmin
+    .from("confirmed_bookings")
+    .insert([{
+      // Minimal required fields for the table constraint
+      teacher_first_name: "BLOCKED",
+      teacher_last_name: "BLOCKED",
+      teacher_email: "blocked@ttsask.ca",
+      teacher_phone: "000-000-0000",
+      school_name: "BLOCKED",
+      school_address_line1: "BLOCKED",
+      school_city: "BLOCKED",
+      school_province: "SK",
+      school_postal_code: "000 000",
+
+      booking_date: booking.booking_date,
+      booking_time_start: booking.booking_time_start,
+      booking_time_end: booking.booking_time_end,
+
+      number_of_students: 0,
+      total_cost: 0,
+
+      status: "blocked",
+      blocked_reason: booking.blocked_reason,
+      blocked_by: userId
+    }])
+    .select("id")
+    .single();
+
+  if (error) {
+    const msg = String(error.message || "");
+    const code = (error as any).code;
+    if (code === "23505" || msg.includes("duplicate")) {
+      throw new Error("SLOT_ALREADY_TAKEN");
+    }
+    throw new Error(`BLOCK_FAILED: ${error.message}`);
+  }
+
+  return { id: inserted.id };
+}
+
+// Unblock a slot
+async function unblockSlot(booking: any) {
+  const { error } = await supabaseAdmin
+    .from("confirmed_bookings")
+    .delete()
+    .match({
+      booking_date: booking.booking_date,
+      booking_time_start: booking.booking_time_start,
+      status: "blocked" // Safety: only delete blocked rows, never real bookings
+    });
+
+  if (error) throw new Error(`UNBLOCK_FAILED: ${error.message}`);
+  return { success: true };
+}
+
+
+// Cancel a real booking (DB + Google Event)
+async function deleteBooking(bookingId: string) {
+  // 1. Get booking details to find Google Event ID
+  const { data: booking, error: fetchError } = await supabaseAdmin
+    .from("confirmed_bookings")
+    .select("google_calendar_event_id")
+    .eq("id", bookingId)
+    .single();
+
+  if (fetchError) throw new Error(`FETCH_FAILED: ${fetchError.message}`);
+  if (!booking) throw new Error("BOOKING_NOT_FOUND");
+
+  // 2. Delete from Google Calendar (if event exists)
+  if (booking.google_calendar_event_id) {
+    try {
+      const accessToken = await getAccessToken();
+      const res = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events/${booking.google_calendar_event_id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (!res.ok && res.status !== 404 && res.status !== 410) {
+        // Ignore 404/410 (already deleted)
+        const txt = await res.text();
+        console.error("Google delete error:", txt);
+        // We continue to delete from DB even if Google fails, or throw? 
+        // Usually better to ensure DB is clean. 
+      }
+    } catch (e) {
+      console.error("Google delete exception:", e);
+    }
+  }
+
+  // 3. Delete from DB
+  const { error: deleteError } = await supabaseAdmin
+    .from("confirmed_bookings")
+    .delete()
+    .eq("id", bookingId);
+
+  if (deleteError) throw new Error(`DELETE_FAILED: ${deleteError.message}`);
+
+  return { success: true };
+}
+
+
+// --- MAIN HANDLER ---
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
   try {
-    const { action, date, booking } = await req.json();
+    const { action, date, booking, bookingId } = await req.json();
 
+    // Public Action: Check availability
     if (action === "getSlots") {
       const slots = await getAvailableSlots(date);
       return new Response(JSON.stringify({ success: true, slots }), {
@@ -289,11 +424,48 @@ serve(async (req) => {
       });
     }
 
+    // Public Action: Book (DB + Google)
     if (action === "bookSlot") {
-      const result = await bookSlot(booking);
-      return new Response(JSON.stringify({ ...result, message: "Booking confirmed" }), {
+      const { eventId, eventLink } = await bookSlot(booking);
+      return new Response(JSON.stringify({
+        success: true,
+        eventId,
+        eventLink,
+        message: "Booking confirmed",
+      }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Admin Action: Block
+    if (action === "blockSlot") {
+      const userId = await verifyAdmin(req.headers.get("Authorization"));
+      await blockSlot(booking, userId);
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    // Admin Action: Unblock
+    if (action === "unblockSlot") {
+      await verifyAdmin(req.headers.get("Authorization"));
+      await unblockSlot(booking);
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    // Admin Action: Delete Booking
+    if (action === "deleteBooking") {
+      await verifyAdmin(req.headers.get("Authorization"));
+      if (!bookingId) throw new Error("Missing bookingId");
+      await deleteBooking(bookingId);
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
@@ -301,22 +473,22 @@ serve(async (req) => {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (error: any) {
-    console.error("Edge function error:", error);
+  } catch (err: any) {
+    console.error("Edge function error:", err);
 
-    if (error.message === "DOUBLE_BOOKED") {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          code: "DOUBLE_BOOKED",
-          error: "This time slot was just booked by another teacher. Please pick another available time.",
-        }),
-        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    const status =
+      err.message === "UNAUTHORIZED" ? 401 :
+        err.message === "DOUBLE_BOOKED" || err.message === "SLOT_ALREADY_TAKEN" ? 409 :
+          500;
 
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500,
+    return new Response(JSON.stringify({
+      success: false,
+      code: err.message,
+      error: err.message === "DOUBLE_BOOKED"
+        ? "This time slot was just booked by another teacher."
+        : err.message
+    }), {
+      status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

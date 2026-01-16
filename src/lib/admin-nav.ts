@@ -3,7 +3,8 @@ import {
   Users,
   Trophy,
   Activity,
-  DollarSign
+  DollarSign,
+  CalendarRange,
 } from "lucide-react";
 
 export interface AdminNavItem {
@@ -37,6 +38,12 @@ export const ADMIN_NAV: AdminNavItem[] = [
     label: "SPED",
     icon: Activity,
     href: "/admin/sped"
+  },
+  {
+    id: "sped-availability",
+    label: "Availability",
+    icon: CalendarRange,
+    href: "/admin/sped-availability"
   },
   {
     id: "finance",
