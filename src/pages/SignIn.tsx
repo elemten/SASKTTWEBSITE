@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/lib/supabase';
-import { auth } from '@/lib/auth';
+
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -35,12 +35,7 @@ export default function SignIn() {
         return;
       }
 
-      // If Supabase auth fails, try mock auth for local testing
-      const mockAuthSuccess = auth.signIn(email, password);
-      if (mockAuthSuccess) {
-        navigate('/admin');
-        return;
-      }
+
 
       // Both failed
       setError(signInError?.message || 'Invalid email or password');

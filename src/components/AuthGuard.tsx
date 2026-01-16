@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { auth } from '@/lib/auth';
+
 import { supabase } from '@/lib/supabase';
 
 interface AuthGuardProps {
@@ -24,12 +24,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
         return;
       }
 
-      // Fallback to mock auth for local testing
-      if (auth.isAuthenticated()) {
-        setIsAuthorized(true);
-        setIsChecking(false);
-        return;
-      }
+
 
       // Not authenticated - redirect to sign-in
       navigate('/sign-in', {

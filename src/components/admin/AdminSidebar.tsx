@@ -1,21 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ADMIN_NAV } from "@/lib/admin-nav";
-import { auth } from "@/lib/auth";
+
+import { supabase } from "@/lib/supabase";
 import logo from "@/assets/logo.png";
 
 export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onNavigate?: () => void }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setIsAdmin(true);
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleNavigate = (href: string) => {
     navigate(href);
     if (onNavigate) onNavigate();
+  };
+
+  const handleSignOut = async () => {
+    // 1. Sign out of Supabase
+    await supabase.auth.signOut();
+    // 2. Redirect
+    navigate('/sign-in');
   };
 
   return (
@@ -43,7 +62,13 @@ export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onN
             {!collapsed && (
               <div>
                 <h2 className="font-semibold text-gray-900">Admin Panel</h2>
-                <p className="text-xs text-gray-500">Table Tennis Saskatchewan</p>
+                <div className="flex items-center gap-1">
+                  {isAdmin && (
+                    <span className="flex items-center text-[10px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
+                      <Shield className="w-3 h-3 mr-1" /> Verified
+                    </span>
+                  )}
+                </div>
               </div>
             )}
           </motion.div>
@@ -135,10 +160,7 @@ export const AdminSidebar = ({ isMobile, onNavigate }: { isMobile?: boolean; onN
       {/* Sign Out - Bottom of Sidebar */}
       <div className="px-3 py-4 border-t border-gray-100">
         <button
-          onClick={() => {
-            auth.signOut();
-            navigate('/sign-in');
-          }}
+          onClick={handleSignOut}
           className={cn(
             "group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
             "text-red-500 hover:bg-red-50 active:scale-95",

@@ -60,7 +60,9 @@ export default function SPEDAvailability() {
         setError(null);
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) throw new Error("You must be logged in");
+            if (!session) {
+                throw new Error("You must be logged in");
+            }
 
             const dateStr = format(date, "yyyy-MM-dd");
 
@@ -102,7 +104,9 @@ export default function SPEDAvailability() {
         setError(null);
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) throw new Error("You must be logged in");
+            if (!session) {
+                throw new Error("You must be logged in");
+            }
 
             const dateStr = format(date, "yyyy-MM-dd");
 
@@ -141,7 +145,9 @@ export default function SPEDAvailability() {
         setError(null);
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) throw new Error("You must be logged in");
+            if (!session) {
+                throw new Error("You must be logged in");
+            }
 
             const payload = {
                 action: "deleteBooking",

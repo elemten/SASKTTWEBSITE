@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { auth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 
 export const AdminTopBar = () => {
   const [user, setUser] = useState<any>(null);
@@ -29,8 +29,8 @@ export const AdminTopBar = () => {
     });
   }, []);
 
-  const handleSignOut = () => {
-    auth.signOut();
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
     navigate('/sign-in');
   };
 

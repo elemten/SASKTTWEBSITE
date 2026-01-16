@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+.env.local
+.env
+
+# Strix security testing results
+strix_runs/
 
 # Editor directories and files
 .vscode/*
