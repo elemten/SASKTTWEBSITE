@@ -286,6 +286,13 @@ async function verifyAdmin(authHeader: string | null) {
 
   if (error || !user) throw new Error("Invalid token");
 
+  // Check if user is in permitted admin emails list (Fallback for simple setup)
+  const ALLOWED_ADMIN_EMAILS = ["info@ttsask.ca", "mark@ttsask.ca", "zion.office@sasktel.net"];
+  if (user.email && ALLOWED_ADMIN_EMAILS.includes(user.email)) {
+    return user.id;
+  }
+
+  // Otherwise check database role
   const { data: profile } = await supabaseAdmin
     .from("profiles")
     .select("role")
