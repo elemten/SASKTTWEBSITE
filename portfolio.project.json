@@ -1,0 +1,220 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-01-23T02:00:33Z",
+  "repo": {
+    "name": "sask-ping-shine-main",
+    "path": ".",
+    "is_mono_repo": false,
+    "primary_language": "TypeScript",
+    "other_languages": ["JavaScript", "HTML", "CSS", "SQL", "Markdown"],
+    "package_manager": "npm",
+    "has_tests": false,
+    "has_ci": true,
+    "has_docker": false
+  },
+  "project": {
+    "slug": "table-tennis-saskatchewan",
+    "title": "Table Tennis Saskatchewan Website and Admin Portal",
+    "category": "Full-Stack App",
+    "role": "IT Specialist & Full-Stack Developer (Project Lead)",
+    "status": "It is live",
+    "featured": true,
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "React Router",
+      "Tailwind CSS",
+      "Supabase",
+      "Postgres",
+      "RLS",
+      "Edge Functions",
+      "Stripe",
+      "Google Calendar API",
+      "Vercel"
+    ],
+    "dates": {
+      "start": "2025-08",
+      "end": "2025-12"
+    },
+    "one_liner": "Public website and admin portal for Table Tennis Saskatchewan with memberships, training signup, and SPED invoicing.",
+    "problem": [
+      "Needed a modern public site to present programs, events, and membership benefits for the provincial table tennis association.",
+      "Needed admin tooling to manage members, clubs, clinics, and SPED program operations, including invoicing.",
+      "Needed integrations for payments and scheduling without running a custom backend."
+    ],
+    "solution": [
+      "Built a Vite and React single-page site with program, events, and registration pages.",
+      "Implemented Supabase-backed forms and admin dashboards for membership, club, clinic, and finance workflows.",
+      "Added Supabase Edge Functions for Google Calendar availability, Stripe payment processing, and SPED invoice PDF generation."
+    ],
+    "features": [
+      "Public marketing pages for programs, events, clubs, coaching, and contact.",
+      "Membership registration form with validation and membership number generation for admins.",
+      "Training signup flow with member lookup and Stripe checkout links.",
+      "SPED program registration and booking workflows stored in Supabase.",
+      "Admin dashboard modules for members, clubs, clinics, SPED availability, tournaments, finance, and reports.",
+      "SPED invoice grouping via SQL RPC and on-demand PDF generation.",
+      "Route-level code splitting and manual chunking to reduce bundle size."
+    ],
+    "tech_stack": {
+      "frontend": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "React Router",
+        "Tailwind CSS",
+        "Radix UI",
+        "Framer Motion",
+        "TanStack Query"
+      ],
+      "backend": [
+        "Supabase Auth",
+        "Supabase Edge Functions (Deno)",
+        "Stripe API",
+        "Google Calendar API"
+      ],
+      "database": ["Supabase Postgres", "SQL RPC functions"],
+      "infra": ["Vercel", "Supabase"],
+      "tooling": [
+        "ESLint",
+        "Knip",
+        "Depcheck",
+        "ts-prune",
+        "Rollup Visualizer",
+        "Strix security scan (GitHub Actions)"
+      ]
+    },
+    "architecture": {
+      "overview": "Vite-powered React SPA with React Router for public and admin routes. Supabase provides auth and Postgres storage, while edge functions handle Google Calendar availability, Stripe payments, and SPED invoice PDFs. The app ships as a static build with Vercel SPA rewrites and static assets in public.",
+      "components": [
+        "Public site pages and sections (home, membership, training, clubs, events, gallery, contact)",
+        "Registration flows for members, clubs, training, and SPED programs",
+        "Admin dashboard modules for members, clubs, clinics, tournaments, finance, and reports",
+        "Supabase Edge Functions for Google Calendar availability, Stripe webhooks, and PDF invoicing",
+        "Supabase database schema, RPCs, and role profiles"
+      ],
+      "data_flow": [
+        "Public forms submit to Supabase tables via the supabase-js client.",
+        "Admin finance page calls `get_sped_invoice_headers` RPC and invokes `sped-invoice-pdf` to download invoices.",
+        "Google Calendar edge function reads calendar events to calculate available booking slots.",
+        "Stripe checkout and webhook flows record provincial payments and update member status in Supabase."
+      ]
+    },
+    "security_reliability": {
+      "security": [
+        "Admin routes require a Supabase session check in `AuthGuard`.",
+        "SPED invoice edge function verifies user JWT and role before using service role access.",
+        "Secrets for Supabase, Stripe, and Google Calendar are configured via environment variables.",
+        "Profiles table enables role data with RLS policies."
+      ],
+      "reliability": [
+        "Route lazy loading with Suspense fallback and an error boundary for route failures.",
+        "Low-end device optimizations disable heavy animations and reduce effects.",
+        "Manual chunking strategy reduces large bundle sizes."
+      ],
+      "privacy_notes": [
+        "Member and school data is stored in Supabase tables; access is gated by auth and roles (qualitative).",
+        "Google Calendar service account credentials are expected via environment variables, not in code (qualitative)."
+      ]
+    },
+    "impact": {
+      "metrics": [
+        {
+          "label": "Initial bundle size reduction",
+          "value": 83,
+          "unit": "%",
+          "evidence": "OPTIMIZATION_REPORT.md: \"83% reduction in initial bundle size\""
+        },
+        {
+          "label": "Pre-optimization main bundle size",
+          "value": 967.8,
+          "unit": "kB",
+          "evidence": "OPTIMIZATION_REPORT.md: \"dist/assets/index-k02QgkYI.js     967.80 kB\""
+        }
+      ],
+      "qualitative": [
+        "Improved perceived load performance with route-based code splitting and lazy-loaded admin features (qualitative).",
+        "Reduced operational friction by centralizing membership, club, and SPED workflows in one admin portal (qualitative)."
+      ]
+    },
+    "links": {
+      "repo_url": null,
+      "demo_url": null,
+      "docs_url": null
+    },
+    "evidence": {
+      "key_files": [
+        {
+          "path": "src/App.tsx",
+          "why": "Defines route structure, lazy loading, and admin route protection."
+        },
+        {
+          "path": "src/components/AuthGuard.tsx",
+          "why": "Shows Supabase session check for admin access."
+        },
+        {
+          "path": "src/components/forms/MemberForm.tsx",
+          "why": "Membership registration and validation logic."
+        },
+        {
+          "path": "src/pages/TrainingSignup.tsx",
+          "why": "Member lookup and Stripe-based training and provincial payment flow."
+        },
+        {
+          "path": "src/pages/admin/Finance.tsx",
+          "why": "SPED invoice loading via RPC and PDF download flow."
+        },
+        {
+          "path": "supabase/functions/sped-invoice-pdf/index.ts",
+          "why": "Edge function for PDF invoice generation with role checks."
+        },
+        {
+          "path": "supabase/functions/google-calendar/index.ts",
+          "why": "Calendar availability integration used for bookings."
+        },
+        {
+          "path": "supabase/functions/stripe-provincial-webhook/index.ts",
+          "why": "Stripe webhook updates provincial membership payments."
+        },
+        {
+          "path": "supabase/migrations/create_profiles_table.sql",
+          "why": "Profiles table and RLS policies for roles."
+        },
+        {
+          "path": "SPED_INVOICING_SETUP.md",
+          "why": "Documents SPED invoicing workflow and components."
+        },
+        {
+          "path": "OPTIMIZATION_REPORT.md",
+          "why": "Performance and bundle-size metrics."
+        },
+        {
+          "path": "vercel.json",
+          "why": "Deployment SPA rewrite configuration."
+        }
+      ],
+      "screenshots": [
+        {
+          "path": "assets/og.png",
+          "caption": "Open Graph preview image for the site."
+        },
+        {
+          "path": "assets/home-hero-1.jpg",
+          "caption": "Homepage hero section visual."
+        },
+        {
+          "path": "assets/logo.png",
+          "caption": "Table Tennis Saskatchewan logo."
+        }
+      ],
+      "asset_copy_instructions": [
+        "Copy these files from the original repo into your new portfolio repo under the same paths:",
+        "public/og.png -> assets/og.png",
+        "public/home/hero-1.jpg -> assets/home-hero-1.jpg",
+        "public/logo.png -> assets/logo.png",
+        "Optionally add real UI screenshots (admin dashboard, forms, finance/invoicing) into assets/ and reference them here for stronger proof."
+      ]
+    }
+  }
+}

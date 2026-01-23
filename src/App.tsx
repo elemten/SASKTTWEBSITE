@@ -59,6 +59,8 @@ const PlayClinics = lazy(() => import("./pages/play/Clinics"));
 const PlaySPED = lazy(() => import("./pages/play/SPED"));
 const TrainingSignup = lazy(() => import("./pages/TrainingSignup"));
 const Expenses = lazy(() => import("./pages/Expenses"));
+const PortfolioCaseStudy = lazy(() => import("./app/portfolio/PortfolioCaseStudy.jsx"));
+const RecruiterPortfolio = lazy(() => import("./components/Portfolio"));
 
 // Auth pages - REMOVED
 
@@ -219,6 +221,8 @@ const App = () => {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/faq" element={<FAQ />} />
                   <Route path="/expenses" element={<Expenses />} />
+                  <Route path="/portfolio" element={<PortfolioCaseStudy />} />
+                  <Route path="/recruiter" element={<RecruiterPortfolio />} />
 
                   {/* Coming Soon page for auth features */}
                   <Route path="/coming-soon" element={<ComingSoon />} />
