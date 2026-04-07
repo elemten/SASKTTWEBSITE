@@ -11,9 +11,12 @@ Set these in your Supabase dashboard under Settings > Edge Functions > Environme
 ```
 GOOGLE_CALENDAR_ID=your_google_calendar_id_here
 GOOGLE_SERVICE_ACCOUNT_EMAIL=your_service_account_email_here
+GOOGLE_IMPERSONATED_USER_EMAIL=calendar_owner@yourdomain.com
 GOOGLE_PRIVATE_KEY=your_private_key_here
 ADMIN_EMAIL=your_admin_email_here
 ```
+
+`GOOGLE_IMPERSONATED_USER_EMAIL` is optional. Set it only if you have Google Workspace domain-wide delegation configured for the service account. If you leave it unset, the service account itself must have at least "Make changes to events" access on the target calendar.
 
 ### For Frontend Application
 

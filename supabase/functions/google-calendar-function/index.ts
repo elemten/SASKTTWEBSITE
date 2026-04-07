@@ -11,6 +11,7 @@ const SERVICE_ACCOUNT_EMAIL =
   Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL") ??
   "ttsask-calendar-booking@n8nworkflows-469621.iam.gserviceaccount.com";
 
+const IMPERSONATED_USER_EMAIL = Deno.env.get("GOOGLE_IMPERSONATED_USER_EMAIL")?.trim() ?? "";
 const PRIVATE_KEY = Deno.env.get("GOOGLE_PRIVATE_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -31,14 +32,18 @@ async function generateJWT() {
   const now = Math.floor(Date.now() / 1000);
 
   const header = { alg: "RS256", typ: "JWT" };
-  const payload = {
+  const payload: Record<string, string | number> = {
     iss: SERVICE_ACCOUNT_EMAIL,
     scope: "https://www.googleapis.com/auth/calendar",
     aud: "https://oauth2.googleapis.com/token",
     iat: now,
     exp: now + 3600,
-    sub: "info@ttsask.ca",
   };
+
+  // Domain-wide delegation is optional. When unset, Google uses the service account itself.
+  if (IMPERSONATED_USER_EMAIL) {
+    payload.sub = IMPERSONATED_USER_EMAIL;
+  }
 
   const encodedHeader = btoa(JSON.stringify(header));
   const encodedPayload = btoa(JSON.stringify(payload));
@@ -88,6 +93,17 @@ async function getAccessToken() {
 
   const data = await response.json();
   return data.access_token as string;
+}
+
+async function readGoogleError(res: Response) {
+  const text = await res.text();
+
+  try {
+    const parsed = JSON.parse(text);
+    return { text, parsed };
+  } catch {
+    return { text, parsed: null };
+  }
 }
 
 // --- BOOKING LOGIC ---
@@ -198,9 +214,25 @@ async function createGoogleEvent(booking: any, bookingRowId: string) {
   });
 
   if (!res.ok) {
-    const txt = await res.text();
-    console.error("Google Calendar create error:", txt);
-    throw new Error(`GOOGLE_CREATE_FAILED`);
+    const { text, parsed } = await readGoogleError(res);
+    const reason = parsed?.error?.errors?.[0]?.reason;
+    const message = parsed?.error?.message;
+
+    console.error("Google Calendar create error:", {
+      calendarId: CALENDAR_ID,
+      serviceAccountEmail: SERVICE_ACCOUNT_EMAIL,
+      impersonatedUserEmail: IMPERSONATED_USER_EMAIL || null,
+      status: res.status,
+      reason,
+      message,
+      raw: text,
+    });
+
+    if (res.status === 403 && reason === "requiredAccessLevel") {
+      throw new Error("GOOGLE_CALENDAR_PERMISSION_DENIED");
+    }
+
+    throw new Error("GOOGLE_CREATE_FAILED");
   }
 
   const ev = await res.json();
@@ -488,12 +520,17 @@ serve(async (req) => {
         err.message === "DOUBLE_BOOKED" || err.message === "SLOT_ALREADY_TAKEN" ? 409 :
           500;
 
+    const errorMessage =
+      err.message === "DOUBLE_BOOKED"
+        ? "This time slot was just booked by another teacher."
+        : err.message === "GOOGLE_CALENDAR_PERMISSION_DENIED"
+          ? "Booking is temporarily unavailable because the Google Calendar integration does not have writer access to the configured calendar."
+          : err.message;
+
     return new Response(JSON.stringify({
       success: false,
       code: err.message,
-      error: err.message === "DOUBLE_BOOKED"
-        ? "This time slot was just booked by another teacher."
-        : err.message
+      error: errorMessage,
     }), {
       status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

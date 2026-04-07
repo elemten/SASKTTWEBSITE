@@ -55,11 +55,14 @@ Set these in: **Supabase Dashboard > Settings > Edge Functions > Environment Var
 ```bash
 GOOGLE_CALENDAR_ID=your_google_calendar_id_here
 GOOGLE_SERVICE_ACCOUNT_EMAIL=your_service_account_email_here
+GOOGLE_IMPERSONATED_USER_EMAIL=calendar_owner@yourdomain.com
 GOOGLE_PRIVATE_KEY=your_private_key_here
 STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret_here
 SUPABASE_URL=your_supabase_project_url_here
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 ```
+
+`GOOGLE_IMPERSONATED_USER_EMAIL` is optional. Use it only when the Google service account has domain-wide delegation and the impersonated mailbox has writer access to `GOOGLE_CALENDAR_ID`. Otherwise leave it unset and share the calendar directly with the service account email.
 
 ## Getting API Keys
 
@@ -97,5 +100,4 @@ For CI/CD, add these secrets in GitHub:
 - `VITE_SUPABASE_ANON_KEY` (for building)
 
 Go to: **Repository > Settings > Secrets and variables > Actions**
-
 
